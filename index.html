@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Bodega | Tenis y Mas</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar for Desktop -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <img src="images/logo-tm.png" alt="Tennis y Mas" class="logo-img">
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link active"><span class="nav-icon">📊</span> Dashboard</a></li>
+                <li><a href="sales.html" class="nav-link"><span class="nav-icon">🛒</span> Registrar Venta</a></li>
+                <!-- Future: <li><a href="#" class="nav-link"><span class="nav-icon">📦</span> Entradas</a></li> -->
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <div>
+                    <h1>Inventario Central</h1>
+                    <p style="opacity: 0.6;">Control de stock en tiempo real</p>
+                </div>
+                <div id="connectionStatus"
+                    style="font-size: 0.8rem; background: rgba(46, 204, 113, 0.1); color: #2ecc71; padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(46, 204, 113, 0.3);">
+                    ● Sincronizado
+                </div>
+            </header>
+
+            <div class="stats-bar">
+                <div class="stat-card">
+                    <div class="stat-label">Stock Total</div>
+                    <div class="stat-value" id="totalStock">0</div>
+                    <div style="font-size: 0.75rem; color: #2ecc71;">Actualizado ahora</div>
+                </div>
+                <div class="stat-card" style="border-right-color: #3498db;">
+                    <div class="stat-label">Sedes Activas</div>
+                    <div class="stat-value">2</div>
+                    <div style="font-size: 0.75rem; color: #888;">Fantasías / Bulevar</div>
+                </div>
+            </div>
+
+            <div class="inventory-controls">
+                <div class="search-wrapper">
+                    <span>🔍</span>
+                    <input type="text" id="searchInput" class="filter-input"
+                        placeholder="Buscar tenis, guayos, tallas...">
+                </div>
+                <select id="sedeFilter" class="form-control"
+                    style="width: auto; background: transparent; border: none; font-weight: 700;">
+                    <option value="all">TODAS LAS SEDES</option>
+                    <option value="Sede Fantasias New York">FANTASÍAS NEW YORK</option>
+                    <option value="Sede Bulevar">BULEVAR</option>
+                </select>
+            </div>
+
+            <div id="inventoryGrid" class="inventory-grid">
+                <!-- Data will be loaded here -->
+                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5;">Cargando productos...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="active"><i>📊</i><span>Stock</span></a>
+        <a href="sales.html"><i>🛒</i><span>Vender</span></a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            init().then(() => {
+                document.getElementById('searchInput').addEventListener('input', renderDashboard);
+                document.getElementById('sedeFilter').addEventListener('change', renderDashboard);
+            });
+        });
+
+        function renderDashboard() {
+            const grid = document.getElementById('inventoryGrid');
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const sede = document.getElementById('sedeFilter').value;
+
+            // Re-group currentInventory by product to show cards
+            const productsMap = {};
+
+            currentInventory.forEach(item => {
+                const matchesSearch = item.product_name.toLowerCase().includes(term) || item.size.toLowerCase().includes(term);
+                const matchesSede = sede === 'all' || item.location_name === sede;
+
+                if (matchesSearch && matchesSede) {
+                    if (!productsMap[item.product_name]) {
+                        productsMap[item.product_name] = {
+                            name: item.product_name,
+                            category: item.category,
+                            image: item.image,
+                            stocks: []
+                        };
+                    }
+                    productsMap[item.product_name].stocks.push(item);
+                }
+            });
+
+            const productsArray = Object.values(productsMap);
+
+            // Update total stock count
+            const total = currentInventory.reduce((acc, item) => acc + item.stock, 0);
+            document.getElementById('totalStock').textContent = total;
+
+            if (productsArray.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No se encontraron productos con esos filtros.</div>';
+                return;
+            }
+
+            grid.innerHTML = productsArray.map(p => {
+                // Determine main image
+                let imgUrl = p.image;
+                if (!imgUrl) imgUrl = 'https://via.placeholder.com/300x300?text=Sin+Imagen';
+
+                return `
+                    <div class="product-card">
+                        <div class="card-img-container">
+                            <span class="card-category">${p.category || 'Deportivo'}</span>
+                            <img src="${imgUrl}" alt="${p.name}" class="card-img">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">${p.name}</h3>
+                            <div class="stock-badges">
+                                ${p.stocks.sort((a, b) => a.size - b.size).map(s => `
+                                    <div class="badge ${s.stock <= 2 ? 'low' : ''}">
+                                        ${s.size} 
+                                        <span style="color: white;">(${s.stock})</span>
+                                        <span class="badge-sede">${s.location_name.includes('New York') ? 'NY' : 'BL'}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    </script>
+</body>
+
+</html>
