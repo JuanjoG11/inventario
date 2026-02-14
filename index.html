@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario Bodega | Tenis y Mas</title>
+
+    <!-- Performance: Mirroring shop settings -->
+    <link rel="preconnect" href="https://nrlaadaggmpjtdmtntoz.supabase.co">
+    <link rel="dns-prefetch" href="https://nrlaadaggmpjtdmtntoz.supabase.co">
+    <link rel="preconnect" href="https://unpkg.com">
+
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap"
         rel="stylesheet">
@@ -20,7 +26,6 @@
             <ul class="nav-links">
                 <li><a href="index.html" class="nav-link active"><span class="nav-icon">📊</span> Dashboard</a></li>
                 <li><a href="sales.html" class="nav-link"><span class="nav-icon">🛒</span> Registrar Venta</a></li>
-                <!-- Future: <li><a href="#" class="nav-link"><span class="nav-icon">📦</span> Entradas</a></li> -->
             </ul>
         </aside>
 
@@ -33,7 +38,7 @@
                 </div>
                 <div id="connectionStatus"
                     style="font-size: 0.8rem; background: rgba(46, 204, 113, 0.1); color: #2ecc71; padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(46, 204, 113, 0.3);">
-                    ● Sincronizado
+                    ⏳ Conectando...
                 </div>
             </header>
 
@@ -65,8 +70,7 @@
             </div>
 
             <div id="inventoryGrid" class="inventory-grid">
-                <!-- Data will be loaded here -->
-                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5;">Cargando productos...</p>
+                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5;">Esperando datos...</p>
             </div>
         </main>
     </div>
@@ -77,7 +81,8 @@
         <a href="sales.html"><i>🛒</i><span>Vender</span></a>
     </nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Use the same script as the shop -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -91,48 +96,45 @@
             const grid = document.getElementById('inventoryGrid');
             const term = document.getElementById('searchInput').value.toLowerCase();
             const sede = document.getElementById('sedeFilter').value;
+            const totalStockEl = document.getElementById('totalStock');
 
-            // Re-group currentInventory by product to show cards
+            if (!grid) return;
+
             const productsMap = {};
-
             currentInventory.forEach(item => {
-                const matchesSearch = item.product_name.toLowerCase().includes(term) || item.size.toLowerCase().includes(term);
+                const matchesSearch = (item.product_name || "").toLowerCase().includes(term) || (item.size || "").toString().toLowerCase().includes(term);
                 const matchesSede = sede === 'all' || item.location_name === sede;
 
                 if (matchesSearch && matchesSede) {
-                    if (!productsMap[item.product_name]) {
-                        productsMap[item.product_name] = {
-                            name: item.product_name,
+                    const key = item.product_name || "Unknown";
+                    if (!productsMap[key]) {
+                        productsMap[key] = {
+                            name: key,
                             category: item.category,
                             image: item.image,
                             stocks: []
                         };
                     }
-                    productsMap[item.product_name].stocks.push(item);
+                    productsMap[key].stocks.push(item);
                 }
             });
 
             const productsArray = Object.values(productsMap);
-
-            // Update total stock count
-            const total = currentInventory.reduce((acc, item) => acc + item.stock, 0);
-            document.getElementById('totalStock').textContent = total;
+            const total = currentInventory.reduce((acc, item) => acc + (item.stock || 0), 0);
+            if (totalStockEl) totalStockEl.textContent = total;
 
             if (productsArray.length === 0) {
-                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No se encontraron productos con esos filtros.</div>';
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No hay productos para mostrar.</div>';
                 return;
             }
 
             grid.innerHTML = productsArray.map(p => {
-                // Determine main image
-                let imgUrl = p.image;
-                if (!imgUrl) imgUrl = 'https://via.placeholder.com/300x300?text=Sin+Imagen';
-
+                let imgUrl = p.image || 'https://via.placeholder.com/300x300?text=Sin+Imagen';
                 return `
                     <div class="product-card">
                         <div class="card-img-container">
                             <span class="card-category">${p.category || 'Deportivo'}</span>
-                            <img src="${imgUrl}" alt="${p.name}" class="card-img">
+                            <img src="${imgUrl}" alt="${p.name}" class="card-img" onerror="this.src='https://via.placeholder.com/300x300?text=Error+Imagen'">
                         </div>
                         <div class="card-content">
                             <h3 class="card-title">${p.name}</h3>
@@ -141,7 +143,7 @@
                                     <div class="badge ${s.stock <= 2 ? 'low' : ''}">
                                         ${s.size} 
                                         <span style="color: white;">(${s.stock})</span>
-                                        <span class="badge-sede">${s.location_name.includes('New York') ? 'NY' : 'BL'}</span>
+                                        <span class="badge-sede">${(s.location_name || "").includes('New York') ? 'NY' : 'BL'}</span>
                                     </div>
                                 `).join('')}
                             </div>
