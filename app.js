@@ -1,4 +1,4 @@
-// 🚀 TENNIS Y MAS - APP v2.0 (DIAGNÓSTICO)
+// 🚀 TENNIS Y MAS - APP v2.1 (RESILIENCIA TOTAL)
 const SUPABASE_URL = 'https://nrlaadaggmpjtdmtntoz.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ybGFhZGFnZ21wanRkbXRudG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0NTM0NjksImV4cCI6MjA4NTAyOTQ2OX0.B7RLhRRvuz5jAsRAHLhWIPtW3KdhEEAKzoKV3DfeoJE';
 
@@ -8,11 +8,8 @@ let allProducts = [];
 let currentInventory = [];
 let supabaseClient = null;
 
-/**
- * 🛰️ DIAGNOSTIC LOGGER - Aparece de inmediato
- */
 function logToScreen(msg, type = 'info') {
-    console.log(`[Diagnostic v2.0] ${msg}`);
+    console.log(`[v2.1] ${msg}`);
     const grid = document.getElementById('inventoryGrid');
     if (grid) {
         let debugBox = document.getElementById('debug-console');
@@ -20,7 +17,7 @@ function logToScreen(msg, type = 'info') {
             debugBox = document.createElement('div');
             debugBox.id = 'debug-console';
             debugBox.style = "grid-column: 1/-1; background: #000; color: #0f0; padding: 20px; font-family: monospace; font-size: 0.8rem; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; white-space: pre-wrap;";
-            debugBox.innerHTML = "<b>CONSOLA DE DIAGNÓSTICO v2.0</b> (Si ves esto, el código se actualizó)<br>";
+            debugBox.innerHTML = "<b>CONSOLA v2.1</b><br>";
             grid.parentElement.insertBefore(debugBox, grid);
         }
         const color = type === 'error' ? '#ff3333' : (type === 'success' ? '#00ff00' : '#888');
@@ -28,12 +25,12 @@ function logToScreen(msg, type = 'info') {
     }
 }
 
-/**
- * 🛰️ DIRECT FETCH WITH TIMEOUT
- */
-async function supabaseFetch(table, select = '*') {
+async function supabaseFetch(table, select = '*', timeoutMs = 12000) {
     const url = `${SUPABASE_URL}/rest/v1/${table}?select=${select}`;
-    logToScreen(`Conectando a: ${table}...`);
+    logToScreen(`Pidiendo ${table}...`);
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
         const response = await fetch(url, {
@@ -41,8 +38,10 @@ async function supabaseFetch(table, select = '*') {
                 'apikey': SUPABASE_KEY,
                 'Authorization': `Bearer ${SUPABASE_KEY}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            signal: controller.signal
         });
+        clearTimeout(timer);
 
         if (!response.ok) {
             const err = await response.text();
@@ -50,31 +49,27 @@ async function supabaseFetch(table, select = '*') {
         }
 
         const data = await response.json();
-        logToScreen(`✅ Cargado ${table}: ${data.length} filas.`, 'success');
+        logToScreen(`✅ ${table} OK (${data.length} filas).`, 'success');
         return data;
     } catch (e) {
-        logToScreen(`❌ Error en ${table}: ${e.message}`, 'error');
+        clearTimeout(timer);
+        if (e.name === 'AbortError') throw new Error(`Timeout en ${table} (Servidor muy lento o bloqueado).`);
         throw e;
     }
 }
 
-// Initialize App
 async function init() {
-    logToScreen("🚀 Iniciando conexión...");
+    logToScreen("Iniciando carga...");
     const statusEl = document.getElementById('connectionStatus');
-    const grid = document.getElementById('inventoryGrid');
-
-    if (window.location.protocol === 'file:') {
-        logToScreen("ERROR: Estás abriendo el archivo local. Usa el link de Vercel.", "error");
-        return;
-    }
 
     try {
-        if (statusEl) statusEl.textContent = "⏳ Sincronizando...";
+        if (statusEl) statusEl.textContent = "⏳ Cargando...";
 
-        // Cargar datos
-        locations = await supabaseFetch('locations');
-        allProducts = await supabaseFetch('products', 'id,name,category,image,images');
+        // Cargar lo básico rápido
+        locations = await supabaseFetch('locations', '*', 8000);
+        allProducts = await supabaseFetch('products', 'id,name,category,image,images', 8000);
+
+        // Cargar inventario con fallback agresivo
         await fetchInventory();
 
         if (statusEl) {
@@ -82,8 +77,16 @@ async function init() {
             statusEl.style.color = "#2ecc71";
         }
 
+        // Quitar consola si hubo datos
+        if (currentInventory.length > 0) {
+            setTimeout(() => {
+                const b = document.getElementById('debug-console');
+                if (b) b.style.display = 'none';
+            }, 3000);
+        }
+
     } catch (e) {
-        console.error("❌ Init Error:", e);
+        logToScreen(`FALLO TOTAL: ${e.message}`, 'error');
         if (statusEl) {
             statusEl.textContent = "⚠️ Error";
             statusEl.style.color = "#ff3333";
@@ -93,7 +96,10 @@ async function init() {
 
 async function fetchInventory() {
     try {
-        const data = await supabaseFetch('view_inventory_details');
+        logToScreen("Intentando cargar vista de inventario...");
+        // Intentamos la vista primero (timeout corto para no trabar todo)
+        const data = await supabaseFetch('view_inventory_details', '*', 10000);
+
         currentInventory = data.map(item => {
             const prod = allProducts.find(p => p.id === item.product_id);
             let img = item.image;
@@ -103,21 +109,43 @@ async function fetchInventory() {
             }
             return { ...item, image: img };
         });
+
+        if (currentInventory.length === 0) {
+            logToScreen("Vista vacía, revisando tabla cruda...", "error");
+            throw new Error("Empty View");
+        }
+
         updateUI();
     } catch (err) {
-        logToScreen("Fallo vista, usando tabla cruda...", "error");
-        const rawData = await supabaseFetch('inventory');
-        currentInventory = rawData.map(item => {
-            const prod = allProducts.find(p => p.id === item.product_id);
-            return {
-                ...item,
-                product_name: prod ? prod.name : 'Unknown',
-                category: prod ? prod.category : 'N/A',
-                location_name: item.location_id === 1 ? 'Sede Fantasias New York' : 'Sede Bulevar',
-                image: prod ? (prod.image || (prod.images && prod.images[0])) : null
-            };
-        });
-        updateUI();
+        logToScreen(`Cargando tabla cruda (Fallback)...`, 'error');
+        try {
+            const rawData = await supabaseFetch('inventory', '*', 10000);
+            currentInventory = rawData.map(item => {
+                const prod = allProducts.find(p => p.id === item.product_id);
+                const loc = locations.find(l => l.id === item.location_id);
+                return {
+                    ...item,
+                    product_id: item.product_id,
+                    product_name: prod ? prod.name : 'Modelo ?',
+                    category: prod ? prod.category : 'N/A',
+                    location_name: loc ? loc.name : 'Bodega',
+                    image: prod ? (prod.image || (prod.images && prod.images[0])) : null,
+                    size: item.size,
+                    stock: item.stock
+                };
+            });
+
+            if (currentInventory.length === 0) {
+                logToScreen("⚠️ ADVERTENCIA: No hay datos en la tabla 'inventory'.", "error");
+            }
+
+            updateUI();
+        } catch (e2) {
+            logToScreen(`Fallo carga de inventario crudo: ${e2.message}`, 'error');
+            // Mock empty data to clear the "Cargando..."
+            currentInventory = [];
+            updateUI();
+        }
     }
 }
 
