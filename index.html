@@ -5,12 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario Bodega | Tenis y Mas</title>
-
-    <!-- Performance: Mirroring shop settings -->
-    <link rel="preconnect" href="https://nrlaadaggmpjtdmtntoz.supabase.co">
-    <link rel="dns-prefetch" href="https://nrlaadaggmpjtdmtntoz.supabase.co">
-    <link rel="preconnect" href="https://unpkg.com">
-
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap"
         rel="stylesheet">
@@ -70,7 +64,9 @@
             </div>
 
             <div id="inventoryGrid" class="inventory-grid">
-                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5;">Esperando datos...</p>
+                <!-- El grid se llenará vía JS -->
+                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 50px;">Cargando inventario...
+                </p>
             </div>
         </main>
     </div>
@@ -81,8 +77,7 @@
         <a href="sales.html"><i>🛒</i><span>Vender</span></a>
     </nav>
 
-    <!-- Use the same script as the shop -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Eliminamos el script de la librería para evitar bloqueos tempranos -->
     <script src="app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -94,28 +89,29 @@
 
         function renderDashboard() {
             const grid = document.getElementById('inventoryGrid');
+            if (!grid) return;
+
             const term = document.getElementById('searchInput').value.toLowerCase();
             const sede = document.getElementById('sedeFilter').value;
             const totalStockEl = document.getElementById('totalStock');
 
-            if (!grid) return;
-
             const productsMap = {};
             currentInventory.forEach(item => {
-                const matchesSearch = (item.product_name || "").toLowerCase().includes(term) || (item.size || "").toString().toLowerCase().includes(term);
+                const name = item.product_name || "Modelo Desconocido";
+                const size = (item.size || "").toString();
+                const matchesSearch = name.toLowerCase().includes(term) || size.toLowerCase().includes(term);
                 const matchesSede = sede === 'all' || item.location_name === sede;
 
                 if (matchesSearch && matchesSede) {
-                    const key = item.product_name || "Unknown";
-                    if (!productsMap[key]) {
-                        productsMap[key] = {
-                            name: key,
+                    if (!productsMap[name]) {
+                        productsMap[name] = {
+                            name: name,
                             category: item.category,
                             image: item.image,
                             stocks: []
                         };
                     }
-                    productsMap[key].stocks.push(item);
+                    productsMap[name].stocks.push(item);
                 }
             });
 
@@ -124,33 +120,30 @@
             if (totalStockEl) totalStockEl.textContent = total;
 
             if (productsArray.length === 0) {
-                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No hay productos para mostrar.</div>';
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No hay datos que mostrar. Revisa la consola si el cuadro verde persiste.</div>';
                 return;
             }
 
-            grid.innerHTML = productsArray.map(p => {
-                let imgUrl = p.image || 'https://via.placeholder.com/300x300?text=Sin+Imagen';
-                return `
-                    <div class="product-card">
-                        <div class="card-img-container">
-                            <span class="card-category">${p.category || 'Deportivo'}</span>
-                            <img src="${imgUrl}" alt="${p.name}" class="card-img" onerror="this.src='https://via.placeholder.com/300x300?text=Error+Imagen'">
-                        </div>
-                        <div class="card-content">
-                            <h3 class="card-title">${p.name}</h3>
-                            <div class="stock-badges">
-                                ${p.stocks.sort((a, b) => a.size - b.size).map(s => `
-                                    <div class="badge ${s.stock <= 2 ? 'low' : ''}">
-                                        ${s.size} 
-                                        <span style="color: white;">(${s.stock})</span>
-                                        <span class="badge-sede">${(s.location_name || "").includes('New York') ? 'NY' : 'BL'}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
+            grid.innerHTML = productsArray.map(p => `
+                <div class="product-card">
+                    <div class="card-img-container">
+                        <span class="card-category">${p.category || 'Calzado'}</span>
+                        <img src="${p.image || 'https://via.placeholder.com/300x300?text=Sin+Imagen'}" alt="${p.name}" class="card-img" onerror="this.src='https://via.placeholder.com/300x300?text=Error'">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${p.name}</h3>
+                        <div class="stock-badges">
+                            ${p.stocks.sort((a, b) => a.size - b.size).map(s => `
+                                <div class="badge ${s.stock <= 2 ? 'low' : ''}">
+                                    ${s.size} 
+                                    <span>(${s.stock})</span>
+                                    <span class="badge-sede">${(s.location_name || "NY").includes('New York') ? 'NY' : 'BL'}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
-                `;
-            }).join('');
+                </div>
+            `).join('');
         }
     </script>
 </body>
