@@ -704,18 +704,18 @@
 
             if (!sede || !selectedProduct) return;
 
+            // Get all sizes for this product (regardless of location)
             const available = currentInventory.filter(i =>
-                i.product_name === selectedProduct.name &&
-                i.location_name === sede
+                i.product_name === selectedProduct.name && i.stock > 0
             );
 
             if (available.length === 0) {
                 sizeSelect.innerHTML = '<option value="" disabled selected>Sin stock registrado</option>';
-                alertText.textContent = "⚠️ Este producto no tiene existencias en esta sede seleccionada.";
+                alertText.textContent = "⚠️ Este producto no tiene existencias disponibles.";
                 alertText.style.color = "var(--color-red)";
             } else {
                 sizeSelect.innerHTML = '<option value="" disabled selected>Seleccione talla...</option>' +
-                    available.map(i => `<option value="${i.size}">${i.size} (Stock: ${i.stock})</option>`).join('');
+                    available.map(i => `<option value="${i.size}">Talla ${i.size} (Stock: ${i.stock})</option>`).join('');
                 alertText.textContent = "💡 Tallas detectadas. Selecciona una para descontar.";
                 alertText.style.color = "#888";
             }
@@ -873,16 +873,22 @@
                         const size = document.getElementById('saleSize').value;
                         const qty = parseInt(document.getElementById('saleQty').value);
 
-                        if (!selectedProduct) return alert('Selecciona un producto primero');
+                        if (!selectedProduct) {
+                            showToast('Selecciona un producto primero', 'error');
+                            return;
+                        }
+
+                        if (!size) {
+                            showToast('Selecciona una talla', 'error');
+                            return;
+                        }
 
                         const btn = document.getElementById('submitBtn');
                         btn.disabled = true;
-                        btn.textContent = 'Actualizando...';
+                        btn.textContent = 'Procesando...';
 
-                        const loc = locations.find(l => l.name === sede);
-                        if (!loc) return alert('Sede no válida');
-
-                        const success = await registerSale(selectedProduct.id, loc.id, size, qty);
+                        // Use activeLocationId instead of sede validation
+                        const success = await registerSale(selectedProduct.id, activeLocationId, size, qty);
 
                         if (success) {
                             logTransaction('Venta', selectedProduct.name, size, sede, qty);
@@ -893,14 +899,14 @@
                             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             if (log) {
                                 log.insertAdjacentHTML('afterbegin', `
-                                    <div style="background: var(--color-gray); padding: 12px; border-radius: 10px; border-left: 3px solid #e74c3c;">
-                                        <div style="font-size: 0.8rem; font-weight: 700;">-${qty} | ${selectedProduct.name}</div>
-                                        <div style="font-size: 0.7rem; opacity: 0.5;">Talla ${size} | ${sede.split('Sede ')[1] || sede} | ${time}</div>
-                                    </div>
-                                `);
+                                <div style="background: var(--color-gray); padding: 12px; border-radius: 10px; border-left: 3px solid #e74c3c;">
+                                    <div style="font-size: 0.8rem; font-weight: 700;">-${qty} | ${selectedProduct.name}</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.5;">Talla ${size} | ${sede.split('Sede ')[1] || sede} | ${time}</div>
+                                </div>
+                            `);
                             }
 
-                            showToast('Venta registrada con éxito');
+                            showToast(`✅ Venta registrada: ${selectedProduct.name} Talla ${size}`, 'success');
 
                             // Full Reset
                             saleForm.reset();
@@ -912,10 +918,12 @@
                             document.getElementById('formPlaceholder').style.display = 'block';
 
                             renderDashboard();
+                        } else {
+                            showToast('Error al registrar la venta', 'error');
                         }
 
                         btn.disabled = false;
-                        btn.textContent = 'Confirmar Transacción';
+                        btn.textContent = 'FINALIZAR VENTA';
                     });
                 }
 
