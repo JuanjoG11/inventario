@@ -105,27 +105,34 @@ async function supabaseFetch(table, select = '*') {
     return await response.json();
 }
 
+/**
+ * 📦 FETCH INVENTORY FROM SUPABASE
+ */
 async function fetchInventory() {
     try {
-        console.log("🔄 Carga Inteligente de Inventario...");
-
-        // 1. Fetch INVENTORY first (Source of Truth for Stock)
-        const { data: invData, error: invError } = await supabaseClient.from('inventory').select('*');
-        if (invError) throw invError;
-
         let data = [];
 
-        if (invData && invData.length > 0) {
-            // 2. Identify distinct PRODUCTS present in inventory
-            const productIds = [...new Set(invData.map(item => item.product_id))];
-            console.log(`📦 Encotrados ${productIds.length} productos con inventario activo.`);
+        if (supabaseClient) {
+            console.log("🔄 Carga Inteligente de Inventario...");
 
-            // 3. Fetch ALL products from database (no filtering)
+            // 1. Fetch ALL inventory from all locations
+            const { data: invData, error: invError } = await supabaseClient
+                .from('inventory')
+                .select('*');
+
+            if (invError) throw invError;
+
+            rawInventory = invData; // Save raw data
+
+            // 2. Extract unique product IDs
+            const productIds = [...new Set(invData.map(item => item.product_id))];
+            console.log(`📦 Encontrados ${productIds.length} productos en inventario.`);
+
+            // 3. Fetch ALL products from database
             if (productIds.length > 0) {
                 const { data: pData, error: pError } = await supabaseClient
                     .from('products')
-                    .select('id,name,category,image,images,sizes')
-                    .in('id', productIds);
+                    .select('id,name,category,image,images,sizes');
 
                 if (pError) throw pError;
 
@@ -140,22 +147,29 @@ async function fetchInventory() {
                 });
             }
 
-            // 4. Join Data & Apply Unified Stock Logic
-            data = invData.map(item => {
+            // 4. Aggregate stock across all locations (sum by product + size)
+            const stockMap = {};
+            invData.forEach(item => {
+                const key = `${item.product_id}_${item.size}`;
+                if (!stockMap[key]) {
+                    stockMap[key] = { ...item, stock: 0 };
+                }
+                stockMap[key].stock += item.stock;
+            });
+
+            // 5. Convert to array and add product info
+            data = Object.values(stockMap).map(item => {
                 const p = allProducts.find(prod => prod.id == item.product_id);
                 if (!p) {
                     console.warn(`⚠️ Producto ${item.product_id} no encontrado en allProducts`);
                     return null;
                 }
 
-                const l = locations.find(loc => loc.id == item.location_id) ||
-                    locations.find(loc => loc.id == activeLocationId);
-
                 return {
                     ...item,
                     product_name: p.name,
                     category: p.category,
-                    location_name: l ? l.name : 'Sede',
+                    location_name: 'Stock Total',
                     image: p.image || (p.images && p.images[0]) || 'images/logo-tm.png'
                 };
             }).filter(item => item !== null);
@@ -185,47 +199,44 @@ async function fetchInventory() {
 async function registerSale(productId, locationId, size, quantity) {
     console.log(`🛒 Registrando venta: Producto ${productId}, Sede ${locationId}, Talla ${size}, Cantidad ${quantity}`);
 
-    // Unified Stock Logic: Ignore locationId in search, but use it for recording the transaction
-    const invIndex = currentInventory.findIndex(i =>
+    // 1. Find the specific item record for the ACTIVE LOCATION
+    const specificItem = rawInventory.find(i =>
         i.product_id == productId &&
+        i.location_id == activeLocationId &&
         i.size == size
     );
 
-    if (invIndex === -1) {
-        alert("Error: No se encontró este producto en el inventario.");
-        console.error("❌ Item no encontrado en inventario");
+    if (!specificItem) {
+        alert("Error: No hay stock registrado en esta sede para este producto.");
         return false;
     }
 
-    const item = currentInventory[invIndex];
-    const newStock = item.stock - quantity;
+    const newStock = specificItem.stock - quantity;
 
     if (newStock < 0) {
-        const proceed = confirm(`⚠️ Stock insuficiente (${item.stock} disponibles). ¿Desea registrar la venta de todas formas? (El inventario quedará en negativo)`);
+        const proceed = confirm(`⚠️ Stock insuficiente en sede (${specificItem.stock} disponibles). ¿Desea registrar la venta de todas formas? (El inventario quedará en negativo)`);
         if (!proceed) return false;
     }
 
-    // Update local inventory
-    currentInventory[invIndex].stock = newStock;
-    console.log(`✅ Stock actualizado localmente: ${item.stock} -> ${newStock}`);
-
-    // Try to update Supabase in background (if available)
+    // 2. Update Supabase with the CORRECT new stock for this location
     if (supabaseClient) {
         try {
             const { error } = await supabaseClient
                 .from('inventory')
                 .update({ stock: newStock, updated_at: new Date() })
                 .eq('product_id', productId)
-                .eq('location_id', GLOBAL_STOCK_LOCATION_ID) // Always subtract from Central stock
+                .eq('location_id', activeLocationId)
                 .eq('size', size);
 
             if (error) {
                 console.warn("⚠️ No se pudo sincronizar con Supabase:", error.message);
+                return false;
             } else {
-                console.log("☁️ Sincronizado con Supabase");
+                console.log("☁️ Stock actualizado en Supabase");
             }
         } catch (e) {
             console.warn("⚠️ Error al sincronizar:", e);
+            return false;
         }
     }
 
@@ -273,6 +284,26 @@ function loadEmergencyData() {
 function updateUI() {
     if (typeof renderDashboard === 'function') renderDashboard();
     if (typeof renderSalesUI === 'function') renderSalesUI();
+}
+
+async function logTransaction(type, productName, size, sedeIdOrName, qty) {
+    // Convert sede ID to name if it's a number
+    let sedeName = sedeIdOrName;
+    if (typeof sedeIdOrName === 'number' || !isNaN(sedeIdOrName)) {
+        const location = locations.find(l => l.id == sedeIdOrName);
+        sedeName = location ? location.name : sedeIdOrName;
+    }
+
+    const log = JSON.parse(localStorage.getItem('transaction_log') || '[]');
+    log.unshift({
+        type,
+        product: productName,
+        size,
+        sede: sedeName,
+        qty,
+        timestamp: new Date().toISOString()
+    });
+    localStorage.setItem('transaction_log', JSON.stringify(log.slice(0, 100))); // Keep last 100
 }
 
 async function verifyPin(pin) {

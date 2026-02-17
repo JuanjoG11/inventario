@@ -566,19 +566,7 @@
         }
 
         // --- History Implementation ---
-        function logTransaction(type, product, size, sede, qty) {
-            const history = JSON.parse(localStorage.getItem('transaction_history') || '[]');
-            const entry = {
-                date: new Date().toISOString(),
-                type: type, // 'Sale' or 'Entry'
-                product: product,
-                size: size,
-                sede: sede,
-                qty: qty
-            };
-            history.unshift(entry);
-            localStorage.setItem('transaction_history', JSON.stringify(history.slice(0, 100))); // Max 100
-        }
+        // logTransaction is now defined in app.js
 
         function renderHistory() {
             const table = document.getElementById('historyLogTable');
@@ -917,6 +905,8 @@
                             document.getElementById('noProductSelected').style.display = 'block';
                             document.getElementById('formPlaceholder').style.display = 'block';
 
+                            // Reload inventory and update dashboard
+                            await fetchInventory();
                             renderDashboard();
                         } else {
                             showToast('Error al registrar la venta', 'error');
