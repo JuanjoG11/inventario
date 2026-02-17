@@ -13,9 +13,10 @@
 
     --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --shadow-red: 0 4px 24px rgba(255, 51, 51, 0.4);
-    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    --radius-md: 16px;
-    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    --radius-md: 20px;
+    --radius-lg: 30px;
+    --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeIn {
@@ -138,6 +139,71 @@ body {
 
 .nav-icon {
     font-size: 1.2rem;
+}
+
+/* Floating Bottom Nav for Mobile */
+.bottom-nav-container {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 450px;
+    z-index: 1000;
+    display: none;
+}
+
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 10px 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.bottom-nav a {
+    text-decoration: none;
+    color: #888;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 25px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.bottom-nav a.active {
+    color: var(--color-red);
+    background: rgba(255, 51, 51, 0.1);
+}
+
+.bottom-nav a i {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.bottom-nav a span {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 15px;
+    background: linear-gradient(to right, #fff, #888);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 /* Header & Stats */
@@ -322,47 +388,64 @@ body {
     .main-content {
         margin-left: 0;
         padding: 20px;
-        padding-bottom: 100px;
+        padding-bottom: 120px;
     }
 
-    .bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: var(--color-gray);
-        justify-content: space-around;
-        padding: 15px 0;
-        border-top: 1px solid var(--color-gray-light);
-        backdrop-filter: blur(10px);
-        z-index: 1000;
+    .bottom-nav-container {
+        display: block;
     }
 }
 
-@media (min-width: 993px) {
-    .bottom-nav {
-        display: none;
-    }
+/* Table Styles */
+.data-table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    background: var(--color-gray);
+    border: 1px solid var(--color-gray-light);
 }
 
-.bottom-nav a {
-    text-decoration: none;
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 800;
     color: #888;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    text-transform: uppercase;
     font-size: 0.7rem;
-    font-weight: 700;
+    letter-spacing: 1px;
 }
 
-.bottom-nav a.active {
-    color: var(--color-red);
+.data-table td {
+    padding: 15px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.bottom-nav i {
-    font-size: 1.4rem;
-    margin-bottom: 4px;
+.data-table tr:hover td {
+    background: rgba(255, 255, 255, 0.01);
+}
+
+.type-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.type-sale {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.type-entry {
+    background: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
 }
 
 /* Modal and Forms */
@@ -434,4 +517,103 @@ body {
 
 .btn-primary:active {
     transform: scale(0.98);
+}
+
+/* Dashboard Charts Grid */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+@media (min-width: 992px) {
+    .charts-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+/* Enhanced Sales Form */
+.sales-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@media (max-width: 991px) {
+    .sales-container {
+        grid-template-columns: 1fr;
+    }
+
+    .sales-preview-card {
+        position: relative;
+        top: 0;
+    }
+}
+
+@media (min-width: 992px) {
+    .sales-container {
+        grid-template-columns: 1.2fr 1.5fr;
+        align-items: start;
+    }
+}
+
+.sales-preview-card {
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.4), rgba(18, 18, 18, 0.4));
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    position: sticky;
+    top: 40px;
+    padding: 0;
+}
+
+.sales-preview-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sales-form-card {
+    background: rgba(18, 18, 18, 0.6);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    padding: 40px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-glass);
+}
+
+.sales-form-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 30px;
+    color: var(--color-white);
+}
+
+.sales-input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.search-result-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    transition: var(--transition);
+}
+
+.search-result-item:hover {
+    background: rgba(255, 51, 51, 0.1) !important;
+    padding-left: 25px !important;
+}
+
+.sales-success-animation {
+    animation: pulseRed 2s infinite;
 }
