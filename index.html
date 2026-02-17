@@ -22,71 +22,162 @@
                 <img src="images/logo-tm.png" alt="Tennis y Mas" class="logo-img">
             </div>
             <ul class="nav-links">
-                <li><a href="index.html" class="nav-link active"><span class="nav-icon">📊</span> Dashboard</a></li>
-                <li><a href="sales.html" class="nav-link"><span class="nav-icon">🛒</span> Registrar Venta</a></li>
+                <li><a href="#" onclick="showSection('dashboard', this); return false;" class="nav-link active"><span
+                            class="nav-icon">📊</span> Dashboard</a></li>
+                <li><a href="#" onclick="showSection('sales', this); return false;" class="nav-link"><span
+                            class="nav-icon">🛒</span> Registrar Venta</a></li>
             </ul>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="page-header">
-                <div>
-                    <h1>Inventario Central</h1>
-                    <p style="opacity: 0.6;">Control de stock real y sincronizado</p>
-                </div>
-                <div id="connectionStatus"
-                    style="font-size: 0.8rem; background: rgba(46, 204, 113, 0.1); color: #2ecc71; padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(46, 204, 113, 0.3); display: flex; align-items: center; gap: 10px;">
-                    ⏳ Iniciando...
-                </div>
-            </header>
+            <div id="dashboard-section">
+                <header class="page-header">
+                    <div>
+                        <h1>Inventario Central</h1>
+                        <p style="opacity: 0.6;">Control de stock real y sincronizado</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="window.setAllStockTo10()"
+                            style="background: #333; color: white; border: 1px solid #444; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem;">
+                            🛠️ Rellenar Stock (10)
+                        </button>
+                        <div id="connectionStatus"
+                            style="font-size: 0.8rem; background: rgba(46, 204, 113, 0.1); color: #2ecc71; padding: 8px 15px; border-radius: 20px; border: 1px solid rgba(46, 204, 113, 0.3); display: flex; align-items: center; gap: 10px;">
+                            ⏳ Iniciando...
+                        </div>
+                    </div>
+                </header>
 
-            <div class="stats-bar">
-                <div class="stat-card">
-                    <div class="stat-label">Stock Total</div>
-                    <div class="stat-value" id="totalStock">0</div>
-                    <div style="font-size: 0.75rem; color: #2ecc71;">Existencias reales</div>
+                <div class="stats-bar">
+                    <div class="stat-card">
+                        <div class="stat-label">Stock Total</div>
+                        <div class="stat-value" id="totalStock">0</div>
+                        <div style="font-size: 0.75rem; color: #2ecc71;">Existencias reales</div>
+                    </div>
+                    <div class="stat-card" style="border-right-color: #3498db;">
+                        <div class="stat-label">Ventas Hoy</div>
+                        <div class="stat-value" id="totalSales">0</div>
+                        <div style="font-size: 0.75rem; color: #888;">Transacciones diarias</div>
+                    </div>
+                    <div class="stat-card" style="border-right-color: #f39c12;">
+                        <div class="stat-label">Stock Bajo</div>
+                        <div class="stat-value" id="lowStockCount">0</div>
+                        <div style="font-size: 0.75rem; color: #e74c3c;">Revisiones pendientes</div>
+                    </div>
                 </div>
-                <div class="stat-card" style="border-right-color: #3498db;">
-                    <div class="stat-label">Ventas Hoy</div>
-                    <div class="stat-value" id="totalSales">0</div>
-                    <div style="font-size: 0.75rem; color: #888;">Transacciones diarias</div>
+
+                <div class="charts-container"
+                    style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px;">
+                    <div class="card" style="padding: 25px; min-height: 300px;">
+                        <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">TENDENCIA DE VENTAS</h3>
+                        <div style="height: 200px;"><canvas id="salesTrendChart"></canvas></div>
+                    </div>
+                    <div class="card" style="padding: 25px; min-height: 300px;">
+                        <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">STOCK POR CATEGORÍA</h3>
+                        <div style="height: 200px;"><canvas id="stockDistributionChart"></canvas></div>
+                    </div>
                 </div>
-                <div class="stat-card" style="border-right-color: #f39c12;">
-                    <div class="stat-label">Stock Bajo</div>
-                    <div class="stat-value" id="lowStockCount">0</div>
-                    <div style="font-size: 0.75rem; color: #e74c3c;">Revisiones pendientes</div>
+
+                <div class="inventory-controls">
+                    <div class="search-wrapper">
+                        <span>🔍</span>
+                        <input type="text" id="searchInput" class="filter-input"
+                            placeholder="Buscar tenis, guayos, tallas...">
+                    </div>
+                    <select id="sedeFilter" class="form-control"
+                        style="width: auto; background: transparent; border: none; font-weight: 700;">
+                        <option value="all">TODAS LAS SEDES</option>
+                        <option value="Sede Fantasias New York">FANTASÍAS NEW YORK</option>
+                        <option value="Sede Bulevar">BULEVAR</option>
+                    </select>
+                </div>
+
+                <div id="inventoryGrid" class="inventory-grid">
+                    <p style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">Buscando existencias
+                        en
+                        bodega...</p>
                 </div>
             </div>
 
-            <div class="charts-container"
-                style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px;">
-                <div class="card" style="padding: 25px; min-height: 300px;">
-                    <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">TENDENCIA DE VENTAS</h3>
-                    <div style="height: 200px;"><canvas id="salesTrendChart"></canvas></div>
-                </div>
-                <div class="card" style="padding: 25px; min-height: 300px;">
-                    <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">STOCK POR CATEGORÍA</h3>
-                    <div style="height: 200px;"><canvas id="stockDistributionChart"></canvas></div>
-                </div>
-            </div>
+            <div id="sales-section" style="display:none;">
+                <header class="page-header">
+                    <div>
+                        <h1>Registrar Movimiento</h1>
+                        <p style="opacity: 0.6;">Descontar stock real de bodega</p>
+                    </div>
+                </header>
 
-            <div class="inventory-controls">
-                <div class="search-wrapper">
-                    <span>🔍</span>
-                    <input type="text" id="searchInput" class="filter-input"
-                        placeholder="Buscar tenis, guayos, tallas...">
-                </div>
-                <select id="sedeFilter" class="form-control"
-                    style="width: auto; background: transparent; border: none; font-weight: 700;">
-                    <option value="all">TODAS LAS SEDES</option>
-                    <option value="Sede Fantasias New York">FANTASÍAS NEW YORK</option>
-                    <option value="Sede Bulevar">BULEVAR</option>
-                </select>
-            </div>
+                <div class="app-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <!-- Form Column -->
+                    <section class="card-column">
+                        <div class="card"
+                            style="background: var(--color-gray); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--color-gray-light);">
+                            <form id="saleForm">
+                                <div class="form-group">
+                                    <label>1. Punto de Venta / Sede</label>
+                                    <select id="saleSede" class="form-control" required>
+                                        <option value="" disabled selected>Seleccione ubicación...</option>
+                                        <option value="Sede Fantasias New York">Sede Fantasias New York</option>
+                                        <option value="Sede Bulevar">Sede Bulevar</option>
+                                    </select>
+                                </div>
 
-            <div id="inventoryGrid" class="inventory-grid">
-                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">Buscando existencias en
-                    bodega...</p>
+                                <div class="form-group product-search" style="position: relative;">
+                                    <label>2. Buscar Producto</label>
+                                    <input type="text" id="productSearch" class="form-control"
+                                        placeholder="Escribe el nombre del modelo..." autocomplete="off">
+                                    <div id="searchResults" class="search-results"
+                                        style="position: absolute; width:100%; top:100%; z-index:50; background: var(--color-gray-light); border: 1px solid var(--color-gray-lighter); border-radius: 12px; margin-top:5px; max-height:250px; overflow-y:auto; box-shadow: var(--shadow-glass); display:none;">
+                                    </div>
+                                </div>
+
+                                <div id="productDetails"
+                                    style="display: none; margin-top: 30px; padding-top: 30px; border-top: 1px dashed var(--color-gray-lighter);">
+                                    <div id="selectedInfo"
+                                        style="display: flex; gap: 15px; margin-bottom: 25px; align-items: center;">
+                                        <img id="prevImg" src=""
+                                            style="width: 60px; height: 60px; border-radius: 10px; object-fit: cover;">
+                                        <div>
+                                            <h4 id="prevName" style="font-size: 1rem;"></h4>
+                                            <p id="prevCat"
+                                                style="font-size: 0.7rem; color: var(--color-red); text-transform: uppercase; font-weight: 800;">
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>3. Talla a Vender</label>
+                                        <select id="saleSize" class="form-control" required>
+                                            <option value="" disabled selected>Seleccione talla...</option>
+                                        </select>
+                                        <p id="stockAlert" style="font-size: 0.7rem; color: #888; margin-top: 8px;"></p>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>4. Cantidad</label>
+                                        <input type="number" id="saleQty" class="form-control" value="1" min="1"
+                                            required>
+                                    </div>
+
+                                    <button type="submit" class="btn-primary" id="submitBtn">Confirmar
+                                        Transacción</button>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+                    <!-- History Column -->
+                    <section class="card-column">
+                        <div class="card" style="background: var(--color-black); height: 100%; padding: 0;">
+                            <h3 style="margin-bottom: 20px; font-size: 0.8rem; opacity: 0.4;">MOVIMIENTOS RECIENTES</h3>
+                            <div id="salesLog" style="display: flex; flex-direction: column; gap: 12px;">
+                                <p style="opacity: 0.3; text-align: center; padding: 40px;">No hay registros locales.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </main>
     </div>
@@ -106,7 +197,6 @@
     <!-- Production Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="tennisymas_catalog.js"></script>
     <script src="app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -177,6 +267,18 @@
 
             grid.innerHTML = productsArray.map(p => {
                 let imgUrl = p.image || 'https://via.placeholder.com/300x300?text=Tenis+y+Mas';
+
+                // Consolidate sizes (Sum stock across locations)
+                const sizeMap = {};
+                p.stocks.forEach(s => {
+                    const sz = s.size;
+                    if (!sizeMap[sz]) sizeMap[sz] = 0;
+                    sizeMap[sz] += s.stock;
+                });
+                const consolidatedSizes = Object.entries(sizeMap)
+                    .map(([size, stock]) => ({ size: parseFloat(size), stock }))
+                    .sort((a, b) => a.size - b.size);
+
                 return `
                     <div class="product-card">
                         <div class="card-img-container">
@@ -186,11 +288,10 @@
                         <div class="card-content">
                             <h3 class="card-title">${p.name}</h3>
                             <div class="stock-badges">
-                                ${p.stocks.sort((a, b) => a.size - b.size).map(s => `
-                                    <div class="badge ${s.stock <= 0 ? 'out' : (s.stock <= 2 ? 'low' : '')}">
-                                        ${s.size} 
-                                        <span>(${s.stock})</span>
-                                        <span class="badge-sede">${(s.location_name || '').includes('New York') ? 'NY' : 'BL'}</span>
+                                ${consolidatedSizes.map(s => `
+                                    <div class="badge ${s.stock <= 0 ? 'out' : (s.stock <= 2 ? 'low' : '')}" style="display: flex; gap: 5px; align-items: center;">
+                                        <b style="font-size: 1rem;">${s.size}</b> 
+                                        <span style="opacity: 0.7;">| ${s.stock} unds</span>
                                     </div>
                                 `).join('')}
                             </div>

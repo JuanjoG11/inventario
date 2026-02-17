@@ -109,20 +109,17 @@
         <a href="sales.html" class="active"><i>🛒</i><span>Vender</span></a>
     </nav>
 
+    <!-- Production Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="app.js"></script>
     <script>
         let selectedProduct = null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Force load emergency data if not already loaded
-            if (!allProducts || allProducts.length === 0) {
-                console.log("⚠️ Forzando carga de catálogo de emergencia...");
-                loadEmergencyData();
-            }
-
-            console.log(`📦 Productos disponibles: ${allProducts.length}`);
-            console.log(`📦 Inventario disponible: ${currentInventory.length} items`);
+            // 🚀 Start Sync
+            init().then(() => {
+                console.log("✅ Ventas sincronizadas con la nube");
+            });
 
             // Don't wait for init, just set up listeners immediately
             const searchInput = document.getElementById('productSearch');

@@ -59,14 +59,14 @@ const TENNISYMAS_PRODUCTS = [
     { id: 46, name: "Peto Doble Faz", category: "Petos", image: "https://http2.mlstatic.com/D_NQ_NP_968393-MCO45686009867_042021-O.jpg", sizes: ["Única"] },
 
     // --- CAMISETAS (8 Productos) ---
-    { id: 47, name: "Camiseta Nike Dri-FIT Park VII", category: "Camisetas", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/e5e5e5e5-5e5e-5e5e-5e5e-5e5e5e5e5e5e/dri-fit-park-vii-football-shirt-8798.png", sizes: ["S", "M", "L", "XL", "XXL"] },
-    { id: 48, name: "Camiseta Adidas Squadra 21", category: "Camisetas", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/8a3c85e4c1c84d3e8f3eafc500fd146e_9366/Camiseta_Squadra_21_Azul_GN5742_01_standard.jpg", sizes: ["S", "M", "L", "XL"] },
-    { id: 49, name: "Camiseta Puma teamFINAL 21", category: "Camisetas", image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/704369/01/fnd/PNA/fmt/png/teamFINAL-21-Men's-Jersey", sizes: ["S", "M", "L", "XL", "XXL"] },
-    { id: 50, name: "Camiseta Selección Colombia Local", category: "Camisetas", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/437e2972995e4e70b427aef500cc9032_9366/Camiseta_Local_Seleccion_Colombia_22_Amarillo_HB9656_01_laydown.jpg", sizes: ["S", "M", "L", "XL"] },
-    { id: 51, name: "Camiseta Selección Colombia Visitante", category: "Camisetas", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/ed56965be27e4e649852aef500cd07c4_9366/Camiseta_Visitante_Seleccion_Colombia_22_Rojo_HD8849_01_laydown.jpg", sizes: ["S", "M", "L", "XL"] },
-    { id: 52, name: "Camiseta Nike Academy 23", category: "Camisetas", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/37e62752-980b-402a-923f-e55532551356/academy-23-dri-fit-short-sleeve-football-top-8798.png", sizes: ["S", "M", "L", "XL"] },
-    { id: 53, name: "Camiseta Adidas Entrada 22", category: "Camisetas", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/7036c7a6e76c4333b207ae28004f7b2d_9366/Camiseta_Entrada_22_Negro_H57478_01_laydown.jpg", sizes: ["S", "M", "L", "XL"] },
-    { id: 54, name: "Camiseta Puma teamLIGA", category: "Camisetas", image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/704917/01/fnd/PNA/fmt/png/teamLIGA-Jersey-Men", sizes: ["S", "M", "L", "XL"] }
+    { id: 47, name: "Camiseta Nike Dri-FIT Park VII", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL", "XXL"] },
+    { id: 48, name: "Camiseta Adidas Squadra 21", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL"] },
+    { id: 49, name: "Camiseta Puma teamFINAL 21", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL", "XXL"] },
+    { id: 50, name: "Camiseta Selección Colombia Local", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL"] },
+    { id: 51, name: "Camiseta Selección Colombia Visitante", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL"] },
+    { id: 52, name: "Camiseta Nike Academy 23", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL"] },
+    { id: 53, name: "Camiseta Adidas Entrada 22", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL"] },
+    { id: 54, name: "Camiseta Puma teamLIGA", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL"] }
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
