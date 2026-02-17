@@ -118,9 +118,11 @@ async function init() {
 
         const [locs] = await Promise.race([dataPromise, timeoutPromise]);
 
-        locations = locs;
+        if (locs && locs.length > 0) {
+            locations = locs;
+            console.log("✅ Sedes cargadas:", locations.length);
+        }
 
-        console.log("✅ Sedes cargadas. Iniciando carga inteligente de inventario...");
         await fetchInventory();
 
         if (statusEl) {
@@ -202,10 +204,11 @@ async function fetchInventory() {
 
         // 4. Join Data
         const data = invData.map(item => {
-            const p = allProducts.find(prod => prod.id === item.product_id);
-            if (!p) return null; // Skip if product details not found
+            // Loose equality to handle string/number IDs
+            const p = allProducts.find(prod => prod.id == item.product_id);
+            if (!p) return null;
 
-            const l = locations.find(loc => loc.id === item.location_id);
+            const l = locations.find(loc => loc.id == item.location_id);
 
             return {
                 ...item,
@@ -217,8 +220,12 @@ async function fetchInventory() {
         }).filter(item => item !== null);
 
         console.log(`✅ Inventario final procesado: ${data.length} items.`);
-        currentInventory = data;
-        updateUI();
+        if (data.length > 0) {
+            currentInventory = data;
+            updateUI();
+        } else {
+            console.warn("⚠️ El cruce de inventario no generó resultados. Manteniendo datos actuales.");
+        }
 
     } catch (err) {
         console.error("❌ Error en Carga Inteligente:", err);

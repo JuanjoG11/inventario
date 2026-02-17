@@ -197,23 +197,29 @@
     <!-- Production Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="tennisymas_catalog.js"></script>
     <script src="app.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Reset daily sales counter
-            const today = new Date().toLocaleDateString();
-            if (localStorage.getItem('last_sale_date') !== today) {
-                localStorage.setItem('today_sales_count', '0');
-                localStorage.setItem('last_sale_date', today);
-            }
-
-            init().then(() => {
-                document.getElementById('searchInput').addEventListener('input', renderDashboard);
-                document.getElementById('sedeFilter').addEventListener('change', renderDashboard);
-            });
-        });
-
         let salesChart = null, stockChart = null;
+        let selectedProduct = null;
+
+        function showSection(sectionId, element) {
+            // Hide all sections
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('sales-section').style.display = 'none';
+
+            // Show target section
+            document.getElementById(sectionId + '-section').style.display = 'block';
+
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            // Re-render dashboard if visible
+            if (sectionId === 'dashboard') {
+                renderDashboard();
+            }
+        }
 
         function renderDashboard() {
             const grid = document.getElementById('inventoryGrid');
@@ -222,8 +228,6 @@
             const totalStockEl = document.getElementById('totalStock');
             const lowStockEl = document.getElementById('lowStockCount');
             const salesEl = document.getElementById('totalSales');
-
-            if (!grid) return;
 
             // Calculate metrics
             let totalStock = 0, lowStock = 0;
@@ -237,12 +241,22 @@
             if (lowStockEl) lowStockEl.textContent = lowStock;
             if (salesEl) salesEl.textContent = localStorage.getItem('today_sales_count') || '0';
 
-            // Group by Product Name
+            renderInventoryGrid(currentInventory);
+            renderCharts();
+        }
+
+        function renderInventoryGrid(inventory) {
+            const grid = document.getElementById('inventoryGrid');
+            if (!grid) return;
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const sede = document.getElementById('sedeFilter').value;
+
+            // Group by Product Name (Consolidated)
             const productsMap = {};
-            currentInventory.forEach(item => {
+            inventory.forEach(item => {
                 const name = item.product_name || "Desconocido";
                 const size = (item.size || "").toString();
-                const matchesSearch = name.toLowerCase().includes(term) || size.toLowerCase().includes(term);
+                const matchesSearch = name.toLowerCase().includes(term) || size.includes(term);
                 const matchesSede = sede === 'all' || item.location_name === sede;
 
                 if (matchesSearch && matchesSede) {
@@ -261,12 +275,12 @@
             const productsArray = Object.values(productsMap);
 
             if (productsArray.length === 0) {
-                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No se encontraron productos con stock en bodega.</div>';
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No se encontraron productos.</div>';
                 return;
             }
 
             grid.innerHTML = productsArray.map(p => {
-                let imgUrl = p.image || 'https://via.placeholder.com/300x300?text=Tenis+y+Mas';
+                let imgUrl = p.image || 'images/logo-tm.png';
 
                 // Consolidate sizes (Sum stock across locations)
                 const sizeMap = {};
@@ -299,8 +313,6 @@
                     </div>
                 `;
             }).join('');
-
-            renderCharts();
         }
 
         function renderCharts() {
@@ -364,6 +376,137 @@
                 }
             });
         }
+
+        function renderSalesUI() {
+            if (selectedProduct) updateSizeOptions();
+            // You can add more logic here to update the sales history or other UI elements
+        }
+
+        // --- Sales Implementation ---
+        function selectProduct(id) {
+            selectedProduct = allProducts.find(p => p.id == id);
+            document.getElementById('productSearch').value = selectedProduct.name;
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('productDetails').style.display = 'block';
+
+            document.getElementById('prevName').textContent = selectedProduct.name;
+            document.getElementById('prevCat').textContent = selectedProduct.category || 'Deportivo';
+            document.getElementById('prevImg').src = selectedProduct.image || (selectedProduct.images && selectedProduct.images[0]) || 'images/logo-tm.png';
+
+            updateSizeOptions();
+        }
+
+        function updateSizeOptions() {
+            const sede = document.getElementById('saleSede').value;
+            const sizeSelect = document.getElementById('saleSize');
+            const alertText = document.getElementById('stockAlert');
+
+            if (!sede || !selectedProduct) return;
+
+            const available = currentInventory.filter(i =>
+                i.product_name === selectedProduct.name &&
+                i.location_name === sede
+            );
+
+            if (available.length === 0) {
+                sizeSelect.innerHTML = '<option value="" disabled selected>Sin stock registrado</option>';
+                alertText.textContent = "Este producto no tiene entradas en esta sede.";
+            } else {
+                sizeSelect.innerHTML = '<option value="" disabled selected>Seleccione talla...</option>' +
+                    available.map(i => `<option value="${i.size}">${i.size} (Stock: ${i.stock})</option>`).join('');
+                alertText.textContent = "Selecciona una talla para descontar.";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reset daily sales counter
+            const today = new Date().toLocaleDateString();
+            if (localStorage.getItem('last_sale_date') !== today) {
+                localStorage.setItem('today_sales_count', '0');
+                localStorage.setItem('last_sale_date', today);
+            }
+
+            init().then(() => {
+                document.getElementById('searchInput').addEventListener('input', renderDashboard);
+                document.getElementById('sedeFilter').addEventListener('change', renderDashboard);
+
+                // Add sales listeners
+                const searchInput = document.getElementById('productSearch');
+                const results = document.getElementById('searchResults');
+                const sedeSelect = document.getElementById('saleSede');
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const term = e.target.value.toLowerCase();
+                        if (term.length < 2) {
+                            results.style.display = 'none';
+                            return;
+                        }
+
+                        const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+                        if (filtered.length > 0) {
+                            results.innerHTML = filtered.map(p => `
+                                <div class="search-result-item" onclick="selectProduct(${p.id})" style="padding: 12px 20px; border-bottom: 1px solid var(--color-gray-lighter); cursor: pointer;">
+                                    <div style="font-weight: 700;">${p.name}</div>
+                                    <div style="font-size: 0.75rem; opacity: 0.5;">${p.category || 'Deportivo'}</div>
+                                </div>
+                            `).join('');
+                            results.style.display = 'block';
+                        } else {
+                            results.innerHTML = '<div style="padding: 20px; text-align: center; opacity: 0.5;">No se encontraron productos</div>';
+                            results.style.display = 'block';
+                        }
+                    });
+                }
+
+                if (sedeSelect) {
+                    sedeSelect.addEventListener('change', () => {
+                        if (selectedProduct) updateSizeOptions();
+                    });
+                }
+
+                const saleForm = document.getElementById('saleForm');
+                if (saleForm) {
+                    saleForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const sede = document.getElementById('saleSede').value;
+                        const size = document.getElementById('saleSize').value;
+                        const qty = parseInt(document.getElementById('saleQty').value);
+
+                        if (!selectedProduct) return alert('Selecciona un producto primero');
+
+                        const btn = document.getElementById('submitBtn');
+                        btn.disabled = true;
+                        btn.textContent = 'Actualizando...';
+
+                        const loc = locations.find(l => l.name === sede);
+                        if (!loc) return alert('Sede no válida');
+
+                        const success = await registerSale(selectedProduct.id, loc.id, size, qty);
+
+                        if (success) {
+                            const log = document.getElementById('salesLog');
+                            if (log.innerHTML.includes('No hay registros')) log.innerHTML = '';
+
+                            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            log.insertAdjacentHTML('afterbegin', `
+                                <div style="background: var(--color-gray); padding: 12px; border-radius: 10px; border-left: 3px solid #e74c3c;">
+                                    <div style="font-size: 0.8rem; font-weight: 700;">-${qty} | ${selectedProduct.name}</div>
+                                    <div style="font-size: 0.7rem; opacity: 0.5;">Talla ${size} | ${sede.split('Sede ')[1] || sede} | ${time}</div>
+                                </div>
+                            `);
+
+                            alert('Venta registrada con éxito.');
+                            updateSizeOptions();
+                            document.getElementById('saleQty').value = 1;
+                        }
+
+                        btn.disabled = false;
+                        btn.textContent = 'Confirmar Transacción';
+                    });
+                }
+            });
+        });
     </script>
 </body>
 
