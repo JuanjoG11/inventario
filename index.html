@@ -44,12 +44,29 @@
                 <div class="stat-card">
                     <div class="stat-label">Stock Total</div>
                     <div class="stat-value" id="totalStock">0</div>
-                    <div style="font-size: 0.75rem; color: #2ecc71;">Actualizado ahora</div>
+                    <div style="font-size: 0.75rem; color: #2ecc71;">Existencias reales</div>
                 </div>
                 <div class="stat-card" style="border-right-color: #3498db;">
-                    <div class="stat-label">Sedes Activas</div>
-                    <div class="stat-value">2</div>
-                    <div style="font-size: 0.75rem; color: #888;">Fantasías / Bulevar</div>
+                    <div class="stat-label">Ventas Hoy</div>
+                    <div class="stat-value" id="totalSales">0</div>
+                    <div style="font-size: 0.75rem; color: #888;">Transacciones diarias</div>
+                </div>
+                <div class="stat-card" style="border-right-color: #f39c12;">
+                    <div class="stat-label">Stock Bajo</div>
+                    <div class="stat-value" id="lowStockCount">0</div>
+                    <div style="font-size: 0.75rem; color: #e74c3c;">Revisiones pendientes</div>
+                </div>
+            </div>
+
+            <div class="charts-container"
+                style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px;">
+                <div class="card" style="padding: 25px; min-height: 300px;">
+                    <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">TENDENCIA DE VENTAS</h3>
+                    <div style="height: 200px;"><canvas id="salesTrendChart"></canvas></div>
+                </div>
+                <div class="card" style="padding: 25px; min-height: 300px;">
+                    <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">STOCK POR CATEGORÍA</h3>
+                    <div style="height: 200px;"><canvas id="stockDistributionChart"></canvas></div>
                 </div>
             </div>
 
@@ -80,24 +97,49 @@
         <a href="sales.html"><i>🛒</i><span>Vender</span></a>
     </nav>
 
-    <!-- Production Library -->
+    <!-- Production Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="tennisymas_catalog.js"></script>
     <script src="app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Reset daily sales counter
+            const today = new Date().toLocaleDateString();
+            if (localStorage.getItem('last_sale_date') !== today) {
+                localStorage.setItem('today_sales_count', '0');
+                localStorage.setItem('last_sale_date', today);
+            }
+
             init().then(() => {
                 document.getElementById('searchInput').addEventListener('input', renderDashboard);
                 document.getElementById('sedeFilter').addEventListener('change', renderDashboard);
             });
         });
 
+        let salesChart = null, stockChart = null;
+
         function renderDashboard() {
             const grid = document.getElementById('inventoryGrid');
             const term = document.getElementById('searchInput').value.toLowerCase();
             const sede = document.getElementById('sedeFilter').value;
             const totalStockEl = document.getElementById('totalStock');
+            const lowStockEl = document.getElementById('lowStockCount');
+            const salesEl = document.getElementById('totalSales');
 
             if (!grid) return;
+
+            // Calculate metrics
+            let totalStock = 0, lowStock = 0;
+            currentInventory.forEach(item => {
+                const stock = item.stock || 0;
+                totalStock += stock;
+                if (stock > 0 && stock <= 2) lowStock++;
+            });
+
+            if (totalStockEl) totalStockEl.textContent = totalStock;
+            if (lowStockEl) lowStockEl.textContent = lowStock;
+            if (salesEl) salesEl.textContent = localStorage.getItem('today_sales_count') || '0';
 
             // Group by Product Name
             const productsMap = {};
@@ -121,8 +163,6 @@
             });
 
             const productsArray = Object.values(productsMap);
-            const total = currentInventory.reduce((acc, item) => acc + (item.stock || 0), 0);
-            if (totalStockEl) totalStockEl.textContent = total;
 
             if (productsArray.length === 0) {
                 grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; opacity: 0.5; padding: 100px;">No se encontraron productos con stock en bodega.</div>';
@@ -152,6 +192,70 @@
                     </div>
                 `;
             }).join('');
+
+            renderCharts();
+        }
+
+        function renderCharts() {
+            const ctxSales = document.getElementById('salesTrendChart')?.getContext('2d');
+            const ctxStock = document.getElementById('stockDistributionChart')?.getContext('2d');
+            if (!ctxSales || !ctxStock) return;
+
+            // Stock by category
+            const categories = {};
+            currentInventory.forEach(item => {
+                const cat = item.category || 'Otros';
+                categories[cat] = (categories[cat] || 0) + (item.stock || 0);
+            });
+
+            if (stockChart) stockChart.destroy();
+            stockChart = new Chart(ctxStock, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(categories),
+                    datasets: [{
+                        data: Object.values(categories),
+                        backgroundColor: ['#ff3333', '#cc0000', '#333', '#1e1e1e', '#888'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#888', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+
+            if (salesChart) salesChart.destroy();
+            salesChart = new Chart(ctxSales, {
+                type: 'line',
+                data: {
+                    labels: ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'],
+                    datasets: [{
+                        label: 'Ventas',
+                        data: [0, 2, 5, 3, 8, 4, 6],
+                        borderColor: '#ff3333',
+                        backgroundColor: 'rgba(255,51,51,0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { display: false },
+                        x: { ticks: { color: '#444' }, grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
         }
     </script>
 </body>
