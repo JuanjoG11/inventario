@@ -7,10 +7,17 @@ const EMERGENCY_PRODUCTS = [];
 
 
 // State
-let locations = [{ id: 1, name: "Sede Fantasias New York" }, { id: 2, name: "Sede Bulevar" }];
+let locations = [
+    { id: 1, name: "Sede Bulevar", pin: "1111" },
+    { id: 2, name: "Sede Fantasías", pin: "2222" },
+    { id: 3, name: "Sede Virtual", pin: "3333" }
+];
+let activeLocationId = parseInt(localStorage.getItem('active_location_id') || '0'); // 0 means not logged in
+let isLoggedIn = localStorage.getItem('is_logged_in') === 'true';
 let allProducts = [];
 let currentInventory = [];
 let supabaseClient = null;
+const GLOBAL_STOCK_LOCATION_ID = 0; // The ID used in 'inventory' table for the shared pool
 
 /**
  * 🛠️ INITIALIZATION
@@ -19,108 +26,33 @@ async function init() {
     console.log("🚀 Iniciando Sistema de Inventario...");
     const statusEl = document.getElementById('connectionStatus');
 
-    // 1. LOAD EMERGENCY DATA IMMEDIATELY
-    allProducts = EMERGENCY_PRODUCTS;
-    loadEmergencyData();
-    updateUI();
+    // 0. CLEAR OLD CACHE
+    console.log("🧹 Limpiando caché antiguo...");
+    localStorage.removeItem('elite_inventory_cache');
+    localStorage.removeItem('elite_products_cache');
 
-    // 🛑 DANGER ZONE: CLEANUP DATABASE
-    // Uncomment this line in console to run: window.dangerousCleanupDatabase()
-    // 🛑 DANGER ZONE: CLEANUP DATABASE
-    // Uncomment this line in console to run: window.dangerousCleanupDatabase()
-    window.dangerousCleanupDatabase = async function () {
-        // ... (Cleanup logic remains) ...
-    };
-
-    // 🛠️ TOOL: RESET STOCK TO 10 (Requested by User)
-    window.setAllStockTo10 = async function () {
-        if (!supabaseClient) return alert("Error: No hay conexión a Supabase");
-        const confirmReset = confirm("⚠️ ¿Estás seguro de poner 10 UNIDADES de stock a TODOS los productos en TODAS las tallas y sedes? Esto sobrescribirá el inventario actual.");
-        if (!confirmReset) return;
-
-        console.log("🚀 Iniciando carga masiva de stock (10 unids)...");
-        const statusEl = document.getElementById('connectionStatus');
-        if (statusEl) statusEl.textContent = "⏳ Actualizando Stock...";
-
-        try {
-            // 1. Get reference data
-            const { data: prods } = await supabaseClient.from('products').select('id,sizes');
-            const { data: locs } = await supabaseClient.from('locations').select('id');
-
-            if (!prods || !locs) throw new Error("No se pudieron cargar productos o sedes");
-
-            const updates = [];
-
-            // 2. Build Inventory Records
-            prods.forEach(p => {
-                if (!p.sizes) return;
-                p.sizes.forEach(s => {
-                    locs.forEach(l => {
-                        updates.push({
-                            product_id: p.id,
-                            location_id: l.id,
-                            size: s,
-                            stock: 10, // FORCE 10 STOCK
-                            updated_at: new Date()
-                        });
-                    });
-                });
-            });
-
-            console.log(`📦 Preparando ${updates.length} registros de inventario...`);
-
-            // 3. Upsert in batches (Supabase limits payload size)
-            const BATCH_SIZE = 100;
-            for (let i = 0; i < updates.length; i += BATCH_SIZE) {
-                const batch = updates.slice(i, i + BATCH_SIZE);
-                const { error } = await supabaseClient.from('inventory').upsert(batch, { onConflict: 'product_id,location_id,size' });
-                if (error) console.error("Error en lote:", error);
-                console.log(`✅ Lote ${i / BATCH_SIZE + 1} procesado`);
-            }
-
-            alert("✅ ¡Stock actualizado a 10 unidades para todo el catálogo!");
-            location.reload();
-
-        } catch (err) {
-            console.error("Error setting stock:", err);
-            alert("Hubo un error al actualizar el stock.");
-        }
-    };
-
-    if (statusEl) {
-        statusEl.textContent = "● Modo Local (Demo)";
-        statusEl.style.background = "rgba(241, 196, 15, 0.1)";
-        statusEl.style.color = "#f1c40f";
-        statusEl.style.borderColor = "rgba(241, 196, 15, 0.3)";
+    // 1. Show login or load UI
+    if (isLoggedIn && activeLocationId > 0) {
+        document.body.classList.remove('login-required');
+        updateUI(); // Show empty state while loading
+    } else {
+        showLoginScreen();
     }
 
-    // 2. Try to connect to Supabase in background (optional)
+    // 2. Initialize Supabase Client
+    if (window.supabase) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: false }
+        });
+    }
+
+    // 3. Try to sync with Supabase
     try {
-        if (statusEl) statusEl.textContent = "⏳ Intentando sincronizar...";
-
-        if (window.supabase) {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-                auth: { persistSession: false }
-            });
-        }
-
-        // Try to load real data with timeout (Increased to 30s)
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), 30000)
-        );
-
-        // OPTIMIZATION: Don't fetch all products here. Just fetch locations.
-        // We will fetch relevant products in fetchInventory based on what's in stock.
-        const dataPromise = Promise.all([
-            supabaseFetch('locations')
-            // supabaseFetch('products') // ❌ REMOVED: Too slow to fetch 4000 products immediately
-        ]);
-
-        const [locs] = await Promise.race([dataPromise, timeoutPromise]);
-
-        if (locs && locs.length > 0) {
-            locations = locs;
-            console.log("✅ Sedes cargadas:", locations.length);
+        if (statusEl) {
+            statusEl.textContent = "● Sincronizando...";
+            statusEl.style.background = "rgba(52, 152, 219, 0.1)";
+            statusEl.style.color = "#3498db";
+            statusEl.style.borderColor = "rgba(52, 152, 219, 0.3)";
         }
 
         await fetchInventory();
@@ -134,12 +66,22 @@ async function init() {
         }
 
     } catch (e) {
-        console.warn("⚠️ Error de conexión inicial (posible timeout), reintentando...", e);
+        console.warn("⚠️ Hubo un problema al sincronizar. Usando datos de respaldo.");
         if (statusEl) {
-            statusEl.textContent = "● Sincronizado";
-            statusEl.className = "status-badge status-success";
+            statusEl.textContent = "● Modo Offline";
+            statusEl.style.color = "#e67e22";
         }
     }
+}
+
+/**
+ * 🛠️ SILENT AUTO-RESTORE
+ */
+async function silentRestoreCatalog() {
+    // This function is no longer needed as products are loaded directly from DB.
+    // Keeping it as a placeholder or removing it depends on future requirements.
+    // For now, it will remain, but its call in init() has been removed.
+    console.log("Silent restore catalog is deprecated.");
 }
 
 /**
@@ -171,61 +113,66 @@ async function fetchInventory() {
         const { data: invData, error: invError } = await supabaseClient.from('inventory').select('*');
         if (invError) throw invError;
 
-        if (!invData || invData.length === 0) {
-            console.log("⚠️ No hay inventario registrado.");
-            currentInventory = [];
-            updateUI();
-            return;
+        let data = [];
+
+        if (invData && invData.length > 0) {
+            // 2. Identify distinct PRODUCTS present in inventory
+            const productIds = [...new Set(invData.map(item => item.product_id))];
+            console.log(`📦 Encotrados ${productIds.length} productos con inventario activo.`);
+
+            // 3. Fetch ALL products from database (no filtering)
+            if (productIds.length > 0) {
+                const { data: pData, error: pError } = await supabaseClient
+                    .from('products')
+                    .select('id,name,category,image,images,sizes')
+                    .in('id', productIds);
+
+                if (pError) throw pError;
+
+                // Merge products into allProducts
+                pData.forEach(spProd => {
+                    const idx = allProducts.findIndex(p => p.id == spProd.id);
+                    if (idx !== -1) {
+                        allProducts[idx] = { ...allProducts[idx], ...spProd };
+                    } else {
+                        allProducts.push(spProd);
+                    }
+                });
+            }
+
+            // 4. Join Data & Apply Unified Stock Logic
+            data = invData.map(item => {
+                const p = allProducts.find(prod => prod.id == item.product_id);
+                if (!p) {
+                    console.warn(`⚠️ Producto ${item.product_id} no encontrado en allProducts`);
+                    return null;
+                }
+
+                const l = locations.find(loc => loc.id == item.location_id) ||
+                    locations.find(loc => loc.id == activeLocationId);
+
+                return {
+                    ...item,
+                    product_name: p.name,
+                    category: p.category,
+                    location_name: l ? l.name : 'Sede',
+                    image: p.image || (p.images && p.images[0]) || 'images/logo-tm.png'
+                };
+            }).filter(item => item !== null);
         }
 
-        // 2. Identify distinct PRODUCTS present in inventory
-        // (This avoids fetching 4000 products if we only have 50 in stock)
-        const productIds = [...new Set(invData.map(item => item.product_id))];
-        console.log(`📦 Encotrados ${productIds.length} productos con inventario activo.`);
+        // 5. Use inventory data directly
+        currentInventory = data;
 
-        // 3. Fetch ONLY those products
-        // Supabase .in() limit is around ~6500 chars in URL, but usually okay for <200-300 items.
-        // If productIds is HUGE, we might still have issues, but let's assume valid inventory is smaller than total DB dump.
-        // Safety: If > 1000 items, maybe filter client side? 
-        // Let's assume valid inventory is manageable.
+        console.log(`✅ Inventario cargado: ${currentInventory.length} items desde base de datos.`);
+        console.log(`📊 Productos únicos: ${allProducts.length}`);
 
-        let prods = [];
-        if (productIds.length > 0) {
-            const { data: pData, error: pError } = await supabaseClient
-                .from('products')
-                .select('id,name,category,image,images,sizes')
-                .in('id', productIds);
-
-            if (pError) throw pError;
-            prods = pData;
+        // Debug: Show first 3 items
+        if (currentInventory.length > 0) {
+            console.log('🔍 Muestra de inventario:', currentInventory.slice(0, 3));
         }
 
-        allProducts = prods; // Update global product list to only what we have in stock/inventory context
-
-        // 4. Join Data
-        const data = invData.map(item => {
-            // Loose equality to handle string/number IDs
-            const p = allProducts.find(prod => prod.id == item.product_id);
-            if (!p) return null;
-
-            const l = locations.find(loc => loc.id == item.location_id);
-
-            return {
-                ...item,
-                product_name: p.name,
-                category: p.category,
-                location_name: l ? l.name : 'Bodega',
-                image: p.image || (p.images && p.images[0]) || 'images/logo-tm.png'
-            };
-        }).filter(item => item !== null);
-
-        console.log(`✅ Inventario final procesado: ${data.length} items.`);
-        if (data.length > 0) {
-            currentInventory = data;
-            updateUI();
-        } else {
-            console.warn("⚠️ El cruce de inventario no generó resultados. Manteniendo datos actuales.");
-        }
+        updateUI();
 
     } catch (err) {
         console.error("❌ Error en Carga Inteligente:", err);
@@ -238,10 +185,9 @@ async function fetchInventory() {
 async function registerSale(productId, locationId, size, quantity) {
     console.log(`🛒 Registrando venta: Producto ${productId}, Sede ${locationId}, Talla ${size}, Cantidad ${quantity}`);
 
-    // Find the inventory item
+    // Unified Stock Logic: Ignore locationId in search, but use it for recording the transaction
     const invIndex = currentInventory.findIndex(i =>
         i.product_id == productId &&
-        i.location_id == locationId &&
         i.size == size
     );
 
@@ -270,7 +216,7 @@ async function registerSale(productId, locationId, size, quantity) {
                 .from('inventory')
                 .update({ stock: newStock, updated_at: new Date() })
                 .eq('product_id', productId)
-                .eq('location_id', locationId)
+                .eq('location_id', GLOBAL_STOCK_LOCATION_ID) // Always subtract from Central stock
                 .eq('size', size);
 
             if (error) {
@@ -328,6 +274,88 @@ function updateUI() {
     if (typeof renderDashboard === 'function') renderDashboard();
     if (typeof renderSalesUI === 'function') renderSalesUI();
 }
+
+async function verifyPin(pin) {
+    const sede = locations.find(l => l.pin === pin);
+    if (sede) {
+        activeLocationId = sede.id;
+        isLoggedIn = true;
+        localStorage.setItem('active_location_id', activeLocationId);
+        localStorage.setItem('is_logged_in', 'true');
+
+        document.body.classList.remove('login-required');
+        const loginOverlay = document.getElementById('loginOverlay');
+        if (loginOverlay) loginOverlay.style.display = 'none';
+
+        showToast(`Bienvenido a ${sede.name}`, 'success');
+
+        // Populate selectors now that we have a sede
+        if (typeof populateProfileSelectors === 'function') populateProfileSelectors();
+
+        await fetchInventory();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function showLoginScreen() {
+    document.body.classList.add('login-required');
+    const loginOverlay = document.getElementById('loginOverlay');
+    if (loginOverlay) loginOverlay.style.display = 'flex';
+}
+
+function logout() {
+    localStorage.removeItem('is_logged_in');
+    localStorage.removeItem('active_location_id');
+    location.reload();
+}
+
+window.verifyPin = verifyPin;
+window.logout = logout;
+window.showLoginScreen = showLoginScreen;
+
+// DATABASE CLEANUP UTILITY
+window.dangerousCleanupDatabase = async function () {
+    if (!confirm('¿Estás SEGURO de que quieres limpiar productos NO oficiales de la base de datos? Esta acción NO se puede deshacer.')) return;
+
+    try {
+        if (!supabaseClient) {
+            alert('No hay conexión a Supabase');
+            return;
+        }
+
+        // Get all products from DB
+        const { data: allDBProducts, error: fetchError } = await supabaseClient
+            .from('products')
+            .select('id, name');
+
+        if (fetchError) throw fetchError;
+
+        const officialIds = TENNISYMAS_PRODUCTS.map(p => p.id);
+        const toDelete = allDBProducts.filter(p => !officialIds.includes(p.id));
+
+        if (toDelete.length === 0) {
+            alert('✅ La base de datos ya está limpia. Solo contiene productos oficiales.');
+            return;
+        }
+
+        console.log(`🗑️ Eliminando ${toDelete.length} productos no oficiales...`);
+
+        for (const prod of toDelete) {
+            // Delete from inventory first
+            await supabaseClient.from('inventory').delete().eq('product_id', prod.id);
+            // Then delete product
+            await supabaseClient.from('products').delete().eq('id', prod.id);
+        }
+
+        alert(`✅ Limpieza completada. Se eliminaron ${toDelete.length} productos no oficiales.`);
+        location.reload();
+    } catch (err) {
+        console.error('Error en limpieza:', err);
+        alert('❌ Error al limpiar: ' + err.message);
+    }
+};
 
 function formatCurrency(val) {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
