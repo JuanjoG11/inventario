@@ -97,6 +97,12 @@
         <a href="sales.html"><i>🛒</i><span>Vender</span></a>
     </nav>
 
+    <!-- TEMPORARY CLEANUP BUTTON -->
+    <button onclick="window.dangerousCleanupDatabase()"
+        style="position:fixed; bottom:80px; right:20px; z-index:9999; background:#e74c3c; color:white; padding:15px 25px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);">
+        🗑️ LIMPIAR BD
+    </button>
+
     <!-- Production Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -175,7 +181,7 @@
                     <div class="product-card">
                         <div class="card-img-container">
                             <span class="card-category">${p.category || 'Calzado'}</span>
-                            <img src="${imgUrl}" alt="${p.name}" class="card-img" onerror="this.src='https://via.placeholder.com/300x300?text=Error'">
+                            <img src="${imgUrl}" alt="${p.name}" class="card-img" onerror="this.onerror=null; this.src='images/logo-tm.png'">
                         </div>
                         <div class="card-content">
                             <h3 class="card-title">${p.name}</h3>

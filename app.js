@@ -138,7 +138,15 @@ async function init() {
         const [locs, prods] = await Promise.race([dataPromise, timeoutPromise]);
 
         locations = locs;
-        allProducts = prods;
+
+        // STRICT FILTER: Only keep products that are in our catalog
+        if (typeof TENNISYMAS_PRODUCTS !== 'undefined') {
+            const validIds = TENNISYMAS_PRODUCTS.map(p => p.id);
+            allProducts = prods.filter(p => validIds.includes(p.id));
+            console.log(`🔒 Filtro aplicado: ${prods.length} -> ${allProducts.length} productos`);
+        } else {
+            allProducts = prods;
+        }
         await fetchInventory();
 
         if (statusEl) {
