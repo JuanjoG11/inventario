@@ -1,6 +1,6 @@
 // 🚀 TENNIS Y MAS - APP v6.5 (CATÁLOGO REAL TENNISYMAS.COM)
-const SUPABASE_URL = 'https://nrlaadaggmpjtdmtntoz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ybGFhZGFnZ21wanRkbXRudG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0NTM0NjksImV4cCI6MjA4NTAyOTQ2OX0.B7RLhRRvuz5jAsRAHLhWIPtW3KdhEEAKzoKV3DfeoJE';
+const SUPABASE_URL = 'https://shbtmkeyarqppasdpzxv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoYnRta2V5YXJxcHBhc2Rwenh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4NjEzODQsImV4cCI6MjA4NzQzNzM4NH0.Z4Bqo7NHUNs736UBbSG79OEwXEPQvG9ZUrgemLEquGQ';
 
 // 🎒 CATÁLOGO REAL - Basado en tennisymas.com
 const EMERGENCY_PRODUCTS = [];
@@ -8,8 +8,8 @@ const EMERGENCY_PRODUCTS = [];
 
 // State
 let locations = [
-    { id: 1, name: "Sede Bulevar", pin: "1111" },
-    { id: 2, name: "Sede Fantasías", pin: "2222" },
+    { id: 1, name: "Sede Fantasias New York", pin: "1111" },
+    { id: 2, name: "Sede Bulevar", pin: "2222" },
     { id: 3, name: "Sede Virtual", pin: "3333" }
 ];
 let activeLocationId = parseInt(localStorage.getItem('active_location_id') || '0'); // 0 means not logged in
@@ -66,10 +66,13 @@ async function init() {
         }
 
     } catch (e) {
-        console.warn("⚠️ Hubo un problema al sincronizar. Usando datos de respaldo.");
+        console.warn("⚠️ Hubo un problema al sincronizar. Usando datos de respaldo:", e);
         if (statusEl) {
-            statusEl.textContent = "● Modo Offline";
-            statusEl.style.color = "#e67e22";
+            statusEl.textContent = "● Error Sincro";
+            statusEl.className = "status-badge status-warning";
+            statusEl.style.color = "#f39c12";
+            statusEl.style.background = "rgba(243, 156, 18, 0.1)";
+            statusEl.style.borderColor = "rgba(243, 156, 18, 0.3)";
         }
     }
 }
@@ -110,143 +113,131 @@ async function supabaseFetch(table, select = '*') {
  */
 async function fetchInventory() {
     try {
-        let data = [];
+        console.log("🔄 Sincronizando Catálogo Dinámico...");
 
         if (supabaseClient) {
-            console.log("🔄 Carga Inteligente de Inventario...");
+            // 1. Fetch ALL products from the database (The "Web" catalog)
+            const { data: pData, error: pError } = await supabaseClient
+                .from('products')
+                .select('id,name,category,image,images,sizes');
 
-            // 1. Fetch ALL inventory from all locations
+            if (pError) throw pError;
+
+            // Update the global catalog with fresh data from DB
+            allProducts = pData.map(p => ({
+                ...p,
+                sizes: typeof p.sizes === 'string' ? JSON.parse(p.sizes) : (p.sizes || [])
+            }));
+
+            console.log(`📦 Catálogo cargado: ${allProducts.length} productos.`);
+
+            // 2. Fetch ALL inventory records
             const { data: invData, error: invError } = await supabaseClient
                 .from('inventory')
                 .select('*');
 
             if (invError) throw invError;
 
-            rawInventory = invData; // Save raw data
+            rawInventory = invData;
 
-            // 2. Extract unique product IDs
-            const productIds = [...new Set(invData.map(item => item.product_id))];
-            console.log(`📦 Encontrados ${productIds.length} productos en inventario.`);
+            // 3. Construct Complete Inventory (Shared Pool)
+            let fullInventory = [];
 
-            // 3. Fetch ALL products from database
-            if (productIds.length > 0) {
-                const { data: pData, error: pError } = await supabaseClient
-                    .from('products')
-                    .select('id,name,category,image,images,sizes');
+            allProducts.forEach(product => {
+                const productSizes = Array.isArray(product.sizes) ? product.sizes : [];
 
-                if (pError) throw pError;
+                productSizes.forEach(size => {
+                    // Find existing record in the GLOBAL pool (location_id: 0)
+                    const existing = rawInventory.find(i =>
+                        i.product_id == product.id &&
+                        i.location_id == 0 &&
+                        i.size == size.toString()
+                    );
 
-                // Merge products into allProducts
-                pData.forEach(spProd => {
-                    const idx = allProducts.findIndex(p => p.id == spProd.id);
-                    if (idx !== -1) {
-                        allProducts[idx] = { ...allProducts[idx], ...spProd };
-                    } else {
-                        allProducts.push(spProd);
-                    }
+                    fullInventory.push({
+                        id: existing ? existing.id : null,
+                        product_id: product.id,
+                        product_name: product.name,
+                        category: product.category,
+                        location_id: 0,
+                        location_name: "Stock Global",
+                        size: size.toString(),
+                        stock: existing ? existing.stock : 0,
+                        image: product.image || (product.images && product.images[0]) || 'images/logo-tm.png',
+                        updated_at: existing ? existing.updated_at : null
+                    });
                 });
-            }
-
-            // 4. Aggregate stock across all locations (sum by product + size)
-            const stockMap = {};
-            invData.forEach(item => {
-                const key = `${item.product_id}_${item.size}`;
-                if (!stockMap[key]) {
-                    stockMap[key] = { ...item, stock: 0 };
-                }
-                stockMap[key].stock += item.stock;
             });
 
-            // 5. Convert to array and add product info
-            data = Object.values(stockMap).map(item => {
-                const p = allProducts.find(prod => prod.id == item.product_id);
-                if (!p) {
-                    console.warn(`⚠️ Producto ${item.product_id} no encontrado en allProducts`);
-                    return null;
-                }
+            currentInventory = fullInventory;
+            window.currentInventory = currentInventory;
+            console.log(`✅ Inventario compartido procesado: ${currentInventory.length} variantes.`);
 
-                return {
-                    ...item,
-                    product_name: p.name,
-                    category: p.category,
-                    location_name: 'Stock Total',
-                    image: p.image || (p.images && p.images[0]) || 'images/logo-tm.png'
-                };
-            }).filter(item => item !== null);
-        }
-
-        // 5. Use inventory data directly
-        currentInventory = data;
-
-        console.log(`✅ Inventario cargado: ${currentInventory.length} items desde base de datos.`);
-        console.log(`📊 Productos únicos: ${allProducts.length}`);
-
-        // Debug: Show first 3 items
-        if (currentInventory.length > 0) {
-            console.log('🔍 Muestra de inventario:', currentInventory.slice(0, 3));
+            currentInventory = fullInventory;
+            window.currentInventory = currentInventory; // EXPOSE FOR DEBUG
+            console.log(`✅ Inventario procesado: ${currentInventory.length} variantes totales.`);
+        } else {
+            // Fallback to local catalog if Supabase is not available
+            if (typeof TENNISYMAS_PRODUCTS !== 'undefined') {
+                allProducts = [...TENNISYMAS_PRODUCTS];
+                loadEmergencyData(); // This fills currentInventory from TENNISYMAS_PRODUCTS
+            }
         }
 
         updateUI();
 
     } catch (err) {
-        console.error("❌ Error en Carga Inteligente:", err);
+        console.error("❌ Error en Sincronización:", err);
+        throw err;
     }
 }
 
 /**
- * 🛒 SALES REGISTRATION (Works in Local Mode)
+ * 🛒 SALES REGISTRATION (GLOBAL POOL)
  */
 async function registerSale(productId, locationId, size, quantity) {
-    console.log(`🛒 Registrando venta: Producto ${productId}, Sede ${locationId}, Talla ${size}, Cantidad ${quantity}`);
+    console.log(`🛒 Venta Global: Producto ${productId}, Talla ${size}, Cantidad ${quantity}`);
 
-    // 1. Find the specific item record for the ACTIVE LOCATION
-    const specificItem = rawInventory.find(i =>
+    const itemInCurrent = currentInventory.find(i =>
         i.product_id == productId &&
-        i.location_id == activeLocationId &&
         i.size == size
     );
 
-    if (!specificItem) {
-        alert("Error: No hay stock registrado en esta sede para este producto.");
-        return false;
-    }
-
-    const newStock = specificItem.stock - quantity;
+    let currentStock = itemInCurrent ? itemInCurrent.stock : 0;
+    const newStock = currentStock - quantity;
 
     if (newStock < 0) {
-        const proceed = confirm(`⚠️ Stock insuficiente en sede (${specificItem.stock} disponibles). ¿Desea registrar la venta de todas formas? (El inventario quedará en negativo)`);
+        const proceed = confirm(`⚠️ Stock insuficiente (${currentStock} disponibles). ¿Desea registrar la venta de todas formas?`);
         if (!proceed) return false;
     }
 
-    // 2. Update Supabase with the CORRECT new stock for this location
     if (supabaseClient) {
         try {
+            // ALWAYS update location_id: 0
             const { error } = await supabaseClient
                 .from('inventory')
-                .update({ stock: newStock, updated_at: new Date() })
-                .eq('product_id', productId)
-                .eq('location_id', activeLocationId)
-                .eq('size', size);
+                .upsert({
+                    product_id: productId,
+                    location_id: 0,
+                    size: size,
+                    stock: newStock,
+                    updated_at: new Date()
+                }, { onConflict: 'product_id, location_id, size' });
 
             if (error) {
-                console.warn("⚠️ No se pudo sincronizar con Supabase:", error.message);
+                console.warn("⚠️ Error Supabase:", error.message);
                 return false;
-            } else {
-                console.log("☁️ Stock actualizado en Supabase");
             }
         } catch (e) {
-            console.warn("⚠️ Error al sincronizar:", e);
+            console.warn("⚠️ Error Sincro:", e);
             return false;
         }
     }
 
-    // Increment daily sales counter
     const currentSales = parseInt(localStorage.getItem('today_sales_count') || '0');
     localStorage.setItem('today_sales_count', (currentSales + quantity).toString());
 
-    // Update UI
     updateUI();
-
     return true;
 }
 
@@ -260,21 +251,19 @@ function loadEmergencyData() {
         allProducts = EMERGENCY_PRODUCTS;
     }
 
-    // Generate inventory for each product, size, and location
+    // Generate inventory (Shared Pool)
     currentInventory = [];
     allProducts.forEach(product => {
         product.sizes.forEach(size => {
-            locations.forEach(location => {
-                currentInventory.push({
-                    product_id: product.id,
-                    product_name: product.name,
-                    category: product.category,
-                    image: product.image,
-                    location_id: location.id,
-                    location_name: location.name,
-                    size: size.toString(),
-                    stock: Math.floor(Math.random() * 5) // Low random stock for demo
-                });
+            currentInventory.push({
+                product_id: product.id,
+                product_name: product.name,
+                category: product.category,
+                image: product.image,
+                location_id: 0,
+                location_name: "Stock Global",
+                size: size.toString(),
+                stock: 3
             });
         });
     });
@@ -294,16 +283,17 @@ async function logTransaction(type, productName, size, sedeIdOrName, qty) {
         sedeName = location ? location.name : sedeIdOrName;
     }
 
-    const log = JSON.parse(localStorage.getItem('transaction_log') || '[]');
-    log.unshift({
+    // FIXED KEY: transaction_history instead of transaction_log
+    const history = JSON.parse(localStorage.getItem('transaction_history') || '[]');
+    history.unshift({
         type,
         product: productName,
         size,
         sede: sedeName,
         qty,
-        timestamp: new Date().toISOString()
+        date: new Date().toISOString() // Using 'date' for renderHistory compatibility
     });
-    localStorage.setItem('transaction_log', JSON.stringify(log.slice(0, 100))); // Keep last 100
+    localStorage.setItem('transaction_history', JSON.stringify(history.slice(0, 100))); // Keep last 100
 }
 
 async function verifyPin(pin) {
