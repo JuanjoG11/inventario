@@ -229,6 +229,14 @@ async function fetchInventory() {
                         i.size == size.toString()
                     );
 
+                    // Determinar stock base: si es 37 a 44, el cliente pidió que fuera 2 globalmente.
+                    let baseStock = 0;
+                    if (['37','38','39','40','41','42','43','44'].includes(size.toString())) {
+                        baseStock = 2; // Forzar stock inicial a 2 para tallas 37 a 44
+                    } else if (['S','M','L','XL','XXL','Única'].includes(size.toString())) {
+                        baseStock = 3; // Ropa y Colecciones
+                    }
+
                     fullInventory.push({
                         id: existing ? existing.id : null,
                         product_id: product.id,
@@ -237,7 +245,7 @@ async function fetchInventory() {
                         location_id: 0,
                         location_name: "Stock Global",
                         size: size.toString(),
-                        stock: existing ? existing.stock : 0,
+                        stock: existing ? (existing.stock > 0 ? existing.stock : baseStock) : baseStock,
                         image: product.image || (product.images && product.images[0]) || 'images/logo-tm.png',
                         updated_at: existing ? existing.updated_at : null
                     });

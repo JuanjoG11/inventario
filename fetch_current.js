@@ -15,7 +15,7 @@ function supabaseRequest(path) {
                 'apikey': SUPABASE_KEY,
                 'Authorization': `Bearer ${SUPABASE_KEY}`,
                 'Content-Type': 'application/json'
-            }1
+            }
         };
         const req = https.request(options, (res) => {
             let data = '';
@@ -32,7 +32,7 @@ function supabaseRequest(path) {
 
 async function run() {
     try {
-        const products = await supabaseRequest('products?select=id,name&order=id.asc');
+        const products = await supabaseRequest('products?select=*&order=id.asc');
         fs.writeFileSync('db_products_current.json', JSON.stringify(products, null, 2));
         console.log("✅ Products saved to db_products_current.json");
     } catch (err) {

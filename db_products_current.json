@@ -1,194 +1,1916 @@
 [
   {
     "id": 1,
-    "name": "Mizuno 2 Negro-Blanco"
+    "name": "MIZUNO 2 NEGRO-BLANCO",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1772576014112_126b5c2e_4925_4746_b517_d9a938cd83da.jpg",
+    "images": null,
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-03T22:13:34.326731+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
-    "id": 2,
-    "name": "Teni guayo F50 tubular naranja"
+    "id": 12,
+    "name": "FUTSAL JOMA CANCHA ORIGINALES",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778130365_WhatsApp_Image_2026_03_13_at_9.18.11_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778128371_WhatsApp_Image_2026_03_13_at_9.18.12_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778129275_WhatsApp_Image_2026_03_13_at_9.18.11_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:08:46.915868+00:00",
+    "price": "410000",
+    "oldprice": "510000"
   },
   {
-    "id": 3,
-    "name": "Guayo predator 26 negro blanco sin lengüeta"
+    "id": 13,
+    "name": "FUTSAL JOMA DRIBLING ORIGINALES ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778177681_WhatsApp_Image_2026_03_13_at_9.20.52_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778196790_WhatsApp_Image_2026_03_13_at_9.20.53_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778197907_WhatsApp_Image_2026_03_13_at_9.20.52_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:09:34.778496+00:00",
+    "price": "410000",
+    "oldprice": "510000"
   },
   {
-    "id": 4,
-    "name": "BODEGA LOCAL"
+    "id": 14,
+    "name": "FUTSAL JOMA TOP FLEX REBOUN PINK ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778264868_WhatsApp_Image_2026_03_13_at_9.20.53_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778262706_WhatsApp_Image_2026_03_13_at_9.20.54_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778263705_WhatsApp_Image_2026_03_13_at_9.20.54_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:11:02.172928+00:00",
+    "price": "410000",
+    "oldprice": "510000"
   },
   {
-    "id": 5,
-    "name": "Guayo phantom GX blanco azul claro"
+    "id": 15,
+    "name": "JOMA TOP FLEX LIGA 5 ORIGINALES",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778363296_WhatsApp_Image_2026_03_13_at_9.20.55_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778360795_WhatsApp_Image_2026_03_13_at_9.20.56_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778362317_WhatsApp_Image_2026_03_13_at_9.20.55_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:12:39.909076+00:00",
+    "price": "410000",
+    "oldprice": "510000"
   },
   {
-    "id": 6,
-    "name": "Guayo phantom GX azul negro"
+    "id": 16,
+    "name": "JOMA TOP FLEX LIGA 5 ORIGINALES",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778406614_WhatsApp_Image_2026_03_13_at_9.20.56_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778404979_WhatsApp_Image_2026_03_13_at_9.20.57_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778405958_WhatsApp_Image_2026_03_13_at_9.20.57_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:13:23.056978+00:00",
+    "price": "410000",
+    "oldprice": "510000"
   },
   {
-    "id": 7,
-    "name": "Teni Guayo GX 6 plata fucsia"
-  },
-  {
-    "id": 8,
-    "name": "Tení Guayo F50 verde blanco"
-  },
-  {
-    "id": 9,
-    "name": "Teni guayo F50 blanco verde tubular"
-  },
-  {
-    "id": 10,
-    "name": "Teni Guayo GX bata azul blanco"
-  },
-  {
-    "id": 11,
-    "name": "Guayo phantom Nike gripknit azul claro"
+    "id": 17,
+    "name": "GUAYO PHANTOM GX 6 ELITE",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778504462_WhatsApp_Image_2026_03_14_at_9.38.45_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778502412_WhatsApp_Image_2026_03_14_at_9.38.45_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773778503483_WhatsApp_Image_2026_03_14_at_9.38.45_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:15:01.549556+00:00",
+    "price": "240000",
+    "oldprice": "265000"
   },
   {
     "id": 18,
-    "name": "Teni guayo F50 league tubular blanco rojo "
+    "name": "TENI GUAYO F50 LEAGUE TUBULAR BLANCO ROJO ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802120039_main_18.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:01.082909+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
     "id": 19,
-    "name": "Guayo nike hypervenom 1 RGN hydra blanco azul"
+    "name": "GUAYO NIKE HYPERVENOM 1 RGN HYDRA BLANCO AZUL",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802117779_main_19.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:01.082909+00:00",
+    "price": "180000",
+    "oldprice": "215000"
   },
   {
     "id": 20,
-    "name": "Futsal nike gato supremo negro chulo azul  "
-  },
-  {
-    "id": 21,
-    "name": "Futsal joma top-flex rebound negro verde menta  "
+    "name": "FUTSAL NIKE GATO SUPREMO NEGRO CHULO AZUL  ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802109374_main_20.jpg",
+    "images": null,
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-02-24T21:49:01.082909+00:00",
+    "price": "160000",
+    "oldprice": "195000"
   },
   {
     "id": 22,
-    "name": "Teni guayo lamine yamal morado rosa "
-  },
-  {
-    "id": 23,
-    "name": "Futsal Nike gato supreme fuchsia "
-  },
-  {
-    "id": 24,
-    "name": "Futsal gato lunar morado  "
+    "name": "TENI GUAYO LAMINE YAMAL MORADO ROSA ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802116761_main_22.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:01.082909+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
     "id": 25,
-    "name": "Guayo nike phantom GX 2 negro verde menta  "
-  },
-  {
-    "id": 26,
-    "name": "Teni guayo nike mercurial amarillo "
-  },
-  {
-    "id": 27,
-    "name": "Teni guayo F50 blanco rojo "
-  },
-  {
-    "id": 28,
-    "name": "Teni guayo nike mercurial azul-blanco "
-  },
-  {
-    "id": 29,
-    "name": "Teni guayo adídas F50 naranja "
-  },
-  {
-    "id": 30,
-    "name": "Teni guayo nike mercurial rosa multicolor "
-  },
-  {
-    "id": 31,
-    "name": "Futsal Joma regate rebound verde-blanco  "
+    "name": "GUAYO NIKE PHANTOM GX 2 NEGRO VERDE MENTA  ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802112326_main_25.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:01.656181+00:00",
+    "price": "260000",
+    "oldprice": "295000"
   },
   {
     "id": 32,
-    "name": "Guayo Adidas predator le agüé azul-verde  "
+    "name": "GUAYO ADIDAS PREDATOR LE AGÜÉ AZUL-VERDE  ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802115533_main_32.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:02.088834+00:00",
+    "price": "240000",
+    "oldprice": "275000"
   },
   {
     "id": 33,
-    "name": "Teni guayo Adidas predator league rojo-blanco  "
+    "name": "TENI GUAYO ADIDAS PREDATOR LEAGUE ROJO-BLANCO  ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802114131_main_33.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:02.566798+00:00",
+    "price": "200000",
+    "oldprice": "235000"
   },
   {
     "id": 34,
-    "name": "Teni guayo nike mercurial vapor 15 academy TF rosa  "
-  },
-  {
-    "id": 35,
-    "name": "Teni guayo Adidas F50 pro TF Turf naranja  "
-  },
-  {
-    "id": 36,
-    "name": "Futsal Adidas crazyfast league amarillo neón  "
-  },
-  {
-    "id": 37,
-    "name": "Teni guayo predator league Beckham rosa   "
+    "name": "TENI GUAYO NIKE MERCURIAL VAPOR 15 ACADEMY TF ROSA  ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802122674_main_34.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:02.566798+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
     "id": 38,
-    "name": "Futsal NIKE GATO SUPREME FUCHSIA-AZUL  "
-  },
-  {
-    "id": 39,
-    "name": "Teni guayo F50 elite verde-blanco  "
+    "name": "FUTSAL NIKE GATO SUPREME FUCHSIA-AZUL  ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786020365_WhatsApp_Image_2026_03_14_at_12.25.03_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785929748_WhatsApp_Image_2026_03_14_at_12.25.04_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785931157_WhatsApp_Image_2026_03_14_at_12.25.04_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-02-24T21:49:02.971838+00:00",
+    "price": "$150.000",
+    "oldprice": "$175.000"
   },
   {
     "id": 40,
-    "name": "Guayo predator elite FG BECKAM ROSA"
-  },
-  {
-    "id": 41,
-    "name": "Futsal Nike Gato lunar blanco  "
-  },
-  {
-    "id": 42,
-    "name": "Guayo phantom GX 2 morado-naranja  "
-  },
-  {
-    "id": 43,
-    "name": "Futsal Magistax  "
+    "name": "GUAYO PREDATOR ELITE FG BECKAM ROSA",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802123848_main_40.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:02.971838+00:00",
+    "price": "240000",
+    "oldprice": "275000"
   },
   {
     "id": 44,
-    "name": "Futsal Nike gato agreste rojo-blanco  "
+    "name": "FUTSAL NIKE GATO AGRESTE ROJO-BLANCO  ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802121464_main_44.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:03.387916+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
     "id": 45,
-    "name": "Futsal Nike gato street beige suela goma  "
-  },
-  {
-    "id": 46,
-    "name": "Futsal Nike gato lunar azul-verde "
+    "name": "FUTSAL NIKE GATO STREET BEIGE SUELA GOMA  ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802107289_main_45.jpg",
+    "images": null,
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-02-24T21:49:03.387916+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
     "id": 47,
-    "name": "Futsal Nike gato lunar Azul-blanco  "
-  },
-  {
-    "id": 48,
-    "name": "Futsal Mizuno 2.0 blanco-fuchsia "
-  },
-  {
-    "id": 49,
-    "name": "Futsal Mizuno 2.0 blanco-morado "
-  },
-  {
-    "id": 50,
-    "name": "Futsal Mizuno 2.0 blanco-azul "
+    "name": "FUTSAL NIKE GATO LUNAR AZUL-BLANCO  ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802125768_main_47.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:03.387916+00:00",
+    "price": "190000",
+    "oldprice": "225000"
   },
   {
     "id": 51,
-    "name": "Teni Guayo Adidas predator league negro-azul  "
-  },
-  {
-    "id": 52,
-    "name": "Futsal Nike gato supreme negro chulo verde  "
+    "name": "TENI GUAYO ADIDAS PREDATOR LEAGUE NEGRO-AZUL  ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802118910_main_51.jpg",
+    "images": null,
+    "sizes": "[37,38,39,40,41,42,43,44]",
+    "created_at": "2026-02-24T21:49:03.857843+00:00",
+    "price": "160000",
+    "oldprice": "195000"
   },
   {
     "id": 53,
-    "name": "Futsal Nike gato supreme negro-blanco  "
+    "name": "FUTSAL NIKE GATO SUPREME NEGRO-BLANCO  ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785995980_WhatsApp_Image_2026_03_14_at_12.25.06_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785995066_WhatsApp_Image_2026_03_14_at_12.25.05_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-02-24T21:49:04.197898+00:00",
+    "price": "$150.000",
+    "oldprice": "$175.000"
   },
   {
-    "id": 54,
-    "name": "Futsal Nike gato supreme café  "
+    "id": 87,
+    "name": " TENIGUAYO PHANTOM GX 6 ELITE ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773780580926_WhatsApp_Image_2026_03_14_at_9.40.38_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773780579249_WhatsApp_Image_2026_03_14_at_9.40.37_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773780580110_WhatsApp_Image_2026_03_14_at_9.40.38_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T20:49:42.049857+00:00",
+    "price": "220000",
+    "oldprice": "245000"
+  },
+  {
+    "id": 88,
+    "name": "FUTSAL GATO SUPREME",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802124950_main_88.jpg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773781784718_WhatsApp_Image_2026_03_14_at_9.41.49_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773781786228_WhatsApp_Image_2026_03_14_at_9.41.50_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:09:48.5336+00:00",
+    "price": "180000",
+    "oldprice": "205000"
+  },
+  {
+    "id": 89,
+    "name": "FUTSAL GATO SUPREME",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782018383_WhatsApp_Image_2026_03_14_at_9.43.03_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782016338_WhatsApp_Image_2026_03_14_at_9.43.02_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782017660_WhatsApp_Image_2026_03_14_at_9.43.03_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:13:39.980021+00:00",
+    "price": "190000",
+    "oldprice": "215000"
+  },
+  {
+    "id": 90,
+    "name": "GUAYO PREDATOR 26 ELITE FG ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782118325_WhatsApp_Image_2026_03_14_at_9.49.18_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782116038_WhatsApp_Image_2026_03_14_at_9.49.17_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782117207_WhatsApp_Image_2026_03_14_at_9.49.18_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:15:19.441921+00:00",
+    "price": "240000",
+    "oldprice": "265000"
+  },
+  {
+    "id": 91,
+    "name": "GUAYO NIKE PHANTOM GX 6 ELITE ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782275308_WhatsApp_Image_2026_03_14_at_9.55.09_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782272926_WhatsApp_Image_2026_03_14_at_9.55.09_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782274401_WhatsApp_Image_2026_03_14_at_9.55.08_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:17:56.639815+00:00",
+    "price": "240000",
+    "oldprice": "260000"
+  },
+  {
+    "id": 92,
+    "name": "GUAYO PREDATOR EDGE-EDICIÓN LIMITADA ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782355495_WhatsApp_Image_2026_03_14_at_9.57.08_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782353164_WhatsApp_Image_2026_03_14_at_9.57.07_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782354469_WhatsApp_Image_2026_03_14_at_9.57.07_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:19:16.573572+00:00",
+    "price": "200000",
+    "oldprice": "235000"
+  },
+  {
+    "id": 93,
+    "name": "GUAYO NIKE PHANTOM GX 6 TACHES DE ALUMINIO ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782456076_WhatsApp_Image_2026_03_14_at_9.58.50_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782453620_WhatsApp_Image_2026_03_14_at_9.58.51_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782455189_WhatsApp_Image_2026_03_14_at_9.58.51_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:20:57.728578+00:00",
+    "price": "240000",
+    "oldprice": "265000"
+  },
+  {
+    "id": 94,
+    "name": "GUAYO PREDATOR 26 ELITE FG ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782578837_WhatsApp_Image_2026_03_14_at_10.05.33_AM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782577373_WhatsApp_Image_2026_03_14_at_10.05.33_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "created_at": "2026-03-17T21:23:00.113389+00:00",
+    "price": "240000",
+    "oldprice": "265000"
+  },
+  {
+    "id": 95,
+    "name": "GUAYO NIKE PHANTOM GX 6 ELITE",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802105403_main_95.jpg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782653105_WhatsApp_Image_2026_03_14_at_10.27.07_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782654293_WhatsApp_Image_2026_03_14_at_10.27.07_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:23:31.7356+00:00",
+    "price": "240000",
+    "oldprice": "265000"
+  },
+  {
+    "id": 96,
+    "name": "GUAYO PREDATOR 26 ELITE ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782756116_WhatsApp_Image_2026_03_14_at_10.43.42_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782754766_WhatsApp_Image_2026_03_14_at_10.43.43_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773782755504_WhatsApp_Image_2026_03_14_at_10.43.42_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:25:57.243014+00:00",
+    "price": "240000",
+    "oldprice": "265000"
+  },
+  {
+    "id": 97,
+    "name": "GUAYO NIKE PHANTOM GX 6 ELITE ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773783919956_WhatsApp_Image_2026_03_14_at_10.45.10_AM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773783917636_WhatsApp_Image_2026_03_14_at_10.45.08_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773783919243_WhatsApp_Image_2026_03_14_at_10.45.09_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:45:20.843388+00:00",
+    "price": "$240.000",
+    "oldprice": "$265.000"
+  },
+  {
+    "id": 98,
+    "name": "GUAYO ADIDAS F50 TUBULAR",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784046676_WhatsApp_Image_2026_03_14_at_10.47.02_AM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784044243_WhatsApp_Image_2026_03_14_at_10.47.02_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784045909_WhatsApp_Image_2026_03_14_at_10.47.03_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:47:27.542499+00:00",
+    "price": "$230.000",
+    "oldprice": "$255.000"
+  },
+  {
+    "id": 99,
+    "name": "GUAYO ADIDAS PREDATOR 25 ELITE FT ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784135101_WhatsApp_Image_2026_03_14_at_10.48.49_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784133339_WhatsApp_Image_2026_03_14_at_10.48.48_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784134485_WhatsApp_Image_2026_03_14_at_10.48.48_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:47:49.728646+00:00",
+    "price": "$240.000",
+    "oldprice": "$265.000"
+  },
+  {
+    "id": 100,
+    "name": "GUAYO NIKE HYPERVENOM PHANTOM RNG ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784274199_WhatsApp_Image_2026_03_14_at_11.06.22_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784272964_WhatsApp_Image_2026_03_14_at_11.06.22_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:51:15.208751+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 101,
+    "name": "GUAYO NIKE HYPERVENOM HYDRA",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784327614_WhatsApp_Image_2026_03_14_at_11.10.06_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784344895_WhatsApp_Image_2026_03_14_at_11.10.06_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784346022_WhatsApp_Image_2026_03_14_at_11.10.06_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:52:08.671251+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 102,
+    "name": "GUAYO F50 TUBULAR SPARKFUSION ELITE MORADO ",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784398240_WhatsApp_Image_2026_03_14_at_11.11.50_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784396433_WhatsApp_Image_2026_03_14_at_11.11.51_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784397491_WhatsApp_Image_2026_03_14_at_11.11.50_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:53:18.870975+00:00",
+    "price": "$230.000",
+    "oldprice": "$255.000"
+  },
+  {
+    "id": 103,
+    "name": "GUAYO ADIDAS PREDATOR ELITE FOLD",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784434865_WhatsApp_Image_2026_03_14_at_11.14.44_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784433106_WhatsApp_Image_2026_03_14_at_11.14.44_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784433843_WhatsApp_Image_2026_03_14_at_11.14.44_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:53:55.500974+00:00",
+    "price": "$230.000",
+    "oldprice": "$255.000"
+  },
+  {
+    "id": 104,
+    "name": "GUAYO NIKE PHANTOM GX 2 ELITE FG",
+    "category": "guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784497154_WhatsApp_Image_2026_03_14_at_11.16.36_AM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784495405_WhatsApp_Image_2026_03_14_at_11.16.36_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784496321_WhatsApp_Image_2026_03_14_at_11.16.36_AM.jpeg"
+    ],
+    "sizes": [
+      "Guayo Nike phantom GX 2 elite FG"
+    ],
+    "created_at": "2026-03-17T21:54:58.403511+00:00",
+    "price": "$210.000",
+    "oldprice": "$235.000"
+  },
+  {
+    "id": 105,
+    "name": "JOMA TOP FLEX REBOUND ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784550535_WhatsApp_Image_2026_03_14_at_11.29.28_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784548759_WhatsApp_Image_2026_03_14_at_11.29.29_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784549753_WhatsApp_Image_2026_03_14_at_11.29.29_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:55:51.380001+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 106,
+    "name": "FUTSAL GATO STREET ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784608237_WhatsApp_Image_2026_03_14_at_11.33.09_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784606022_WhatsApp_Image_2026_03_14_at_11.33.09_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784607211_WhatsApp_Image_2026_03_14_at_11.33.09_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:56:49.009583+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 107,
+    "name": "FUTSAL GATO SUPREME ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784670240_WhatsApp_Image_2026_03_14_at_11.34.42_AM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784667843_WhatsApp_Image_2026_03_14_at_11.34.42_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784669603_WhatsApp_Image_2026_03_14_at_11.34.42_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:57:51.176755+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 108,
+    "name": "FUTSAL GATO SUPREME ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784728588_WhatsApp_Image_2026_03_14_at_11.37.07_AM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784726749_WhatsApp_Image_2026_03_14_at_11.37.07_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784728120_WhatsApp_Image_2026_03_14_at_11.37.08_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:58:49.764736+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 109,
+    "name": "FUTSAL MIZUNO CLÁSICO ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784776088_WhatsApp_Image_2026_03_14_at_11.39.50_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784773749_WhatsApp_Image_2026_03_14_at_11.39.50_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784774832_WhatsApp_Image_2026_03_14_at_11.39.50_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T21:59:37.098005+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 110,
+    "name": "FUTSAL MIZUNO CLÁSICO",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784843695_WhatsApp_Image_2026_03_14_at_11.41.02_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784842043_WhatsApp_Image_2026_03_14_at_11.41.03_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784843059_WhatsApp_Image_2026_03_14_at_11.41.02_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:00:44.542183+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 111,
+    "name": "FUTSAL MIZUNO CLÁSICO ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784970195_WhatsApp_Image_2026_03_14_at_11.42.05_AM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784967744_WhatsApp_Image_2026_03_14_at_11.42.06_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773784969380_WhatsApp_Image_2026_03_14_at_11.42.06_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:02:51.12641+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 112,
+    "name": "FUTSAL MIZUNO CLÁSICO ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785018910_WhatsApp_Image_2026_03_14_at_11.43.39_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785017155_WhatsApp_Image_2026_03_14_at_11.43.40_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785018039_WhatsApp_Image_2026_03_14_at_11.43.40_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:03:39.599518+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 113,
+    "name": "FUTSAL NIKE GATO STREET ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785057895_WhatsApp_Image_2026_03_14_at_11.45.08_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785055793_WhatsApp_Image_2026_03_14_at_11.45.09_AM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785057173_WhatsApp_Image_2026_03_14_at_11.45.09_AM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:04:18.726928+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 114,
+    "name": "FUTSAL NIKE GATO STREET ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785095348_WhatsApp_Image_2026_03_14_at_11.46.51_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785092999_WhatsApp_Image_2026_03_14_at_11.46.51_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785094834_WhatsApp_Image_2026_03_14_at_11.46.51_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:04:56.25987+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 115,
+    "name": "FUTSAL JOMA TOP FLEX REBOUND ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785136360_WhatsApp_Image_2026_03_14_at_11.48.14_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785133586_WhatsApp_Image_2026_03_14_at_11.48.14_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785135191_WhatsApp_Image_2026_03_14_at_11.48.14_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:05:37.48181+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 116,
+    "name": "FUTSAL GATO SUPREME ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785173027_WhatsApp_Image_2026_03_14_at_11.49.34_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785171103_WhatsApp_Image_2026_03_14_at_11.49.34_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785172452_WhatsApp_Image_2026_03_14_at_11.49.34_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:06:13.833261+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 117,
+    "name": "FUTSAL JOMA REGATE ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785231252_WhatsApp_Image_2026_03_14_at_11.52.23_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785228567_WhatsApp_Image_2026_03_14_at_11.52.22_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785229955_WhatsApp_Image_2026_03_14_at_11.52.23_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:07:12.404519+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 118,
+    "name": "FUTSAL JOMA REGATE ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785316293_WhatsApp_Image_2026_03_14_at_11.53.47_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785314547_WhatsApp_Image_2026_03_14_at_11.53.47_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785315419_WhatsApp_Image_2026_03_14_at_11.53.47_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:08:37.148637+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 119,
+    "name": "FUTSAL GATO STREET MORA AZUL ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785355117_WhatsApp_Image_2026_03_14_at_11.55.07_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785353097_WhatsApp_Image_2026_03_14_at_11.55.07_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785354404_WhatsApp_Image_2026_03_14_at_11.55.07_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:09:15.818149+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 120,
+    "name": "MIZUNO HURRICANE WAVE 3",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785424871_WhatsApp_Image_2026_03_14_at_11.57.18_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785422615_WhatsApp_Image_2026_03_14_at_11.57.18_AM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785424080_WhatsApp_Image_2026_03_14_at_11.57.18_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:10:25.814156+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 121,
+    "name": "FUTSAL GATO LUNAR MORADO",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785493615_WhatsApp_Image_2026_03_14_at_11.58.20_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785491718_WhatsApp_Image_2026_03_14_at_11.58.21_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785492564_WhatsApp_Image_2026_03_14_at_11.58.20_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:11:34.484722+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 122,
+    "name": "FUTSAL ADIDAS CRAZYFAST ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785551348_WhatsApp_Image_2026_03_14_at_11.59.44_AM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785549449_WhatsApp_Image_2026_03_14_at_11.59.45_AM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785550527_WhatsApp_Image_2026_03_14_at_11.59.44_AM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:12:32.804997+00:00",
+    "price": "$160.000",
+    "oldprice": "$185.000"
+  },
+  {
+    "id": 123,
+    "name": "FUTSAL GATO LUNAR BLANCO ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785600141_WhatsApp_Image_2026_03_14_at_12.00.38_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785598611_WhatsApp_Image_2026_03_14_at_12.00.39_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785599325_WhatsApp_Image_2026_03_14_at_12.00.39_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:13:20.941447+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 124,
+    "name": "FUTSAL NIKE MAGISTAX",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785650165_WhatsApp_Image_2026_03_14_at_12.01.49_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785648159_WhatsApp_Image_2026_03_14_at_12.01.50_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785648828_WhatsApp_Image_2026_03_14_at_12.01.49_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:14:10.902475+00:00",
+    "price": "$150.000",
+    "oldprice": "$185.000"
+  },
+  {
+    "id": 125,
+    "name": "FUTSAL GATO LUNAR AZUL X VERDE ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785689726_WhatsApp_Image_2026_03_14_at_12.02.43_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785688237_WhatsApp_Image_2026_03_14_at_12.02.43_PM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785689121_WhatsApp_Image_2026_03_14_at_12.02.43_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:14:50.419778+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 126,
+    "name": "FUTSAL WAVE HURRACANE 3 ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785735980_WhatsApp_Image_2026_03_14_at_12.16.06_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785733690_WhatsApp_Image_2026_03_14_at_12.16.06_PM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785734775_WhatsApp_Image_2026_03_14_at_12.16.06_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:15:36.912271+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 127,
+    "name": "FUTSAL WAVE HURRACANE 3 ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785772456_WhatsApp_Image_2026_03_14_at_12.16.47_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785770226_WhatsApp_Image_2026_03_14_at_12.16.48_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785771426_WhatsApp_Image_2026_03_14_at_12.16.48_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:16:13.58682+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 128,
+    "name": "FUTSAL WAVE HURRACANE 3 ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785804256_WhatsApp_Image_2026_03_14_at_12.18.10_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785802686_WhatsApp_Image_2026_03_14_at_12.18.11_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785803601_WhatsApp_Image_2026_03_14_at_12.18.11_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:16:44.893394+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 129,
+    "name": "FUTSAL GATO SUPREME ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785877751_WhatsApp_Image_2026_03_14_at_12.25.01_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785875771_WhatsApp_Image_2026_03_14_at_12.25.03_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773785876675_WhatsApp_Image_2026_03_14_at_12.25.02_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:17:58.281297+00:00",
+    "price": "$150.000",
+    "oldprice": "$175.000"
+  },
+  {
+    "id": 130,
+    "name": "FUTSAL NIKE GATO SUPREME CAFÉ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786079937_WhatsApp_Image_2026_03_14_at_12.25.06_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786077720_WhatsApp_Image_2026_03_14_at_12.25.07_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786078779_WhatsApp_Image_2026_03_14_at_12.25.07_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:21:20.697273+00:00",
+    "price": "$150.000",
+    "oldprice": "$175.000"
+  },
+  {
+    "id": 131,
+    "name": "FUTSAL JOMA TOP-FLEX REBOUND ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786154568_WhatsApp_Image_2026_03_14_at_12.25.07_PM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786152685_WhatsApp_Image_2026_03_14_at_12.25.08_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786153881_WhatsApp_Image_2026_03_14_at_12.25.08_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:22:35.306674+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 132,
+    "name": "FUTSAL NIKE GATO SUPREME FUCHSIA ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786334675_WhatsApp_Image_2026_03_14_at_12.26.17_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786334014_WhatsApp_Image_2026_03_14_at_12.26.17_PM__1_.jpeg"
+    ],
+    "sizes": [],
+    "created_at": "2026-03-17T22:25:35.633155+00:00",
+    "price": "$150.000",
+    "oldprice": "$175.000"
+  },
+  {
+    "id": 133,
+    "name": "FUTSAL JOMA REGATE REBOUND ",
+    "category": "futsal",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786508685_WhatsApp_Image_2026_03_14_at_12.27.05_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786507603_WhatsApp_Image_2026_03_14_at_12.27.05_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:28:29.613339+00:00",
+    "price": "$170.000",
+    "oldprice": "$195.000"
+  },
+  {
+    "id": 134,
+    "name": "TENIGUAYO NIKE PHANTOM GX 6 ELITE ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786548990_WhatsApp_Image_2026_03_14_at_12.32.21_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786547266_WhatsApp_Image_2026_03_14_at_12.32.22_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786548492_WhatsApp_Image_2026_03_14_at_12.32.21_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:29:09.564764+00:00",
+    "price": "$220.000",
+    "oldprice": "$245.000"
+  },
+  {
+    "id": 135,
+    "name": "TENIGUAYO ADIDAS F50 TUBULAR",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786607852_WhatsApp_Image_2026_03_14_at_12.33.26_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786606231_WhatsApp_Image_2026_03_14_at_12.33.27_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786607236_WhatsApp_Image_2026_03_14_at_12.33.26_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:30:08.466313+00:00",
+    "price": "$190.000",
+    "oldprice": "$215.000"
+  },
+  {
+    "id": 136,
+    "name": "TENIGUAYO NIKE TOTAL 90 ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802126998_main_136.jpg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786697470_WhatsApp_Image_2026_03_14_at_12.34.35_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786698990_WhatsApp_Image_2026_03_14_at_12.34.37_PM__2_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:31:40.317776+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 137,
+    "name": "TENIGUAYO NIKE TOTAL 90 ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786732768_WhatsApp_Image_2026_03_14_at_12.35.21_PM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786731299_WhatsApp_Image_2026_03_14_at_12.35.21_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786732235_WhatsApp_Image_2026_03_14_at_12.35.21_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:32:13.346474+00:00",
+    "price": "$180.000",
+    "oldprice": "$205.000"
+  },
+  {
+    "id": 138,
+    "name": "TENIGUAYO NIKE X ALEXIA PUTELLAS  PHANTOM GX 6 ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786769669_WhatsApp_Image_2026_03_14_at_12.37.35_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786767538_WhatsApp_Image_2026_03_14_at_12.37.35_PM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786768757_WhatsApp_Image_2026_03_14_at_12.37.35_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:32:50.293296+00:00",
+    "price": "$220.000",
+    "oldprice": "$245.000"
+  },
+  {
+    "id": 139,
+    "name": "TENIGUAYO NIKE PHANTOM GX 6 ELITE ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786815126_WhatsApp_Image_2026_03_14_at_12.38.47_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786813531_WhatsApp_Image_2026_03_14_at_12.38.47_PM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786814230_WhatsApp_Image_2026_03_14_at_12.38.47_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:33:35.855279+00:00",
+    "price": "$220.000",
+    "oldprice": "$245.000"
+  },
+  {
+    "id": 140,
+    "name": "TENIGUAYO ADIDAS PREDATOR 26 ELITE",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786857362_WhatsApp_Image_2026_03_14_at_12.40.22_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786855490_WhatsApp_Image_2026_03_14_at_12.40.22_PM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786856825_WhatsApp_Image_2026_03_14_at_12.40.22_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:34:17.967902+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 141,
+    "name": "TENIGUAYO ADIDAS PREDATOR X BAPE ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786920697_WhatsApp_Image_2026_03_14_at_12.43.10_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786918694_WhatsApp_Image_2026_03_14_at_12.43.09_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773786919558_WhatsApp_Image_2026_03_14_at_12.43.09_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:35:21.717975+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 142,
+    "name": "TENIGUAYO NIKE PHANTOM GX 6 ELITE EN BOTA",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787543493_WhatsApp_Image_2026_03_14_at_12.54.30_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787541797_WhatsApp_Image_2026_03_14_at_12.54.29_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787542763_WhatsApp_Image_2026_03_14_at_12.54.30_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:45:44.884334+00:00",
+    "price": "$220.000",
+    "oldprice": "$245.000"
+  },
+  {
+    "id": 143,
+    "name": "TENIGUAYO NIKE MERCURIAL NIÑO ",
+    "category": "ninos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787606975_WhatsApp_Image_2026_03_14_at_12.59.39_PM__2_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787605232_WhatsApp_Image_2026_03_14_at_12.59.39_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787606194_WhatsApp_Image_2026_03_14_at_12.59.39_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:46:47.502933+00:00",
+    "price": "$170.000",
+    "oldprice": "$195.000"
+  },
+  {
+    "id": 144,
+    "name": "TENIGUAYO ADIDAS F50 NIÑO ",
+    "category": "ninos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787680100_WhatsApp_Image_2026_03_14_at_12.59.40_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787678093_WhatsApp_Image_2026_03_14_at_12.59.41_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787679077_WhatsApp_Image_2026_03_14_at_12.59.41_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:48:00.899502+00:00",
+    "price": "$170.000",
+    "oldprice": "$195.000"
+  },
+  {
+    "id": 145,
+    "name": "TENIGUAYO NIKE MERCURIAL NIÑO ",
+    "category": "ninos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787927198_WhatsApp_Image_2026_03_14_at_12.59.42_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787924299_WhatsApp_Image_2026_03_14_at_12.59.43_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787925495_WhatsApp_Image_2026_03_14_at_12.59.42_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787926483_WhatsApp_Image_2026_03_14_at_12.59.42_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:52:08.018051+00:00",
+    "price": "$170.000",
+    "oldprice": "$195.000"
+  },
+  {
+    "id": 146,
+    "name": "TENIGUAYO ADIDAS NIÑO ",
+    "category": "ninos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787964243_WhatsApp_Image_2026_03_14_at_12.59.43_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787962482_WhatsApp_Image_2026_03_14_at_12.59.45_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773787963732_WhatsApp_Image_2026_03_14_at_12.59.44_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:52:44.988765+00:00",
+    "price": "$170.000",
+    "oldprice": "$195.000"
+  },
+  {
+    "id": 147,
+    "name": "TENIGUAYO NIKE MERCURIAL NIÑO ",
+    "category": "ninos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788072705_WhatsApp_Image_2026_03_14_at_12.59.45_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788071037_WhatsApp_Image_2026_03_14_at_12.59.46_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788072143_WhatsApp_Image_2026_03_14_at_12.59.45_PM__2_.jpeg"
+    ],
+    "sizes": [
+      "32",
+      "33",
+      "34",
+      "35"
+    ],
+    "created_at": "2026-03-17T22:54:33.370678+00:00",
+    "price": "$170.000",
+    "oldprice": "$195.000"
+  },
+  {
+    "id": 148,
+    "name": "TENI GUAYO ADIDAS F50 PRO TF TURF NARANJA",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788169073_WhatsApp_Image_2026_03_14_at_1.01.10_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788167141_WhatsApp_Image_2026_03_14_at_1.01.11_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788168394_WhatsApp_Image_2026_03_14_at_1.01.10_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:56:10.046969+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 149,
+    "name": "TENIGUAYO ADIDAS PREDATOR 5 X BECKHAM ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788215488_WhatsApp_Image_2026_03_14_at_1.05.38_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788213454_WhatsApp_Image_2026_03_14_at_1.05.38_PM__2_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788214338_WhatsApp_Image_2026_03_14_at_1.05.38_PM__1_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:56:56.409882+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 150,
+    "name": "TENIGUAYO ADIDAS F50 NEÓN PRO ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788267585_WhatsApp_Image_2026_03_14_at_1.11.13_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788265503_WhatsApp_Image_2026_03_14_at_1.11.14_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788266414_WhatsApp_Image_2026_03_14_at_1.11.14_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:57:48.326563+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 151,
+    "name": "TENIGUAYO NIKE MERCURIAL ",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773802128165_main_151.jpg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788318720_WhatsApp_Image_2026_03_14_at_1.11.16_PM.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788320016_WhatsApp_Image_2026_03_14_at_1.11.14_PM__2_.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:58:41.118561+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 152,
+    "name": "TENIGUAYO ADIDAS F50 X LAMINE YAMAL",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788362321_WhatsApp_Image_2026_03_14_at_1.11.16_PM__1_.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788360815_WhatsApp_Image_2026_03_14_at_1.11.17_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788361797_WhatsApp_Image_2026_03_14_at_1.11.17_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:59:22.880227+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 153,
+    "name": "TENIGUAYO ADIDAS F50 SPARKFUSION",
+    "category": "tenis-guayos",
+    "image": "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788394872_WhatsApp_Image_2026_03_14_at_1.11.19_PM.jpeg",
+    "images": [
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788392895_WhatsApp_Image_2026_03_14_at_1.11.18_PM__1_.jpeg",
+      "https://shbtmkeyarqppasdpzxv.supabase.co/storage/v1/object/public/product-images/products/1773788393557_WhatsApp_Image_2026_03_14_at_1.11.18_PM.jpeg"
+    ],
+    "sizes": [
+      "37",
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "created_at": "2026-03-17T22:59:55.491053+00:00",
+    "price": "$200.000",
+    "oldprice": "$225.000"
+  },
+  {
+    "id": 154,
+    "name": "Colección La Pesada",
+    "category": "Petos y Camisetas",
+    "image": "https://i.ibb.co/vzP6qFm/la-pesada.webp",
+    "images": null,
+    "sizes": "[\"S\",\"M\",\"L\",\"XL\"]",
+    "created_at": "2026-03-18T19:34:58.216474+00:00",
+    "price": null,
+    "oldprice": null
+  },
+  {
+    "id": 155,
+    "name": "Colección La Grasa",
+    "category": "Petos y Camisetas",
+    "image": "https://i.ibb.co/vzP6qFm/la-grasa.webp",
+    "images": null,
+    "sizes": "[\"S\",\"M\",\"L\",\"XL\"]",
+    "created_at": "2026-03-18T19:34:59.793171+00:00",
+    "price": null,
+    "oldprice": null
+  },
+  {
+    "id": 156,
+    "name": "Colección Los Calidosos",
+    "category": "Petos y Camisetas",
+    "image": "https://i.ibb.co/vzP6qFm/calidosos.webp",
+    "images": null,
+    "sizes": "[\"S\",\"M\",\"L\",\"XL\"]",
+    "created_at": "2026-03-18T19:35:01.254529+00:00",
+    "price": null,
+    "oldprice": null
   }
 ]

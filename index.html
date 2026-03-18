@@ -573,9 +573,30 @@
                 let imgUrl = p.image || 'images/logo-tm.png';
 
                 // Shared Pool Logic: item already represents global stock
-                const consolidatedSizes = p.stocks
-                    .map(s => ({ size: parseFloat(s.size), stock: s.stock }))
-                    .sort((a, b) => a.size - b.size);
+                const sizeMap = new Map();
+                p.stocks.forEach(s => {
+                    const sizeKey = s.size.toString();
+                    if (!sizeMap.has(sizeKey)) {
+                        sizeMap.set(sizeKey, {
+                            size: sizeKey,
+                            numericSize: parseFloat(sizeKey),
+                            stock: s.stock || 0
+                        });
+                    } else {
+                        // Consolidate stock if duplicate size entries exist
+                        sizeMap.get(sizeKey).stock += (s.stock || 0);
+                    }
+                });
+
+                const consolidatedSizes = Array.from(sizeMap.values())
+                    .sort((a, b) => {
+                        // Numeric sort if both are numbers, otherwise alphabetical
+                        if (!isNaN(a.numericSize) && !isNaN(b.numericSize)) return a.numericSize - b.numericSize;
+                        const sizeOrder = {'S':1, 'M':2, 'L':3, 'XL':4, 'XXL':5, 'Única':6};
+                        const orderA = sizeOrder[a.size] || 99;
+                        const orderB = sizeOrder[b.size] || 99;
+                        return orderA - orderB || a.size.toString().localeCompare(b.size.toString());
+                    });
 
                 return `
                     <div class="product-card" onclick="quickSale('${p.id}')">
