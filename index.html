@@ -167,13 +167,24 @@
                     </div>
                 </div>
 
+                <div class="category-filter-bar">
+                    <button class="cat-pill active" onclick="setCategoryFilter('all', this)">✨ TODO</button>
+                    <button class="cat-pill" onclick="setCategoryFilter('Petos y Camisetas', this)">🎽 PETOS/CAMISETAS</button>
+                    <button class="cat-pill" onclick="setCategoryFilter('Guayos', this)">⚽ GUAYOS</button>
+                    <button class="cat-pill" onclick="setCategoryFilter('Tenis-Guayos', this)">👟 TENIS GUAYOS</button>
+                    <button class="cat-pill" onclick="setCategoryFilter('Niños', this)">👶 NIÑOS</button>
+                    <button class="cat-pill" onclick="setCategoryFilter('Futsal', this)">🏟️ FUTSAL</button>
+                </div>
+
                 <div class="inventory-controls">
                     <div class="search-wrapper">
                         <span>🔍</span>
                         <input type="text" id="searchInput" class="filter-input"
-                            placeholder="Buscar tenis, guayos, tallas...">
+                            placeholder="Buscar tenis, guayos, tallas..."
+                            oninput="renderDashboard()">
                     </div>
                     <select id="sedeFilter" class="form-control"
+                        onchange="renderDashboard()"
                         style="width: auto; background: transparent; border: none; font-weight: 700;">
                         <option value="all">TODAS LAS SEDES</option>
                         <option value="Sede Fantasias New York">FANTASÍAS NEW YORK</option>
@@ -409,6 +420,26 @@
     <script>
         let salesChart = null, stockChart = null;
         let selectedProduct = null;
+        let currentCategoryFilter = 'all';
+
+        function setCategoryFilter(cat, btn) {
+            currentCategoryFilter = cat;
+            document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            renderDashboard();
+        }
+
+        function quickSale(productId) {
+            if (!productId || productId === 'null') {
+                showToast('Selecciona un producto válido', 'error');
+                return;
+            }
+            selectProduct(productId, 'sales');
+            showSection('sales');
+            setTimeout(() => {
+                document.getElementById('saleSede').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        }
 
         function showSection(sectionId, element) {
             // Sections to manage
@@ -477,17 +508,37 @@
             const sede = document.getElementById('sedeFilter').value;
 
             // Group by Product Name (Consolidated)
-            console.log(`🔍 Filtrando con - Term: "${term}", Sede: "${sede}"`);
+            console.log(`🔍 Filtrando con - Term: "${term}", Sede: "${sede}", Cat: "${currentCategoryFilter}"`);
             const productsMap = {};
+            
             inventory.forEach(item => {
                 const name = item.product_name || "Desconocido";
                 const size = (item.size || "").toString();
+                const cat = item.category || "Otros";
+
                 const matchesSearch = name.toLowerCase().includes(term) || size.includes(term);
                 const matchesSede = sede === 'all' || item.location_name === sede;
 
-                if (matchesSearch && matchesSede) {
+                // Category Logic (Robust)
+                let matchesCat = currentCategoryFilter === 'all';
+                const itemCat = cat.toLowerCase().trim();
+                const targetCat = currentCategoryFilter.toLowerCase().trim();
+
+                if (!matchesCat) {
+                    if (currentCategoryFilter === 'Petos y Camisetas') {
+                        matchesCat = itemCat.includes('peto') || itemCat.includes('camiseta');
+                    } else if (currentCategoryFilter === 'Tenis-Guayos') {
+                        matchesCat = itemCat.includes('tenis-guayo') || itemCat.includes('tenis guayo');
+                    } else {
+                        matchesCat = itemCat === targetCat;
+                    }
+                }
+
+                if (matchesSearch && matchesSede && matchesCat) {
                     if (!productsMap[name]) {
+                        const productRef = allProducts.find(prod => prod.name === name);
                         productsMap[name] = {
+                            id: productRef ? productRef.id : (item.product_id || null),
                             name: name,
                             category: item.category,
                             image: item.image,
@@ -514,18 +565,19 @@
                     .sort((a, b) => a.size - b.size);
 
                 return `
-                    <div class="product-card">
+                    <div class="product-card" onclick="quickSale('${p.id}')">
                         <div class="card-img-container">
                             <span class="card-category">${p.category || 'Calzado'}</span>
+                            <div class="card-overlay-hint">TOCA PARA VENDER</div>
                             <img src="${imgUrl}" alt="${p.name}" class="card-img" onerror="this.onerror=null; this.src='images/logo-tm.png'">
                         </div>
                         <div class="card-content">
                             <h3 class="card-title">${p.name}</h3>
                             <div class="stock-badges">
                                 ${consolidatedSizes.map(s => `
-                                    <div class="badge ${s.stock <= 0 ? 'out' : (s.stock <= 2 ? 'low' : '')}" style="display: flex; gap: 5px; align-items: center;">
-                                        <b style="font-size: 1rem;">${s.size}</b> 
-                                        <span style="opacity: 0.7;">| ${s.stock} unds</span>
+                                    <div class="badge ${s.stock <= 0 ? 'out' : (s.stock <= 2 ? 'low' : '')}">
+                                        <b>${s.size}</b> 
+                                        <span>| ${s.stock}</span>
                                     </div>
                                 `).join('')}
                             </div>

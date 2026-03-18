@@ -123,11 +123,57 @@ async function fetchInventory() {
 
             if (pError) throw pError;
 
-            // Update the global catalog with fresh data from DB
-            allProducts = pData.map(p => ({
-                ...p,
-                sizes: typeof p.sizes === 'string' ? JSON.parse(p.sizes) : (p.sizes || [])
-            }));
+            // Update the global catalog with fresh data from DB and apply smart match for images
+            allProducts = pData.map(p => {
+                let pImage = p.image;
+                let pCat = p.category;
+
+                // Smart Matcher for Bodega Aliases
+                if (!pImage || pImage === 'images/logo-tm.png') {
+                    const lowName = p.name.toLowerCase();
+                    let matchedRef = null;
+
+                    if (typeof TENNISYMAS_PRODUCTS !== 'undefined') {
+                        if (lowName.includes('mercurial') || lowName.includes('vapor')) {
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('mercurial'));
+                        } else if (lowName.includes('predator')) {
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('predator'));
+                        } else if (lowName.includes('f50') || lowName.includes('crazyfast')) {
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('crazyfast') || c.name.toLowerCase().includes('x speedportal'));
+                        } else if (lowName.includes('phantom') || lowName.includes('gx')) {
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('phantom'));
+                        } else if (lowName.includes('gato') || lowName.includes('lunar') || lowName.includes('supremo') || lowName.includes('street')) {
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('gato'));
+                        } else if (lowName.includes('tiempo')) {
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('tiempo'));
+                        } else if (lowName.includes('mizuno')) {
+                            pCat = 'Futsal'; // Default for mizuno for now
+                        } else if (lowName.includes('joma')) {
+                            pCat = 'Futsal';
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('sala'));
+                        }
+                    }
+
+                    if (matchedRef) {
+                        pImage = matchedRef.image || pImage;
+                        pCat = matchedRef.category || pCat;
+                    }
+
+                    // Enforce category by explicit naming conventions
+                    if (lowName.includes('futsal') || lowName.includes('tf') || lowName.includes('sala')) {
+                        pCat = 'Futsal';
+                    } else if (lowName.includes('guayo') || lowName.includes('fg')) {
+                        pCat = 'Guayos';
+                    }
+                }
+
+                return {
+                    ...p,
+                    image: pImage,
+                    category: pCat || 'Deportivo',
+                    sizes: typeof p.sizes === 'string' ? JSON.parse(p.sizes) : (p.sizes || [])
+                };
+            });
 
             console.log(`📦 Catálogo cargado: ${allProducts.length} productos.`);
 

@@ -1,0 +1,16 @@
+🚀 Iniciando procesamiento...
+📝 Se encontraron 9 secciones de productos.
+📦 Preparados 9 productos para subir.
+📡 DB tiene 48 productos.
+
+🔹 Procesando: "Teni guayo F50 tubular naranja"
+   ✅ Match: "Teni guayo F50 tubular naranja" (ID: 2)
+   🧤 Actualizando stock...
+❌ Error Supabase (POST inventory): 409
+{"code":"23505","details":null,"hint":null,"message":"duplicate key value violates unique constraint \"inventory_unique_combination\""}
+❌ ERROR FATAL:
+Error: Status 409
+    at IncomingMessage.<anonymous> (C:\Users\Juanjo\Documents\Inventario\process_whatsapp_inventory.js:79:28)
+    at IncomingMessage.emit (node:events:520:35)
+    at endReadableNT (node:internal/streams/readable:1701:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
