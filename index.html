@@ -525,12 +525,25 @@
                 const targetCat = currentCategoryFilter.toLowerCase().trim();
 
                 if (!matchesCat) {
-                    if (currentCategoryFilter === 'Petos y Camisetas') {
-                        matchesCat = itemCat.includes('peto') || itemCat.includes('camiseta');
-                    } else if (currentCategoryFilter === 'Tenis-Guayos') {
-                        matchesCat = itemCat.includes('tenis-guayo') || itemCat.includes('tenis guayo');
+                    const filter = currentCategoryFilter.toLowerCase();
+                    const itemCat = cat.toLowerCase();
+
+                    if (filter === 'all' || filter === '✨ todo') {
+                        matchesCat = true;
+                    } else if (filter.includes('peto') || filter.includes('cami')) {
+                        matchesCat = itemCat.includes('peto') || itemCat.includes('cami') || itemCat.includes('ropa');
+                    } else if (filter.includes('niño') || filter.includes('kid')) {
+                        matchesCat = itemCat.includes('niño') || itemCat.includes('niña') || itemCat.includes('infantil') || itemCat.includes(' jr');
+                    } else if (filter.includes('tenis')) {
+                        // Tenis-Guayos case
+                        matchesCat = itemCat.includes('tenis-guayo') || itemCat.includes('tenis guayo') || (itemCat.includes('tenis') && itemCat.includes('guayo'));
+                    } else if (filter.includes('guayo')) {
+                        // Clean guayos check (Avoid matching TENIS-GUAYOS if possible but let's be inclusive if they just want shoes)
+                        matchesCat = itemCat === 'guayos' || itemCat === 'guayo';
+                    } else if (filter.includes('futsal') || filter.includes('sala')) {
+                        matchesCat = itemCat.includes('futsal') || itemCat.includes('sala') || itemCat.includes(' indoor');
                     } else {
-                        matchesCat = itemCat === targetCat;
+                        matchesCat = itemCat.includes(filter.replace('s', '')) || itemCat === targetCat;
                     }
                 }
 

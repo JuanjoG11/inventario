@@ -151,6 +151,10 @@ async function fetchInventory() {
                         } else if (lowName.includes('joma')) {
                             pCat = 'Futsal';
                             matchedRef = TENNISYMAS_PRODUCTS.find(c => c.name.toLowerCase().includes('sala'));
+                        } else if (lowName.includes('peto')) {
+                            pCat = 'Petos';
+                        } else if (lowName.includes('camiseta')) {
+                            pCat = 'Camisetas';
                         }
                     }
 
@@ -158,12 +162,32 @@ async function fetchInventory() {
                         pImage = matchedRef.image || pImage;
                         pCat = matchedRef.category || pCat;
                     }
+                }
 
-                    // Enforce category by explicit naming conventions
-                    if (lowName.includes('futsal') || lowName.includes('tf') || lowName.includes('sala')) {
-                        pCat = 'Futsal';
-                    } else if (lowName.includes('guayo') || lowName.includes('fg')) {
-                        pCat = 'Guayos';
+                // Enforce category by explicit naming conventions (Improved Order)
+                const lowName = p.name.toLowerCase();
+                if (lowName.includes('niño') || lowName.includes(' jr') || lowName.includes('niña')) {
+                    pCat = 'Niños';
+                } else if (lowName.includes('futsal') || lowName.includes('tf') || lowName.includes('sala')) {
+                    pCat = 'Futsal';
+                } else if ((lowName.includes('teni') || lowName.includes('tenis')) && lowName.includes('guayo')) {
+                    pCat = 'Tenis-Guayos';
+                } else if (lowName.includes('guayo') || lowName.includes('fg')) {
+                    pCat = 'Guayos';
+                } else if (lowName.includes('peto')) {
+                    pCat = 'Petos';
+                } else if (lowName.includes('camiseta') || lowName.includes('camisa')) {
+                    pCat = 'Camisetas';
+                }
+
+                let parsedSizes = [];
+                try {
+                    parsedSizes = typeof p.sizes === 'string' ? JSON.parse(p.sizes) : (p.sizes || []);
+                } catch (e) {
+                    console.warn(`⚠️ Error parseando tallas para ${p.name}:`, p.sizes);
+                    // Fallback: si es una cadena separada por comas
+                    if (typeof p.sizes === 'string') {
+                        parsedSizes = p.sizes.split(',').map(s => s.trim());
                     }
                 }
 
@@ -171,7 +195,7 @@ async function fetchInventory() {
                     ...p,
                     image: pImage,
                     category: pCat || 'Deportivo',
-                    sizes: typeof p.sizes === 'string' ? JSON.parse(p.sizes) : (p.sizes || [])
+                    sizes: Array.isArray(parsedSizes) ? parsedSizes : []
                 };
             });
 
@@ -190,7 +214,12 @@ async function fetchInventory() {
             let fullInventory = [];
 
             allProducts.forEach(product => {
-                const productSizes = Array.isArray(product.sizes) ? product.sizes : [];
+                let productSizes = Array.isArray(product.sizes) ? product.sizes : [];
+                
+                // Si no hay tallas, agregamos una por defecto para que el producto sea visible
+                if (productSizes.length === 0) {
+                    productSizes = ['Única'];
+                }
 
                 productSizes.forEach(size => {
                     // Find existing record in the GLOBAL pool (location_id: 0)
