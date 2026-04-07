@@ -100,6 +100,8 @@
                         class="nav-icon">📜</span> Historial</a></li>
             <li><a href="#" onclick="showSection('restock', this); return false;" class="nav-link"><span
                         class="nav-icon">📦</span> Entradas</a></li>
+            <li><a href="#" onclick="showSection('manage', this); return false;" class="nav-link"><span
+                        class="nav-icon">🛠️</span> Gestionar Stock</a></li>
 
             <li class="nav-label"
                 style="font-size: 0.65rem; color: #444; margin: 20px 0 10px 20px; text-transform: uppercase; font-weight: 800;">
@@ -137,22 +139,29 @@
                         </div>
                     </div>
                 </header>
-
                 <div class="stats-bar">
                     <div class="stat-card">
                         <div class="stat-label">Stock Total</div>
                         <div class="stat-value" id="totalStock">0</div>
-                        <div style="font-size: 0.75rem; color: #2ecc71;">Existencias reales</div>
+                        <div style="font-size: 0.75rem; color: #2ecc71;">Existencias totales</div>
+                    </div>
+                    <div class="stat-card" style="border-right-color: #f1c40f;">
+                        <div class="stat-label">Agotados / Críticos</div>
+                        <div class="stat-value" id="criticalStockCount" style="color: #e74c3c;">0</div>
+                        <div style="font-size: 0.75rem; color: #f1c40f;">Requieren reposición</div>
                     </div>
                     <div class="stat-card" style="border-right-color: #3498db;">
                         <div class="stat-label">Ventas Hoy</div>
                         <div class="stat-value" id="totalSales">0</div>
-                        <div style="font-size: 0.75rem; color: #888;">Transacciones diarias</div>
+                        <div style="font-size: 0.75rem; color: #888;">Movimientos diarios</div>
                     </div>
-                    <div class="stat-card" style="border-right-color: #f39c12;">
-                        <div class="stat-label">Stock Bajo</div>
-                        <div class="stat-value" id="lowStockCount">0</div>
-                        <div style="font-size: 0.75rem; color: #e74c3c;">Revisiones pendientes</div>
+                </div>
+
+                <!-- NEW: Critical Alerts Section -->
+                <div id="criticalAlerts" class="card" style="display:none; margin-bottom: 30px; border-left: 5px solid #e74c3c;">
+                    <h3 style="color: #e74c3c; margin-bottom: 15px; font-size: 0.9rem;">⚠️ REPOSICIÓN URGENTE (0-1 unidad)</h3>
+                    <div id="criticalProductsList" style="display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px;">
+                        <!-- Critical items injected here -->
                     </div>
                 </div>
 
@@ -187,8 +196,9 @@
                         onchange="renderDashboard()"
                         style="width: auto; background: transparent; border: none; font-weight: 700;">
                         <option value="all">TODAS LAS SEDES</option>
-                        <option value="Sede Fantasias New York">FANTASÍAS NEW YORK</option>
+                        <option value="Sede Fantasias New York">FANTAS&Iacute;AS NEW YORK</option>
                         <option value="Sede Bulevar">BULEVAR</option>
+                        <option value="Sede Virtual">SEDE VIRTUAL</option>
                     </select>
                 </div>
 
@@ -250,6 +260,7 @@
                                     <option value="" disabled selected>Seleccione ubicación...</option>
                                     <option value="Sede Fantasias New York">Sede Fantasias New York</option>
                                     <option value="Sede Bulevar">Sede Bulevar</option>
+                                    <option value="Sede Virtual">Sede Virtual</option>
                                 </select>
                             </div>
 
@@ -333,6 +344,7 @@
                                 <option value="" disabled selected>Seleccione ubicación...</option>
                                 <option value="Sede Fantasias New York">Sede Fantasias New York</option>
                                 <option value="Sede Bulevar">Sede Bulevar</option>
+                                <option value="Sede Virtual">Sede Virtual</option>
                             </select>
                         </div>
                         <div class="form-group product-search" style="position: relative;">
@@ -390,6 +402,51 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Gestión (Manage) Section -->
+            <div id="manage-section" style="display:none;" class="section-fade-in">
+                <header class="page-header">
+                    <div>
+                        <h1 class="section-title">Gestionar Productos</h1>
+                        <p style="opacity: 0.6;">Actualizar tallas y cantidades de forma global</p>
+                    </div>
+                </header>
+                
+                <div class="card" style="max-width: 800px; margin: 0 auto; padding: 30px;">
+                    <div class="form-group" style="position: relative; margin-bottom: 30px;">
+                        <label style="font-size: 0.7rem; letter-spacing: 2px;">BUSCAR PRODUCTO PARA EDITAR</label>
+                        <input type="text" id="manageSearch" class="form-control" placeholder="Escribe el nombre del producto..." style="font-size: 1.1rem; padding: 15px 20px;">
+                        <div id="manageResults" class="search-results" style="display:none; position: absolute; width:100%; z-index:100; background: var(--color-gray-dark); border: 1px solid var(--color-gray-lighter); border-radius: 12px; margin-top:5px; max-height:250px; overflow-y:auto;">
+                        </div>
+                    </div>
+
+                    <div id="manageProductUI" style="display: none; animation: fadeIn 0.4s ease-out;">
+                        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 30px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 15px;">
+                            <img id="manageProductImg" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 10px;">
+                            <div>
+                                <h2 id="manageProductName" style="margin: 0; font-size: 1.2rem;"></h2>
+                                <p id="manageProductCat" style="color: var(--color-red); margin: 0; font-weight: 800; font-size: 0.7rem; text-transform: uppercase;"></p>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">Inventario por Talla</h3>
+                            <div id="manageSizeList" style="display: flex; flex-direction: column; gap: 10px;">
+                                <!-- Size rows will be injected here -->
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button onclick="addNewSizeRow()" class="btn-primary" style="background: #333; flex: 1; border: 1px dashed #666; font-size: 0.8rem;">+ AGREGAR OTRA TALLA</button>
+                            <button onclick="saveProductManagement()" class="btn-primary" id="saveManageBtn" style="flex: 1.5; font-size: 0.9rem; letter-spacing: 1px;">GUARDAR CAMBIOS</button>
+                        </div>
+                    </div>
+
+                    <div id="noManageProduct" style="padding: 60px 0; text-align: center; opacity: 0.3; border: 2px dashed rgba(255,255,255,0.05); border-radius: 20px;">
+                        <p>Busca un producto para empezar a gestionar sus tallas</p>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -399,8 +456,9 @@
             <a href="#" onclick="showSection('dashboard', this); return false;"
                 class="active"><i>📊</i><span>Stock</span></a>
             <a href="#" onclick="showSection('sales', this); return false;"><i>🛒</i><span>Vender</span></a>
+            <a href="#" onclick="showSection('manage', this); return false;"><i>🛠️</i><span>Gesti&oacute;n</span></a>
             <a href="#" onclick="showSection('history', this); return false;"><i>📜</i><span>Historial</span></a>
-            <a href="#" onclick="showSection('analysis', this); return false;"><i>📈</i><span>Análisis</span></a>
+            <a href="#" onclick="showSection('analysis', this); return false;"><i>📈</i><span>An&aacute;lisis</span></a>
         </nav>
     </div>
 
@@ -443,7 +501,7 @@
 
         function showSection(sectionId, element) {
             // Sections to manage
-            const sections = ['dashboard', 'sales', 'history', 'restock', 'analysis'];
+            const sections = ['dashboard', 'sales', 'history', 'restock', 'analysis', 'manage'];
 
             // Hide all sections
             sections.forEach(id => {
@@ -472,30 +530,61 @@
                 // Trigger resize to fix Chart.js layout issues when section was hidden
                 setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
             }
+            if (sectionId === 'manage') {
+                document.getElementById('manageSearch').value = '';
+                document.getElementById('manageProductUI').style.display = 'none';
+                document.getElementById('noManageProduct').style.display = 'block';
+            }
 
             window.scrollTo(0, 0);
         }
 
         function renderDashboard() {
             const grid = document.getElementById('inventoryGrid');
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            const sede = document.getElementById('sedeFilter').value;
             const totalStockEl = document.getElementById('totalStock');
-            const lowStockEl = document.getElementById('lowStockCount');
+            const criticalStockEl = document.getElementById('criticalStockCount');
             const salesEl = document.getElementById('totalSales');
+            const criticalSection = document.getElementById('criticalAlerts');
+            const criticalList = document.getElementById('criticalProductsList');
 
-            // Calculate metrics (Shared Pool)
-            let totalStock = 0, lowStock = 0;
-            console.log("📊 RenderDashboard - Shared Inventory size:", currentInventory.length);
+            let totalStock = 0;
+            const criticalItemsMap = new Map();
+
+            // Calculate metrics & find critical stocks
             currentInventory.forEach(item => {
                 const stock = item.stock || 0;
                 totalStock += stock;
-                if (stock > 0 && stock <= 2) lowStock++;
+                
+                if (stock <= 1) {
+                    const key = item.product_name;
+                    if (!criticalItemsMap.has(key)) {
+                        criticalItemsMap.set(key, { name: item.product_name, image: item.image, sizes: [] });
+                    }
+                    criticalItemsMap.get(key).sizes.push({ size: item.size, stock: stock });
+                }
             });
 
             if (totalStockEl) totalStockEl.textContent = totalStock;
-            if (lowStockEl) lowStockEl.textContent = lowStock;
+            if (criticalStockEl) criticalStockEl.textContent = criticalItemsMap.size;
             if (salesEl) salesEl.textContent = localStorage.getItem('today_sales_count') || '0';
+
+            // Populate Critical Alerts
+            if (criticalItemsMap.size > 0 && criticalSection && criticalList) {
+                criticalSection.style.display = 'block';
+                criticalList.innerHTML = Array.from(criticalItemsMap.values()).map(item => `
+                    <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; min-width: 130px; border: 1px solid rgba(231, 76, 60, 0.3);">
+                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
+                            <img src="${item.image}" style="width:30px; height:30px; object-fit:cover; border-radius:5px;">
+                            <span style="font-size:0.7rem; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</span>
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                            ${item.sizes.map(s => `<span style="font-size:0.6rem; background:#e74c3c; color:white; padding:2px 5px; border-radius:4px;">T${s.size}: ${s.stock}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } else if (criticalSection) {
+                criticalSection.style.display = 'none';
+            }
 
             renderInventoryGrid(currentInventory);
             renderCharts();
@@ -608,12 +697,20 @@
                         <div class="card-content">
                             <h3 class="card-title">${p.name}</h3>
                             <div class="stock-badges">
-                                ${consolidatedSizes.map(s => `
-                                    <div class="badge ${s.stock <= 0 ? 'out' : (s.stock <= 2 ? 'low' : '')}">
-                                        <b>${s.size}</b> 
-                                        <span>| ${s.stock}</span>
-                                    </div>
-                                `).join('')}
+                                ${consolidatedSizes.map(s => {
+                                    // Identify where this specific size is located
+                                    const locBreakdown = p.stocks
+                                        .filter(stockItem => stockItem.size.toString() === s.size)
+                                        .map(stockItem => `${stockItem.location_name.replace('Sede ', '')}: ${stockItem.stock}`)
+                                        .join(' | ');
+                                        
+                                    return `
+                                        <div class="badge ${s.stock <= 0 ? 'out' : (s.stock <= 1 ? 'low' : '')}" title="${locBreakdown}">
+                                            <b>${s.size}</b> 
+                                            <span>| ${s.stock}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                     </div>
@@ -707,16 +804,27 @@
                 return;
             }
 
-            table.innerHTML = history.map(h => `
+            table.innerHTML = history.map(h => {
+                const dateObj = new Date(h.date);
+                const isSale = h.type === 'Venta';
+                return `
                 <tr>
-                    <td><div style="font-size:0.75rem;">${new Date(h.date).toLocaleDateString()}</div><div style="font-size:0.6rem; opacity:0.5;">${new Date(h.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div></td>
-                    <td><span class="type-badge ${h.type === 'Venta' ? 'type-sale' : 'type-entry'}">${h.type}</span></td>
-                    <td style="font-weight:700;">${h.product}</td>
-                    <td>${h.size}</td>
-                    <td style="font-size:0.75rem;">${h.sede.replace('Sede ', '')}</td>
-                    <td style="font-weight:800; color:${h.type === 'Venta' ? '#e74c3c' : '#2ecc71'}">${h.type === 'Venta' ? '-' : '+'}${h.qty}</td>
+                    <td>
+                        <div style="font-size:0.75rem; font-weight:700;">${dateObj.toLocaleDateString()}</div>
+                        <div style="font-size:0.6rem; opacity:0.5;">${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    </td>
+                    <td><span class="type-badge ${isSale ? 'type-sale' : 'type-entry'}">${h.type}</span></td>
+                    <td>
+                        <div style="font-weight:700; color:#fff;">${h.product}</div>
+                        <div style="font-size:0.6rem; opacity:0.5;">Talla: ${h.size}</div>
+                    </td>
+                    <td style="font-size:0.75rem; font-weight:bold; color:var(--color-red);">${h.sede.replace('Sede ', '')}</td>
+                    <td style="font-weight:800; text-align:right; color:${isSale ? '#e74c3c' : '#2ecc71'}">
+                        ${isSale ? '-' : '+'}${h.qty}
+                    </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // --- Analysis Implementation ---
@@ -726,9 +834,10 @@
             const sales = history.filter(h => h.type === 'Venta');
 
             // Metrics
-            document.getElementById('totalSalesMonth').textContent = sales.reduce((acc, curr) => acc + curr.qty, 0);
+            const salesMonthEl = document.getElementById('totalSalesMonth');
+            if (salesMonthEl) salesMonthEl.textContent = sales.reduce((acc, curr) => acc + curr.qty, 0);
 
-            // Top Products
+            // Top Products (Business Intelligence Style)
             const topMap = {};
             sales.forEach(s => {
                 topMap[s.product] = (topMap[s.product] || 0) + s.qty;
@@ -738,18 +847,26 @@
                 .slice(0, 5);
 
             const listEl = document.getElementById('topProductsList');
-            if (topList.length === 0) {
-                listEl.innerHTML = '<p style="opacity:0.3; font-size:0.8rem;">Sin datos suficientes</p>';
-            } else {
-                listEl.innerHTML = topList.map(([name, qty], i) => `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <span style="font-weight:900; color:var(--color-red); opacity:${1 - i * 0.2}">#${i + 1}</span>
-                            <span style="font-size:0.85rem; font-weight:600;">${name}</span>
+            if (listEl) {
+                if (topList.length === 0) {
+                    listEl.innerHTML = '<p style="opacity:0.3; font-size:0.8rem; text-align:center; padding:20px;">Esperando datos de ventas...</p>';
+                } else {
+                    listEl.innerHTML = topList.map(([name, qty], i) => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; margin-bottom: 8px; border-left: 3px solid ${i === 0 ? '#ff3333' : '#333'}">
+                            <div style="display:flex; gap:15px; align-items:center;">
+                                <div style="width:24px; height:24px; border-radius:50%; background:${i === 0 ? 'var(--color-red)' : '#222'}; display:flex; justify-content:center; align-items:center; font-size:0.7rem; font-weight:900;">${i + 1}</div>
+                                <div>
+                                    <div style="font-size:0.85rem; font-weight:700;">${name}</div>
+                                    <div style="font-size:0.65rem; color:#888;">Nivel de demanda: ${i === 0 ? '🔥 Máximo' : 'Estable'}</div>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-weight:900; font-size:1rem;">${qty}</div>
+                                <div style="font-size:0.6rem; opacity:0.5;">UNDS</div>
+                            </div>
                         </div>
-                        <span style="font-weight:800; font-size:0.8rem;">${qty} unds</span>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             }
 
             // Sede Chart
@@ -766,20 +883,22 @@
                     data: {
                         labels: Object.keys(sedeMap).map(s => s.replace('Sede ', '')),
                         datasets: [{
-                            label: 'Ventas',
+                            label: 'Ventas por Sede',
                             data: Object.values(sedeMap),
-                            backgroundColor: 'rgba(255, 51, 51, 0.5)',
+                            backgroundColor: 'rgba(255, 51, 51, 0.6)',
                             borderColor: '#ff3333',
-                            borderWidth: 1
+                            borderWidth: 2,
+                            borderRadius: 5
                         }]
                     },
                     options: {
                         indexAxis: 'y',
                         responsive: true,
+                        maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { grid: { display: false }, ticks: { color: '#888' } },
-                            y: { grid: { display: false }, ticks: { color: '#888' } }
+                            x: { grid: { display: false }, ticks: { color: '#888', font: { size: 10 } } },
+                            y: { grid: { display: false }, ticks: { color: '#fff', font: { weight: 'bold' } } }
                         }
                     }
                 });
@@ -821,19 +940,35 @@
 
             if (!selectedProduct) return;
 
-            // Global Pool: Direct filter
-            const available = currentInventory.filter(i =>
+            // Get all records for this product across all locations
+            const availableRecords = currentInventory.filter(i =>
                 i.product_id == selectedProduct.id && i.stock > 0
             );
 
-            if (available.length === 0) {
+            // Group by size to show consolidated info + breakdown
+            const groupedBySize = {};
+            availableRecords.forEach(rec => {
+                if (!groupedBySize[rec.size]) {
+                    groupedBySize[rec.size] = { total: 0, breakdown: [] };
+                }
+                groupedBySize[rec.size].total += rec.stock;
+                groupedBySize[rec.size].breakdown.push(`${rec.location_name.replace('Sede ', '')}: ${rec.stock}`);
+            });
+
+            const sizes = Object.keys(groupedBySize);
+
+            if (sizes.length === 0) {
                 sizeSelect.innerHTML = '<option value="" disabled selected>Sin stock registrado</option>';
-                alertText.textContent = "⚠️ Este producto no tiene existencias disponibles en el Stock Global.";
+                alertText.textContent = "⚠️ Este producto no tiene existencias disponibles en ninguna sede.";
                 alertText.style.color = "var(--color-red)";
             } else {
                 sizeSelect.innerHTML = '<option value="" disabled selected>Seleccione talla...</option>' +
-                    available.map(i => `<option value="${i.size}">Talla ${i.size} (Global: ${i.stock})</option>`).join('');
-                alertText.textContent = "💡 Stock compartido detectado. La venta restará del pool global.";
+                    sizes.map(s => `
+                        <option value="${s}">
+                            Talla ${s} (Total: ${groupedBySize[s].total}) [${groupedBySize[s].breakdown.join(' | ')}]
+                        </option>
+                    `).join('');
+                alertText.textContent = "💡 Stock global detectado. Puedes vender desde cualquier sede.";
                 alertText.style.color = "#888";
             }
         }
@@ -865,6 +1000,7 @@
                 }, 400);
             }, 4000);
         }
+        window.showToast = showToast;
 
         function changeActiveProfile(newId) {
             activeLocationId = parseInt(newId);
@@ -1120,6 +1256,150 @@
                 btn.textContent = 'Cargar al Inventario';
             });
         }
+
+        // --- MANAGEMENT LOGIC ---
+        let currentManageProduct = null;
+        const manageSearch = document.getElementById('manageSearch');
+        const manageResults = document.getElementById('manageResults');
+
+        if (manageSearch) {
+            manageSearch.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                if (term.length < 2) { manageResults.style.display = 'none'; return; }
+                const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+                manageResults.innerHTML = filtered.map(p => `
+                    <div class="search-result-item" onclick="selectManageProduct(${p.id})" style="padding: 12px 20px; border-bottom: 1px solid var(--color-gray-lighter); cursor: pointer;">
+                        <div style="font-weight: 700;">${p.name}</div>
+                        <div style="font-size: 0.75rem; opacity: 0.5;">${p.category || 'Deportivo'}</div>
+                    </div>
+                `).join('');
+                manageResults.style.display = 'block';
+            });
+        }
+
+        function selectManageProduct(id) {
+            const prod = allProducts.find(p => p.id == id);
+            currentManageProduct = prod;
+            
+            document.getElementById('manageSearch').value = prod.name;
+            document.getElementById('manageResults').style.display = 'none';
+            document.getElementById('noManageProduct').style.display = 'none';
+            document.getElementById('manageProductUI').style.display = 'block';
+
+            document.getElementById('manageProductName').textContent = prod.name;
+            document.getElementById('manageProductCat').textContent = prod.category || 'Deportivo';
+            document.getElementById('manageProductImg').src = prod.image || (prod.images && prod.images[0]) || 'images/logo-tm.png';
+
+            renderManageProductUI();
+        }
+
+        function renderManageProductUI() {
+            const list = document.getElementById('manageSizeList');
+            list.innerHTML = '';
+            
+            // Get all items for this product in currentInventory
+            const items = currentInventory.filter(i => i.product_id == currentManageProduct.id);
+            
+            if (items.length === 0) {
+                // If it has sizes but no inventory entries, use the sizes as template
+                const sizes = currentManageProduct.sizes || [];
+                if (sizes.length > 0) {
+                    sizes.forEach(s => addNewSizeRow(s, 0));
+                } else {
+                    addNewSizeRow('Única', 0);
+                }
+            } else {
+                items.forEach(item => {
+                    addNewSizeRow(item.size, item.stock);
+                });
+            }
+        }
+
+        function addNewSizeRow(size = '', stock = 0) {
+            const list = document.getElementById('manageSizeList');
+            const row = document.createElement('div');
+            row.className = 'manage-size-row';
+            row.style = 'display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;';
+            row.innerHTML = `
+                <div style="flex: 1;">
+                    <label style="font-size: 0.6rem; color: #888; display: block; margin-bottom: 2px;">Talla</label>
+                    <input type="text" class="manage-size-input form-control" value="${size}" placeholder="Talla..." style="padding: 10px; height: auto;">
+                </div>
+                <div style="flex: 1;">
+                    <label style="font-size: 0.6rem; color: #888; display: block; margin-bottom: 2px;">Stock</label>
+                    <input type="number" class="manage-stock-input form-control" value="${stock}" min="0" style="padding: 10px; height: auto;">
+                </div>
+                <button onclick="this.parentElement.remove()" style="background: transparent; border: none; color: #e74c3c; cursor: pointer; padding: 10px; font-size: 1.2rem;">×</button>
+            `;
+            list.appendChild(row);
+        }
+
+        async function saveProductManagement() {
+            if (!currentManageProduct) return;
+            
+            const btn = document.getElementById('saveManageBtn');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const rows = document.querySelectorAll('.manage-size-row');
+            const newInventory = [];
+            const newSizes = [];
+
+            rows.forEach(row => {
+                const size = row.querySelector('.manage-size-input').value.trim();
+                const stock = parseInt(row.querySelector('.manage-stock-input').value);
+                
+                if (size) {
+                    newInventory.push({
+                        product_id: currentManageProduct.id,
+                        location_id: 0, // Always Global Stock
+                        size: size,
+                        stock: stock,
+                        updated_at: new Date()
+                    });
+                    newSizes.push(size);
+                }
+            });
+
+            try {
+                if (supabaseClient) {
+                    // 1. Update Inventory Table (Batch Upsert)
+                    // First, we might want to delete OLD sizes that are no longer in the list?
+                    // For simplicity, we just upsert the ones we have.
+                    const { error: invError } = await supabaseClient
+                        .from('inventory')
+                        .upsert(newInventory, { onConflict: 'product_id, location_id, size' });
+
+                    if (invError) throw invError;
+
+                    // 2. Update Product's sizes list if it changed
+                    const { error: prodError } = await supabaseClient
+                        .from('products')
+                        .update({ sizes: newSizes })
+                        .eq('id', currentManageProduct.id);
+
+                    if (prodError) throw prodError;
+                }
+
+                // Log the action for history
+                logTransaction('Gestión', currentManageProduct.name, 'Multiple', 'Sistema', 0);
+
+                showToast('Producto actualizado correctamente');
+                await fetchInventory();
+                renderDashboard();
+                showSection('dashboard');
+            } catch (err) {
+                console.error(err);
+                showToast('Error al guardar: ' + (err.message || 'Error desconocido'), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'GUARDAR CAMBIOS';
+            }
+        }
+        
+        window.addNewSizeRow = addNewSizeRow;
+        window.saveProductManagement = saveProductManagement;
+        window.selectManageProduct = selectManageProduct;
     </script>
     <!-- Service Worker Registration -->
     <script>

@@ -56,6 +56,9 @@ async function init() {
         }
 
         await fetchInventory();
+        
+        // 4. Set up Realtime Subscriptions
+        setupRealtime();
 
         if (statusEl) {
             statusEl.textContent = "● Sincronizado";
@@ -81,10 +84,40 @@ async function init() {
  * 🛠️ SILENT AUTO-RESTORE
  */
 async function silentRestoreCatalog() {
-    // This function is no longer needed as products are loaded directly from DB.
-    // Keeping it as a placeholder or removing it depends on future requirements.
-    // For now, it will remain, but its call in init() has been removed.
     console.log("Silent restore catalog is deprecated.");
+}
+
+/**
+ * 🛰️ REALTIME SYNCHRONIZATION
+ * Listen for changes on inventory and products tables to keep sessions synced.
+ */
+function setupRealtime() {
+    if (!supabaseClient) return;
+
+    console.log("📡 Suscribiendo a cambios en tiempo real...");
+
+    // 1. Inventory Changes (Web <--> Local Sales)
+    supabaseClient
+        .channel('inventory_sync')
+        .on('postgres_changes', { event: '*', table: 'inventory', schema: 'public' }, async (payload) => {
+            console.log('🔄 Cambio en Inventario detectado:', payload.eventType);
+            // Re-fetch entire inventory to ensure UI state is consistent
+            await fetchInventory();
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof window.showToast === 'function') window.showToast('Inventario actualizado (Venta Web/Bodega)', 'info');
+        })
+        .subscribe();
+
+    // 2. Product Metadata Changes (New categories/images/sizes)
+    supabaseClient
+        .channel('product_sync')
+        .on('postgres_changes', { event: '*', table: 'products', schema: 'public' }, async (payload) => {
+            console.log('🔄 Cambio en Productos detectado:', payload.eventType);
+            await fetchInventory();
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof window.showToast === 'function') window.showToast('Catálogo actualizado automáticamente', 'info');
+        })
+        .subscribe();
 }
 
 /**
@@ -212,58 +245,65 @@ async function fetchInventory() {
 
             // 3. Construct Complete Inventory (Shared Pool)
             let fullInventory = [];
+            const namesSeen = new Set();
+            const uniqueProducts = allProducts.filter(p => {
+                if (namesSeen.has(p.name)) return false;
+                namesSeen.add(p.name);
+                return true;
+            });
 
-            allProducts.forEach(product => {
+            uniqueProducts.forEach(product => {
                 let productSizes = Array.isArray(product.sizes) ? product.sizes : [];
                 
-                // Si no hay tallas, agregamos una por defecto para que el producto sea visible
                 if (productSizes.length === 0) {
                     productSizes = ['Única'];
                 }
 
                 productSizes.forEach(size => {
-                    // Find existing record in the GLOBAL pool (location_id: 0)
-                    const existing = rawInventory.find(i =>
+                    const sizeKey = size.toString();
+                    
+                    // Get all records for this product/size across all locations
+                    const records = rawInventory.filter(i =>
                         i.product_id == product.id &&
-                        i.location_id == 0 &&
-                        i.size == size.toString()
+                        i.size == sizeKey
                     );
-
-                    // Determinar stock base: si es 37 a 44, el cliente pidió que fuera 2 globalmente.
-                    let baseStock = 0;
-                    if (['37','38','39','40','41','42','43','44'].includes(size.toString())) {
-                        baseStock = 2; // Forzar stock inicial a 2 para tallas 37 a 44
-                    } else if (['S','M','L','XL','XXL','Única'].includes(size.toString())) {
-                        baseStock = 3; // Ropa y Colecciones
+                    
+                    if (records.length === 0) {
+                        // Create a placeholder if no record exists
+                        fullInventory.push({
+                            id: null,
+                            product_id: product.id,
+                            product_name: product.name,
+                            category: product.category,
+                            location_id: 0,
+                            location_name: "Stock Global",
+                            size: sizeKey,
+                            stock: 0,
+                            image: product.image
+                        });
+                    } else {
+                        // Push all existing locations for this product/size
+                        records.forEach(r => {
+                            const location = locations.find(l => l.id == r.location_id);
+                            fullInventory.push({
+                                ...r,
+                                product_name: product.name,
+                                category: product.category,
+                                location_name: location ? location.name : "Sede Desconocida",
+                                image: product.image
+                            });
+                        });
                     }
-
-                    fullInventory.push({
-                        id: existing ? existing.id : null,
-                        product_id: product.id,
-                        product_name: product.name,
-                        category: product.category,
-                        location_id: 0,
-                        location_name: "Stock Global",
-                        size: size.toString(),
-                        stock: existing ? (existing.stock > 0 ? existing.stock : baseStock) : baseStock,
-                        image: product.image || (product.images && product.images[0]) || 'images/logo-tm.png',
-                        updated_at: existing ? existing.updated_at : null
-                    });
                 });
             });
 
             currentInventory = fullInventory;
-            window.currentInventory = currentInventory;
-            console.log(`✅ Inventario compartido procesado: ${currentInventory.length} variantes.`);
+            console.log(`📡 Inventario procesado: ${currentInventory.length} registros (por sede/talla).`);
 
-            currentInventory = fullInventory;
-            window.currentInventory = currentInventory; // EXPOSE FOR DEBUG
-            console.log(`✅ Inventario procesado: ${currentInventory.length} variantes totales.`);
-        } else {
-            // Fallback to local catalog if Supabase is not available
-            if (typeof TENNISYMAS_PRODUCTS !== 'undefined') {
-                allProducts = [...TENNISYMAS_PRODUCTS];
-                loadEmergencyData(); // This fills currentInventory from TENNISYMAS_PRODUCTS
+            if (supabaseClient) {
+                updateUI();
+            } else {
+                loadEmergencyData();
             }
         }
 
@@ -276,49 +316,80 @@ async function fetchInventory() {
 }
 
 /**
- * 🛒 SALES REGISTRATION (GLOBAL POOL)
+ * 🛒 SALES REGISTRATION (SMART LOCATION SUBTRACTION)
+ * Subtracts from the active location first, then from others if needed (Global Pool)
  */
-async function registerSale(productId, locationId, size, quantity) {
-    console.log(`🛒 Venta Global: Producto ${productId}, Talla ${size}, Cantidad ${quantity}`);
-
-    const itemInCurrent = currentInventory.find(i =>
-        i.product_id == productId &&
-        i.size == size
-    );
-
-    let currentStock = itemInCurrent ? itemInCurrent.stock : 0;
-    const newStock = currentStock - quantity;
-
-    if (newStock < 0) {
-        const proceed = confirm(`⚠️ Stock insuficiente (${currentStock} disponibles). ¿Desea registrar la venta de todas formas?`);
-        if (!proceed) return false;
-    }
+async function registerSale(productId, activeLocId, size, quantity) {
+    console.log(`🛒 Venta: Prod ${productId}, Sede ${activeLocId}, Talla ${size}, Qty ${quantity}`);
 
     if (supabaseClient) {
         try {
-            // ALWAYS update location_id: 0
-            const { error } = await supabaseClient
+            // 1. Get ALL records for this product/size
+            const { data: records, error: fetchErr } = await supabaseClient
                 .from('inventory')
-                .upsert({
-                    product_id: productId,
-                    location_id: 0,
-                    size: size,
-                    stock: newStock,
-                    updated_at: new Date()
-                }, { onConflict: 'product_id, location_id, size' });
+                .select('*')
+                .eq('product_id', productId)
+                .eq('size', size);
+            
+            if (fetchErr) throw fetchErr;
 
-            if (error) {
-                console.warn("⚠️ Error Supabase:", error.message);
-                return false;
+            // 2. Identify target record (Priority: 1. Active Loc, 2. Global (0), 3. Any other)
+            let remaining = quantity;
+            const sortedRecords = records.sort((a, b) => {
+                if (a.location_id == activeLocId) return -1;
+                if (b.location_id == activeLocId) return 1;
+                if (a.location_id == 0) return -1;
+                if (b.location_id == 0) return 1;
+                return 0;
+            });
+
+            for (const record of sortedRecords) {
+                if (remaining <= 0) break;
+                
+                const take = Math.min(record.stock || 0, remaining);
+                if (take > 0) {
+                    const newStock = record.stock - take;
+                    remaining -= take;
+
+                    await supabaseClient
+                        .from('inventory')
+                        .update({ stock: newStock, updated_at: new Date() })
+                        .eq('id', record.id);
+                        
+                    console.log(`✅ Descontados ${take} de Sede ${record.location_id}. Restante: ${remaining}`);
+                }
             }
+
+            // 3. Fallback: If still remaining, subtract from Global pool (id: 0) even if it goes negative (for accounting)
+            if (remaining > 0) {
+                const globalRec = records.find(r => r.location_id == 0);
+                if (globalRec) {
+                    await supabaseClient
+                        .from('inventory')
+                        .update({ stock: globalRec.stock - remaining, updated_at: new Date() })
+                        .eq('id', globalRec.id);
+                } else {
+                    // Create it
+                    await supabaseClient
+                        .from('inventory')
+                        .insert({
+                            product_id: productId,
+                            location_id: 0,
+                            size: size,
+                            stock: -remaining,
+                            updated_at: new Date()
+                        });
+                }
+                console.log(`⚠️ Se descontaron ${remaining} adicionales del Stock Global (Negativo).`);
+            }
+
+            await fetchInventory();
+            return true;
         } catch (e) {
-            console.warn("⚠️ Error Sincro:", e);
+            console.warn("⚠️ Error Sincro Venta:", e);
             return false;
         }
     }
-
-    const currentSales = parseInt(localStorage.getItem('today_sales_count') || '0');
-    localStorage.setItem('today_sales_count', (currentSales + quantity).toString());
 
     updateUI();
     return true;
