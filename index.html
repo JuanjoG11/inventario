@@ -93,23 +93,24 @@
             <li><a href="#" onclick="showSection('sales', this); return false;" class="nav-link"><span
                         class="nav-icon">🛒</span> Registrar Venta</a></li>
 
-            <li class="nav-label"
+            <li class="nav-label admin-only"
                 style="font-size: 0.65rem; color: #444; margin: 20px 0 10px 20px; text-transform: uppercase; font-weight: 800;">
                 Gestión</li>
-            <li><a href="#" onclick="showSection('history', this); return false;" class="nav-link"><span
+            <li class="admin-only"><a href="#" onclick="showSection('history', this); return false;" class="nav-link"><span
                         class="nav-icon">📜</span> Historial</a></li>
             <li><a href="#" onclick="showSection('restock', this); return false;" class="nav-link"><span
                         class="nav-icon">📦</span> Entradas</a></li>
-            <li><a href="#" onclick="showSection('manage', this); return false;" class="nav-link"><span
+            <li class="admin-only"><a href="#" onclick="showSection('manage', this); return false;" class="nav-link"><span
                         class="nav-icon">🛠️</span> Gestionar Stock</a></li>
 
-            <li class="nav-label"
+            <li class="nav-label admin-only"
                 style="font-size: 0.65rem; color: #444; margin: 20px 0 10px 20px; text-transform: uppercase; font-weight: 800;">
                 Reportes</li>
-            <li><a href="#" onclick="showSection('analysis', this); return false;" class="nav-link"><span
+            <li class="admin-only"><a href="#" onclick="showSection('analysis', this); return false;" class="nav-link"><span
                         class="nav-icon">📈</span> Análisis</a></li>
 
             <div style="margin-top: auto; padding: 20px 0;">
+                <li class="admin-only"><a href="admin.html" class="nav-link" style="color: #3498db;"><span class="nav-icon">🛡️</span> PANEL ADMIN</a></li>
                 <li><a href="#" onclick="window.logout(); return false;" class="nav-link"
                         style="color: var(--color-red); opacity: 0.7;"><span class="nav-icon">🚪</span> Cerrar
                         Sesión</a></li>
@@ -122,8 +123,8 @@
             <div id="dashboard-section" class="section-fade-in">
                 <header class="page-header">
                     <div>
-                        <h1>Inventario Central</h1>
-                        <p style="opacity: 0.6;">Control de stock real y sincronizado</p>
+                        <h1>Inventario de Sede</h1>
+                        <p style="opacity: 0.6;">Gestión de ventas y disponibilidad local</p>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <div class="active-sede-badge">
@@ -150,7 +151,7 @@
                         <div class="stat-value" id="criticalStockCount" style="color: #e74c3c;">0</div>
                         <div style="font-size: 0.75rem; color: #f1c40f;">Requieren reposición</div>
                     </div>
-                    <div class="stat-card" style="border-right-color: #3498db;">
+                    <div class="stat-card admin-only" style="border-right-color: #3498db;">
                         <div class="stat-label">Ventas Hoy</div>
                         <div class="stat-value" id="totalSales">0</div>
                         <div style="font-size: 0.75rem; color: #888;">Movimientos diarios</div>
@@ -166,7 +167,7 @@
                 </div>
 
                 <div class="charts-grid">
-                    <div class="card" style="padding: 25px; min-height: 300px;">
+                    <div class="card admin-only" style="padding: 25px; min-height: 300px;">
                         <h3 style="font-size: 0.8rem; margin-bottom: 20px; color: #888;">TENDENCIA DE VENTAS</h3>
                         <div style="height: 200px;"><canvas id="salesTrendChart"></canvas></div>
                     </div>
@@ -456,17 +457,11 @@
             <a href="#" onclick="showSection('dashboard', this); return false;"
                 class="active"><i>📊</i><span>Stock</span></a>
             <a href="#" onclick="showSection('sales', this); return false;"><i>🛒</i><span>Vender</span></a>
-            <a href="#" onclick="showSection('manage', this); return false;"><i>🛠️</i><span>Gesti&oacute;n</span></a>
-            <a href="#" onclick="showSection('history', this); return false;"><i>📜</i><span>Historial</span></a>
-            <a href="#" onclick="showSection('analysis', this); return false;"><i>📈</i><span>An&aacute;lisis</span></a>
+            <a href="#" onclick="showSection('manage', this); return false;" class="admin-only"><i>🛠️</i><span>Gesti&oacute;n</span></a>
+            <a href="#" onclick="showSection('history', this); return false;" class="admin-only"><i>📜</i><span>Historial</span></a>
+            <a href="#" onclick="showSection('analysis', this); return false;" class="admin-only"><i>📈</i><span>An&aacute;lisis</span></a>
         </nav>
     </div>
-
-    <!-- TEMPORARY CLEANUP BUTTON -->
-    <button onclick="window.dangerousCleanupDatabase()"
-        style="position:fixed; bottom:20px; right:20px; z-index:9999; opacity: 0.3; background:#333; color:white; padding:10px; border:none; border-radius:10px; font-size: 0.6rem; cursor:pointer;">
-        🗑️ LIMPIAR BD
-    </button>
 
     <!-- Production Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -500,6 +495,13 @@
         }
 
         function showSection(sectionId, element) {
+            // Role-based protection
+            const adminSections = ['history', 'analysis', 'manage'];
+            if (adminSections.includes(sectionId) && currentUserRole !== 'admin') {
+                showToast('Acceso restringido a administradores', 'error');
+                return;
+            }
+
             // Sections to manage
             const sections = ['dashboard', 'sales', 'history', 'restock', 'analysis', 'manage'];
 
@@ -606,7 +608,12 @@
                 const cat = item.category || "Otros";
 
                 const matchesSearch = name.toLowerCase().includes(term) || size.includes(term);
-                const matchesSede = sede === 'all' || item.location_name === sede;
+                
+                // Smart Sede Match: Always include Global Stock (0) items, OR match the specific sede
+                const matchesSede = sede === 'all' || 
+                                   item.location_name === sede || 
+                                   item.location_id == 0 || 
+                                   item.location_name === "Stock Global";
 
                 // Category Logic (Robust)
                 let matchesCat = currentCategoryFilter === 'all';
@@ -831,15 +838,22 @@
         let sedeChart = null;
         function renderAnalysis() {
             const history = JSON.parse(localStorage.getItem('transaction_history') || '[]');
-            const sales = history.filter(h => h.type === 'Venta');
+            const today = new Date().toLocaleDateString();
+            
+            // Filter only TODAY'S sales
+            const salesToday = history.filter(h => 
+                h.type === 'Venta' && 
+                new Date(h.date).toLocaleDateString() === today
+            );
 
             // Metrics
             const salesMonthEl = document.getElementById('totalSalesMonth');
-            if (salesMonthEl) salesMonthEl.textContent = sales.reduce((acc, curr) => acc + curr.qty, 0);
+            if (salesMonthEl) salesMonthEl.textContent = salesToday.reduce((acc, curr) => acc + curr.qty, 0);
 
-            // Top Products (Business Intelligence Style)
+            // Top Products (Business Intelligence Style) - All time or Month??
+            // Let's keep top products for all history to show most popular
             const topMap = {};
-            sales.forEach(s => {
+            history.filter(h => h.type === 'Venta').forEach(s => {
                 topMap[s.product] = (topMap[s.product] || 0) + s.qty;
             });
             const topList = Object.entries(topMap)
@@ -1297,11 +1311,19 @@
             const list = document.getElementById('manageSizeList');
             list.innerHTML = '';
             
-            // Get all items for this product in currentInventory
-            const items = currentInventory.filter(i => i.product_id == currentManageProduct.id);
+            // Get all items for this product in currentInventory and CONSOLIDATE by size
+            const rawItems = currentInventory.filter(i => i.product_id == currentManageProduct.id);
+            const consolidated = {};
             
-            if (items.length === 0) {
-                // If it has sizes but no inventory entries, use the sizes as template
+            rawItems.forEach(item => {
+                const s = item.size.toString();
+                if (!consolidated[s]) consolidated[s] = 0;
+                consolidated[s] += (item.stock || 0);
+            });
+            
+            const sizesInInventory = Object.keys(consolidated);
+
+            if (sizesInInventory.length === 0) {
                 const sizes = currentManageProduct.sizes || [];
                 if (sizes.length > 0) {
                     sizes.forEach(s => addNewSizeRow(s, 0));
@@ -1309,8 +1331,8 @@
                     addNewSizeRow('Única', 0);
                 }
             } else {
-                items.forEach(item => {
-                    addNewSizeRow(item.size, item.stock);
+                sizesInInventory.sort().forEach(size => {
+                    addNewSizeRow(size, consolidated[size]);
                 });
             }
         }
@@ -1363,22 +1385,30 @@
 
             try {
                 if (supabaseClient) {
-                    // 1. Update Inventory Table (Batch Upsert)
-                    // First, we might want to delete OLD sizes that are no longer in the list?
-                    // For simplicity, we just upsert the ones we have.
+                    // 1. Update Inventory Table (Batch Upsert to Global Pool)
                     const { error: invError } = await supabaseClient
                         .from('inventory')
                         .upsert(newInventory, { onConflict: 'product_id, location_id, size' });
 
                     if (invError) throw invError;
 
-                    // 2. Update Product's sizes list if it changed
-                    const { error: prodError } = await supabaseClient
+                    // 2. IMPORTANT: Normalize physical locations
+                    // Since we've updated the Global Stock (ID 0) with the new totals,
+                    // we must clear (set to 0) the records in other locations to avoid double counting.
+                    for (const item of newInventory) {
+                        await supabaseClient
+                            .from('inventory')
+                            .update({ stock: 0, updated_at: new Date() })
+                            .eq('product_id', item.product_id)
+                            .eq('size', item.size)
+                            .neq('location_id', 0);
+                    }
+
+                    // 3. Update Product's sizes list
+                    await supabaseClient
                         .from('products')
                         .update({ sizes: newSizes })
                         .eq('id', currentManageProduct.id);
-
-                    if (prodError) throw prodError;
                 }
 
                 // Log the action for history

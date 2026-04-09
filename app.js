@@ -8,12 +8,14 @@ const EMERGENCY_PRODUCTS = [];
 
 // State
 let locations = [
-    { id: 1, name: "Sede Fantasias New York", pin: "1111" },
-    { id: 2, name: "Sede Bulevar", pin: "2222" },
-    { id: 3, name: "Sede Virtual", pin: "3333" }
+    { id: 1, name: "Sede Fantasias New York", pin: "1111", role: "sede" },
+    { id: 2, name: "Sede Bulevar", pin: "2222", role: "sede" },
+    { id: 3, name: "Sede Virtual", pin: "3333", role: "sede" },
+    { id: 99, name: "MODO ADMINISTRADOR", pin: "0000", role: "admin" }
 ];
 let activeLocationId = parseInt(localStorage.getItem('active_location_id') || '0'); // 0 means not logged in
 let isLoggedIn = localStorage.getItem('is_logged_in') === 'true';
+let currentUserRole = localStorage.getItem('user_role') || 'sede';
 let allProducts = [];
 let currentInventory = [];
 let supabaseClient = null;
@@ -34,6 +36,14 @@ async function init() {
     // 1. Show login or load UI
     if (isLoggedIn && activeLocationId > 0) {
         document.body.classList.remove('login-required');
+        document.body.setAttribute('data-user-role', currentUserRole);
+        
+        // 🚀 PERSISTENT REDIRECT FOR ADMIN
+        if (currentUserRole === 'admin' && !window.location.href.includes('admin.html')) {
+            window.location.href = 'admin.html';
+            return;
+        }
+
         updateUI(); // Show empty state while loading
     } else {
         showLoginScreen();
@@ -427,6 +437,7 @@ function loadEmergencyData() {
 function updateUI() {
     if (typeof renderDashboard === 'function') renderDashboard();
     if (typeof renderSalesUI === 'function') renderSalesUI();
+    if (typeof renderAdminDashboard === 'function') renderAdminDashboard();
 }
 
 async function logTransaction(type, productName, size, sedeIdOrName, qty) {
@@ -455,19 +466,32 @@ async function verifyPin(pin) {
     if (sede) {
         activeLocationId = sede.id;
         isLoggedIn = true;
+        currentUserRole = sede.role || 'sede';
+        
         localStorage.setItem('active_location_id', activeLocationId);
         localStorage.setItem('is_logged_in', 'true');
+        localStorage.setItem('user_role', currentUserRole);
 
         document.body.classList.remove('login-required');
+        document.body.setAttribute('data-user-role', currentUserRole);
+        
         const loginOverlay = document.getElementById('loginOverlay');
         if (loginOverlay) loginOverlay.style.display = 'none';
 
-        showToast(`Bienvenido a ${sede.name}`, 'success');
+        showToast(`Autorizado: ${sede.name}`, 'success');
 
         // Populate selectors now that we have a sede
         if (typeof populateProfileSelectors === 'function') populateProfileSelectors();
 
         await fetchInventory();
+
+        // 🎉 REDIRECTION FOR ADMIN
+        if (currentUserRole === 'admin') {
+            setTimeout(() => {
+                window.location.href = 'admin.html';
+            }, 1000);
+        }
+
         return true;
     } else {
         return false;
@@ -483,6 +507,7 @@ function showLoginScreen() {
 function logout() {
     localStorage.removeItem('is_logged_in');
     localStorage.removeItem('active_location_id');
+    localStorage.removeItem('user_role');
     location.reload();
 }
 
@@ -490,47 +515,9 @@ window.verifyPin = verifyPin;
 window.logout = logout;
 window.showLoginScreen = showLoginScreen;
 
-// DATABASE CLEANUP UTILITY
-window.dangerousCleanupDatabase = async function () {
-    if (!confirm('¿Estás SEGURO de que quieres limpiar productos NO oficiales de la base de datos? Esta acción NO se puede deshacer.')) return;
-
-    try {
-        if (!supabaseClient) {
-            alert('No hay conexión a Supabase');
-            return;
-        }
-
-        // Get all products from DB
-        const { data: allDBProducts, error: fetchError } = await supabaseClient
-            .from('products')
-            .select('id, name');
-
-        if (fetchError) throw fetchError;
-
-        const officialIds = TENNISYMAS_PRODUCTS.map(p => p.id);
-        const toDelete = allDBProducts.filter(p => !officialIds.includes(p.id));
-
-        if (toDelete.length === 0) {
-            alert('✅ La base de datos ya está limpia. Solo contiene productos oficiales.');
-            return;
-        }
-
-        console.log(`🗑️ Eliminando ${toDelete.length} productos no oficiales...`);
-
-        for (const prod of toDelete) {
-            // Delete from inventory first
-            await supabaseClient.from('inventory').delete().eq('product_id', prod.id);
-            // Then delete product
-            await supabaseClient.from('products').delete().eq('id', prod.id);
-        }
-
-        alert(`✅ Limpieza completada. Se eliminaron ${toDelete.length} productos no oficiales.`);
-        location.reload();
-    } catch (err) {
-        console.error('Error en limpieza:', err);
-        alert('❌ Error al limpiar: ' + err.message);
-    }
-};
+function formatCurrency(val) {
+    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
+}
 
 function formatCurrency(val) {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);

@@ -61,6 +61,11 @@ body {
         radial-gradient(circle at 90% 80%, rgba(255, 51, 51, 0.03) 0%, transparent 40%);
 }
 
+/* Role-based Visibility */
+body[data-user-role="sede"] .admin-only {
+    display: none !important;
+}
+
 .card {
     background: rgba(18, 18, 18, 0.6) !important;
     backdrop-filter: blur(25px);
