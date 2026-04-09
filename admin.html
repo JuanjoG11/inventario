@@ -110,11 +110,13 @@
 
         @media (max-width: 992px) {
             .admin-sidebar { display: none; }
-            .admin-main { margin-left: 0; padding: 25px; padding-top: 10px; }
+            .admin-main { margin-left: 0; padding: 15px; padding-top: 10px; width: 100%; box-sizing: border-box; }
             .mobile-header { display: flex; }
             .mobile-nav { display: flex; }
-            .admin-section-grid { grid-template-columns: 1fr; }
-            .kpi-value { font-size: 2rem; }
+            .kpi-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+            .kpi-card { padding: 15px !important; }
+            .admin-section-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
+            .kpi-value { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -128,6 +130,7 @@
         <a href="#" class="mobile-nav-item active" onclick="showAdminSection('overview'); return false;"><i>📊</i><span>Resumen</span></a>
         <a href="#" class="mobile-nav-item" onclick="showAdminSection('movements'); return false;"><i>📜</i><span>Movs</span></a>
         <a href="#" class="mobile-nav-item" onclick="showAdminSection('inventory'); return false;"><i>📦</i><span>Stock</span></a>
+        <a href="https://tennisymas.com/admin.html" class="mobile-nav-item"><i>🌐</i><span>Web</span></a>
         <a href="#" class="mobile-nav-item" onclick="logout(); return false;"><i>🚪</i><span>Salir</span></a>
     </nav>
 
@@ -159,9 +162,10 @@
                 <div class="kpi-grid">
                     <div class="kpi-card"><div class="kpi-label">Existencias</div><div class="kpi-value" id="globalTotalStock">0</div><div style="font-size: 0.65rem; color: #2ecc71; font-weight: 800;">TOTAL GLOBAL</div></div>
                     <div class="kpi-card" style="border-right: 3px solid #e74c3c;"><div class="kpi-label">Agotados</div><div class="kpi-value" id="globalCriticalStock" style="color: #e74c3c;">0</div><div style="font-size: 0.65rem; color: #666; font-weight: 800;">REPOSICIÓN</div></div>
-                    <div class="kpi-card"><div class="kpi-label">Ventas Hoy</div><div class="kpi-value" id="globalTotalSales">0</div><div style="font-size: 0.65rem; color: #3498db; font-weight: 800;">TRANSACCIONES</div></div>
+                    <div class="kpi-card"><div class="kpi-label">Ventas Hoy</div><div class="kpi-value" id="globalTotalSales">0</div><div style="font-size: 0.65rem; color: #3498db; font-weight: 800;">HOY</div></div>
+                    <div class="kpi-card" style="border-bottom: 3px solid #f1c40f;"><div class="kpi-label">Ventas Mes</div><div class="kpi-value" id="globalMonthlySales">0</div><div style="font-size: 0.65rem; color: #f1c40f; font-weight: 800;">MES ACTUAL</div></div>
                 </div>
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
+                <div class="admin-section-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
                     <div class="glass-panel"><h3>TENDENCIA</h3><div style="height: 300px;"><canvas id="adminSalesChart"></canvas></div></div>
                     <div class="glass-panel"><h3>TOP VENTAS</h3><div id="adminTopProducts" style="display: flex; flex-direction: column; gap: 12px;"></div></div>
                 </div>
@@ -169,8 +173,26 @@
 
             <div id="admin-movements" class="admin-section" style="display: none;">
                 <div class="glass-panel">
-                    <h3>Registro Global</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+                        <h3 style="margin: 0;">Registro Global</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="historyFilter" onchange="renderGlobalHistory()" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid #333; padding: 10px; border-radius: 10px; font-size: 0.8rem;">
+                                <option value="all">Todo el Tiempo</option>
+                                <option value="today">Hoy</option>
+                                <option value="month">Este Mes</option>
+                            </select>
+                            <select id="typeFilter" onchange="renderGlobalHistory()" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid #333; padding: 10px; border-radius: 10px; font-size: 0.8rem;">
+                                <option value="all">Todos los Tipos</option>
+                                <option value="Venta">Solo Ventas</option>
+                                <option value="Entrada">Entradas/Ajustes</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Sede</th><th>Cant</th></tr></thead><tbody id="globalHistoryTable"></tbody></table></div>
+                    <div id="historySummary" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: #555; font-size: 0.7rem; text-transform: uppercase;">Total Filtrado</span>
+                        <span id="historyTotalQty" style="font-weight: 900; color: var(--color-accent); font-size: 1.2rem;">0</span>
+                    </div>
                 </div>
             </div>
 
@@ -230,9 +252,20 @@
             document.getElementById('globalTotalStock').textContent = totalStock;
             document.getElementById('globalCriticalStock').textContent = criticalCount;
             const history = JSON.parse(localStorage.getItem('transaction_history') || '[]');
-            const today = new Date().toLocaleDateString();
-            const salesToday = history.filter(h => h.type === 'Venta' && new Date(h.date).toLocaleDateString() === today);
+            const now = new Date();
+            const todayStr = now.toLocaleDateString();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const salesToday = history.filter(h => h.type === 'Venta' && new Date(h.date).toLocaleDateString() === todayStr);
+            const salesMonth = history.filter(h => {
+                const d = new Date(h.date);
+                return h.type === 'Venta' && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+            });
+
             document.getElementById('globalTotalSales').textContent = salesToday.reduce((a, b) => a + b.qty, 0);
+            document.getElementById('globalMonthlySales').textContent = salesMonth.reduce((a, b) => a + b.qty, 0);
+
             const allSales = history.filter(h => h.type === 'Venta');
             renderAdminChart(allSales); renderAdminTopProducts(allSales);
         }
@@ -287,6 +320,39 @@
         }
 
         function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+
+        function renderGlobalHistory() {
+            const history = JSON.parse(localStorage.getItem('transaction_history') || '[]');
+            const timeFilter = document.getElementById('historyFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const now = new Date();
+            const todayStr = now.toLocaleDateString();
+            const thisMonth = now.getMonth();
+            const thisYear = now.getFullYear();
+
+            let filtered = history;
+            
+            // Filter by Time
+            if (timeFilter === 'today') {
+                filtered = filtered.filter(h => new Date(h.date).toLocaleDateString() === todayStr);
+            } else if (timeFilter === 'month') {
+                filtered = filtered.filter(h => {
+                    const d = new Date(h.date);
+                    return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+                });
+            }
+
+            // Filter by Type
+            if (typeFilter !== 'all') {
+                filtered = filtered.filter(h => h.type === typeFilter);
+            }
+
+            const table = document.getElementById('globalHistoryTable');
+            table.innerHTML = filtered.reverse().map(h => `<tr><td>${new Date(h.date).toLocaleString()}</td><td><span style="color: ${h.type === 'Venta' ? '#2ecc71' : '#3498db'}">${h.type}</span></td><td>${h.product}</td><td>${h.location || h.location_id}</td><td>${h.qty}</td></tr>`).join('');
+            
+            const total = filtered.reduce((a, b) => a + b.qty, 0);
+            document.getElementById('historyTotalQty').textContent = total;
+        }
     </script>
 </body>
 </html>
