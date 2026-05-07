@@ -162,7 +162,7 @@ async function fetchInventory() {
             // 1. Fetch ALL products from the database (The "Web" catalog)
             const { data: pData, error: pError } = await supabaseClient
                 .from('products')
-                .select('id,name,category,image,images,sizes');
+                .select('id,name,category,image,images,sizes,price');
 
             if (pError) throw pError;
 
@@ -393,10 +393,40 @@ async function registerSale(productId, activeLocId, size, quantity) {
                 console.log(`⚠️ Se descontaron ${remaining} adicionales del Stock Global (Negativo).`);
             }
 
+            // 4. Record the transaction in Supabase
+            const product = allProducts.find(p => p.id == productId);
+            const location = locations.find(l => l.id == activeLocId);
+            
+            if (product) {
+                console.log("📝 Intentando registrar venta en tabla 'sales'...");
+                const { error: saleError } = await supabaseClient
+                    .from('sales')
+                    .insert({
+                        product_id: productId,
+                        product_name: product.name,
+                        location_id: activeLocId,
+                        location_name: location ? location.name : 'Sede Desconocida',
+                        size: size,
+                        quantity: quantity,
+                        price: cleanPrice(product.price) * quantity,
+                        created_at: new Date().toISOString()
+                    });
+                
+                if (saleError) {
+                    console.error("❌ Error al insertar en tabla 'sales':", saleError);
+                    // No bloqueamos la venta si falla el historial, pero avisamos
+                } else {
+                    console.log("✅ Venta registrada en historial con éxito");
+                }
+                
+                // Also log locally for immediate feedback
+                logTransaction('Venta', product.name, size, activeLocId, quantity);
+            }
+
             await fetchInventory();
             return true;
         } catch (e) {
-            console.warn("⚠️ Error Sincro Venta:", e);
+            console.error("❌ Error crítico en registerSale:", e);
             return false;
         }
     }
@@ -519,6 +549,42 @@ function formatCurrency(val) {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
 }
 
-function formatCurrency(val) {
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
+async function fetchSales(startDate = null, endDate = null) {
+    if (!supabaseClient) return [];
+    
+    try {
+        let query = supabaseClient
+            .from('sales')
+            .select('*')
+            .order('created_at', { ascending: false });
+        
+        if (startDate) {
+            query = query.gte('created_at', startDate);
+        }
+        if (endDate) {
+            // Ensure endDate includes the whole day
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            query = query.lte('created_at', end.toISOString());
+        }
+        
+        const { data, error } = await query;
+        if (error) throw error;
+        return data;
+    } catch (e) {
+        console.error("❌ Error fetching sales:", e);
+        return [];
+    }
 }
+
+function cleanPrice(price) {
+    if (!price) return 0;
+    if (typeof price === 'number') return price;
+    // Remove $, spaces, and dots
+    const clean = price.toString().replace(/[\$\s\.]/g, '');
+    return parseFloat(clean) || 0;
+}
+
+window.formatCurrency = formatCurrency;
+window.cleanPrice = cleanPrice;
+window.fetchSales = fetchSales;

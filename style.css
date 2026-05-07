@@ -434,7 +434,7 @@ body[data-user-role="sede"] .admin-only {
 
 .product-card:hover {
     transform: translateY(-5px);
-    border-color: rgba(255, 51, 51, 0.4);
+    border-color: rgba(255, 255, 255, 0.2);
     box-shadow: var(--shadow-glass);
 }
 
@@ -445,7 +445,7 @@ body[data-user-role="sede"] .admin-only {
 .card-overlay-hint {
     position: absolute;
     inset: 0;
-    background: rgba(255, 51, 51, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -457,6 +457,7 @@ body[data-user-role="sede"] .admin-only {
     z-index: 5;
     text-align: center;
     padding: 20px;
+    backdrop-filter: blur(5px);
 }
 
 .product-card:hover .card-overlay-hint {
@@ -537,8 +538,12 @@ body[data-user-role="sede"] .admin-only {
 }
 
 .badge.low {
-    border-color: var(--color-red);
-    color: var(--color-red);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #888;
+}
+
+.badge.out {
+    opacity: 0.3;
 }
 
 .badge-sede {
