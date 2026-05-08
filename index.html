@@ -1123,9 +1123,12 @@
                         const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
                         if (filtered.length > 0) {
                             results.innerHTML = filtered.map(p => `
-                                    <div class="search-result-item" onclick="selectProduct(${p.id})" style="padding: 12px 20px; border-bottom: 1px solid var(--color-gray-lighter); cursor: pointer;">
-                                        <div style="font-weight: 700;">${p.name}</div>
-                                        <div style="font-size: 0.75rem; opacity: 0.5;">${p.category || 'Deportivo'}</div>
+                                    <div class="search-result-item" onclick="selectProduct(${p.id})" style="padding: 12px 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px;">
+                                        <img src="${p.image || 'images/logo-tm.png'}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 0.9rem; color: #fff;">${p.name}</div>
+                                            <div style="font-size: 0.7rem; color: var(--color-red); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">${p.category || 'futsal'}</div>
+                                        </div>
                                     </div>
                                 `).join('');
                             results.style.display = 'block';
@@ -1227,8 +1230,12 @@
                 if (term.length < 2) { restockResults.style.display = 'none'; return; }
                 const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
                 restockResults.innerHTML = filtered.map(p => `
-                            <div class="search-result-item" onclick="selectProduct(${p.id}, 'restock')" style="padding: 10px 15px; cursor: pointer; border-bottom:1px solid #222;">
-                                <strong>${p.name}</strong>
+                            <div class="search-result-item" onclick="selectProduct(${p.id}, 'restock')" style="padding: 12px 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 15px;">
+                                <img src="${p.image || 'images/logo-tm.png'}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.9rem; color: #fff;">${p.name}</div>
+                                    <div style="font-size: 0.7rem; color: var(--color-red); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">${p.category || 'futsal'}</div>
+                                </div>
                             </div>
                         `).join('');
                 restockResults.style.display = 'block';
