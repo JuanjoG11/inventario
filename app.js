@@ -464,7 +464,33 @@ function loadEmergencyData() {
     console.log(`✅ ${currentInventory.length} items de inventario cargados.`);
 }
 
-function updateUI() {
+async function updateUI() {
+    // 1. Update Sede-Specific KPIs for Today
+    if (isLoggedIn && activeLocationId > 0) {
+        try {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+            const sales = await fetchSales(startOfDay);
+            
+            // Filter by active location
+            const mySales = sales.filter(s => s.location_id == activeLocationId);
+            const totalQty = mySales.reduce((a, b) => a + (b.quantity || 0), 0);
+            const totalMoney = mySales.reduce((a, b) => a + (parseFloat(b.price) || 0), 0);
+            
+            // Update UI elements
+            const salesEl = document.getElementById('totalSales');
+            if (salesEl) salesEl.textContent = totalQty;
+            
+            const revenueEl = document.getElementById('totalRevenueToday');
+            if (revenueEl) revenueEl.textContent = formatCurrency(totalMoney);
+            
+            // Sync local storage for fallback
+            localStorage.setItem('today_sales_count', totalQty);
+        } catch (e) {
+            console.warn("⚠️ Error actualizando KPIs de sede:", e);
+        }
+    }
+
     if (typeof renderDashboard === 'function') renderDashboard();
     if (typeof renderSalesUI === 'function') renderSalesUI();
     if (typeof renderAdminDashboard === 'function') renderAdminDashboard();
