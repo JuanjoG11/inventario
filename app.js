@@ -11,6 +11,7 @@ let locations = [
     { id: 1, name: "Sede Fantasias New York", pin: "1111", role: "sede" },
     { id: 2, name: "Sede Bulevar", pin: "2222", role: "sede" },
     { id: 3, name: "Sede Virtual", pin: "3333", role: "sede" },
+    { id: 4, name: "Sede Virtual 2", pin: "4444", role: "sede" },
     { id: 99, name: "MODO ADMINISTRADOR", pin: "0000", role: "admin" }
 ];
 let activeLocationId = parseInt(localStorage.getItem('active_location_id') || '0'); // 0 means not logged in
@@ -483,6 +484,33 @@ async function updateUI() {
             
             const revenueEl = document.getElementById('totalRevenueToday');
             if (revenueEl) revenueEl.textContent = formatCurrency(totalMoney);
+
+            // 2. Render Detailed List
+            const salesListEl = document.getElementById('misVentasHoy');
+            const salesSectionEl = document.getElementById('sedeDailySalesSection');
+            
+            if (salesListEl && salesSectionEl) {
+                if (mySales.length > 0) {
+                    salesSectionEl.style.display = 'block';
+                    salesListEl.innerHTML = mySales.map(s => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 12px; border-left: 3px solid #2ecc71;">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <div style="font-size: 1.2rem;">👟</div>
+                                <div>
+                                    <div style="font-weight: 800; font-size: 0.85rem; color: #fff;">${s.product_name}</div>
+                                    <div style="font-size: 0.65rem; color: #666;">Talla: ${s.size} • Cant: ${s.quantity}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: 900; color: #2ecc71; font-size: 0.9rem;">${formatCurrency(s.price || 0)}</div>
+                                <div style="font-size: 0.55rem; opacity: 0.5;">${new Date(s.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    salesSectionEl.style.display = 'none';
+                }
+            }
             
             // Sync local storage for fallback
             localStorage.setItem('today_sales_count', totalQty);
