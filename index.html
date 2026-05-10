@@ -570,17 +570,33 @@
             let totalStock = 0;
             const criticalItemsMap = new Map();
 
-            // Calculate metrics & find critical stocks
+            // First consolidate by product name and size
+            const consolidatedByProduct = {};
             currentInventory.forEach(item => {
-                const stock = item.stock || 0;
-                totalStock += stock;
+                const name = item.product_name;
+                const size = item.size;
+                if (!consolidatedByProduct[name]) {
+                    consolidatedByProduct[name] = { name, image: item.image, sizes: {} };
+                }
+                if (!consolidatedByProduct[name].sizes[size]) {
+                    consolidatedByProduct[name].sizes[size] = 0;
+                }
+                consolidatedByProduct[name].sizes[size] += (item.stock || 0);
+                totalStock += (item.stock || 0);
+            });
+
+            // Now find critical stocks based on consolidated data
+            Object.values(consolidatedByProduct).forEach(prod => {
+                const criticalSizes = Object.entries(prod.sizes)
+                    .filter(([size, stock]) => stock <= 1)
+                    .map(([size, stock]) => ({ size, stock }));
                 
-                if (stock <= 1) {
-                    const key = item.product_name;
-                    if (!criticalItemsMap.has(key)) {
-                        criticalItemsMap.set(key, { name: item.product_name, image: item.image, sizes: [] });
-                    }
-                    criticalItemsMap.get(key).sizes.push({ size: item.size, stock: stock });
+                if (criticalSizes.length > 0) {
+                    criticalItemsMap.set(prod.name, {
+                        name: prod.name,
+                        image: prod.image,
+                        sizes: criticalSizes
+                    });
                 }
             });
 
@@ -1420,13 +1436,26 @@
                     // 2. IMPORTANT: Normalize physical locations
                     // Since we've updated the Global Stock (ID 0) with the new totals,
                     // we must clear (set to 0) the records in other locations to avoid double counting.
+                    // We also clear ALL related product IDs with the same name to maintain consistency.
+                    const relatedIds = allProducts
+                        .filter(p => p.name.trim().toLowerCase() === currentManageProduct.name.trim().toLowerCase())
+                        .map(p => p.id);
+
                     for (const item of newInventory) {
                         await supabaseClient
                             .from('inventory')
                             .update({ stock: 0, updated_at: new Date() })
-                            .eq('product_id', item.product_id)
+                            .in('product_id', relatedIds) // Use all related IDs
                             .eq('size', item.size)
                             .neq('location_id', 0);
+                        
+                        // Also clear Global Stock for OTHER related IDs (keeping only the one we just upserted)
+                        await supabaseClient
+                            .from('inventory')
+                            .update({ stock: 0, updated_at: new Date() })
+                            .in('product_id', relatedIds.filter(id => id != item.product_id))
+                            .eq('size', item.size)
+                            .eq('location_id', 0);
                     }
 
                     // 3. Update Product's sizes list

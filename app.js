@@ -256,14 +256,21 @@ async function fetchInventory() {
 
             // 3. Construct Complete Inventory (Shared Pool)
             let fullInventory = [];
-            const namesSeen = new Set();
-            const uniqueProducts = allProducts.filter(p => {
-                if (namesSeen.has(p.name)) return false;
-                namesSeen.add(p.name);
-                return true;
+            
+            // Group allProducts by name to handle duplicates
+            const productsByName = {};
+            allProducts.forEach(p => {
+                if (!productsByName[p.name]) {
+                    productsByName[p.name] = {
+                        ...p,
+                        ids: [p.id]
+                    };
+                } else {
+                    productsByName[p.name].ids.push(p.id);
+                }
             });
 
-            uniqueProducts.forEach(product => {
+            Object.values(productsByName).forEach(product => {
                 let productSizes = Array.isArray(product.sizes) ? product.sizes : [];
                 
                 if (productSizes.length === 0) {
@@ -273,9 +280,9 @@ async function fetchInventory() {
                 productSizes.forEach(size => {
                     const sizeKey = size.toString();
                     
-                    // Get all records for this product/size across all locations
+                    // Get all records for this product NAME (all IDs) across all locations
                     const records = rawInventory.filter(i =>
-                        i.product_id == product.id &&
+                        product.ids.includes(i.product_id) &&
                         i.size == sizeKey
                     );
                     
@@ -283,7 +290,7 @@ async function fetchInventory() {
                         // Create a placeholder if no record exists
                         fullInventory.push({
                             id: null,
-                            product_id: product.id,
+                            product_id: product.id, // Use one ID as reference
                             product_name: product.name,
                             category: product.category,
                             location_id: 0,
@@ -293,7 +300,7 @@ async function fetchInventory() {
                             image: product.image
                         });
                     } else {
-                        // Push all existing locations for this product/size
+                        // Push all existing locations for this product name
                         records.forEach(r => {
                             const location = locations.find(l => l.id == r.location_id);
                             fullInventory.push({
@@ -309,7 +316,7 @@ async function fetchInventory() {
             });
 
             currentInventory = fullInventory;
-            console.log(`📡 Inventario procesado: ${currentInventory.length} registros (por sede/talla).`);
+            console.log(`📡 Inventario procesado: ${currentInventory.length} registros (consolidados por nombre).`);
 
             if (supabaseClient) {
                 updateUI();
@@ -335,22 +342,35 @@ async function registerSale(productId, activeLocId, size, quantity) {
 
     if (supabaseClient) {
         try {
-            // 1. Get ALL records for this product/size
+            // 0. Get the name of the product and all related IDs (to handle duplicates)
+            const targetProduct = allProducts.find(p => p.id == productId);
+            if (!targetProduct) throw new Error("Producto no encontrado en el catálogo local");
+            
+            const relatedIds = allProducts
+                .filter(p => p.name.trim().toLowerCase() === targetProduct.name.trim().toLowerCase())
+                .map(p => p.id);
+
+            // 1. Get ALL records for this product NAME (all related IDs)
             const { data: records, error: fetchErr } = await supabaseClient
                 .from('inventory')
                 .select('*')
-                .eq('product_id', productId)
+                .in('product_id', relatedIds)
                 .eq('size', size);
             
             if (fetchErr) throw fetchErr;
 
-            // 2. Identify target record (Priority: 1. Active Loc, 2. Global (0), 3. Any other)
+            // 2. Identify target records (Priority: 1. Active Loc, 2. Global (0), 3. Any other)
             let remaining = quantity;
             const sortedRecords = records.sort((a, b) => {
-                if (a.location_id == activeLocId) return -1;
-                if (b.location_id == activeLocId) return 1;
-                if (a.location_id == 0) return -1;
-                if (b.location_id == 0) return 1;
+                // Priority 1: Current location (Active Sede)
+                if (a.location_id == activeLocId && b.location_id != activeLocId) return -1;
+                if (b.location_id == activeLocId && a.location_id != activeLocId) return 1;
+                
+                // Priority 2: Global Stock (0)
+                if (a.location_id == 0 && b.location_id != 0) return -1;
+                if (b.location_id == 0 && a.location_id != 0) return 1;
+                
+                // Priority 3: Any other location
                 return 0;
             });
 
@@ -367,20 +387,22 @@ async function registerSale(productId, activeLocId, size, quantity) {
                         .update({ stock: newStock, updated_at: new Date() })
                         .eq('id', record.id);
                         
-                    console.log(`✅ Descontados ${take} de Sede ${record.location_id}. Restante: ${remaining}`);
+                    console.log(`✅ Descontados ${take} de Sede ${record.location_id} (ID Producto: ${record.product_id}). Restante: ${remaining}`);
                 }
             }
 
-            // 3. Fallback: If still remaining, subtract from Global pool (id: 0) even if it goes negative (for accounting)
+            // 3. Fallback: If still remaining, subtract from Global pool (id: 0) of the PRIMARY productId
             if (remaining > 0) {
-                const globalRec = records.find(r => r.location_id == 0);
+                // Try to find a global record for ANY of the related IDs
+                let globalRec = records.find(r => r.location_id == 0);
+                
                 if (globalRec) {
                     await supabaseClient
                         .from('inventory')
                         .update({ stock: globalRec.stock - remaining, updated_at: new Date() })
                         .eq('id', globalRec.id);
                 } else {
-                    // Create it
+                    // Create it for the primary productId selected in UI
                     await supabaseClient
                         .from('inventory')
                         .insert({
@@ -395,34 +417,30 @@ async function registerSale(productId, activeLocId, size, quantity) {
             }
 
             // 4. Record the transaction in Supabase
-            const product = allProducts.find(p => p.id == productId);
             const location = locations.find(l => l.id == activeLocId);
             
-            if (product) {
-                console.log("📝 Intentando registrar venta en tabla 'sales'...");
-                const { error: saleError } = await supabaseClient
-                    .from('sales')
-                    .insert({
-                        product_id: productId,
-                        product_name: product.name,
-                        location_id: activeLocId,
-                        location_name: location ? location.name : 'Sede Desconocida',
-                        size: size,
-                        quantity: quantity,
-                        price: cleanPrice(product.price) * quantity,
-                        created_at: new Date().toISOString()
-                    });
-                
-                if (saleError) {
-                    console.error("❌ Error al insertar en tabla 'sales':", saleError);
-                    // No bloqueamos la venta si falla el historial, pero avisamos
-                } else {
-                    console.log("✅ Venta registrada en historial con éxito");
-                }
-                
-                // Also log locally for immediate feedback
-                logTransaction('Venta', product.name, size, activeLocId, quantity);
+            console.log("📝 Intentando registrar venta en tabla 'sales'...");
+            const { error: saleError } = await supabaseClient
+                .from('sales')
+                .insert({
+                    product_id: productId,
+                    product_name: targetProduct.name,
+                    location_id: activeLocId,
+                    location_name: location ? location.name : 'Sede Desconocida',
+                    size: size,
+                    quantity: quantity,
+                    price: cleanPrice(targetProduct.price) * quantity,
+                    created_at: new Date().toISOString()
+                });
+            
+            if (saleError) {
+                console.error("❌ Error al insertar en tabla 'sales':", saleError);
+            } else {
+                console.log("✅ Venta registrada en historial con éxito");
             }
+            
+            // Also log locally for immediate feedback
+            logTransaction('Venta', targetProduct.name, size, activeLocId, quantity);
 
             await fetchInventory();
             return true;

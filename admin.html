@@ -256,10 +256,28 @@
 
         async function renderAdminDashboard() {
             let totalStock = 0, criticalCount = 0;
+            
+            // Consolidate by product name and size
+            const consolidatedByProduct = {};
             currentInventory.forEach(item => {
+                const name = item.product_name;
+                const size = item.size;
+                if (!consolidatedByProduct[name]) {
+                    consolidatedByProduct[name] = { name, sizes: {} };
+                }
+                if (!consolidatedByProduct[name].sizes[size]) {
+                    consolidatedByProduct[name].sizes[size] = 0;
+                }
+                consolidatedByProduct[name].sizes[size] += (item.stock || 0);
                 totalStock += (item.stock || 0);
-                if (item.stock <= 1 && item.stock >= 0) criticalCount++;
             });
+
+            // Count unique products that have at least one critical size
+            Object.values(consolidatedByProduct).forEach(prod => {
+                const hasCritical = Object.values(prod.sizes).some(stock => stock <= 1);
+                if (hasCritical) criticalCount++;
+            });
+
             document.getElementById('globalTotalStock').textContent = totalStock;
             document.getElementById('globalCriticalStock').textContent = criticalCount;
             
