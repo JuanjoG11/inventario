@@ -93,10 +93,10 @@
             <li><a href="#" onclick="showSection('sales', this); return false;" class="nav-link"><span
                         class="nav-icon">🛒</span> Registrar Venta</a></li>
 
-            <li class="nav-label admin-only"
+            <li class="nav-label"
                 style="font-size: 0.65rem; color: #444; margin: 20px 0 10px 20px; text-transform: uppercase; font-weight: 800;">
                 Gestión</li>
-            <li class="admin-only"><a href="#" onclick="showSection('history', this); return false;" class="nav-link"><span
+            <li><a href="#" onclick="showSection('history', this); return false;" class="nav-link"><span
                         class="nav-icon">📜</span> Historial</a></li>
             <li><a href="#" onclick="showSection('restock', this); return false;" class="nav-link"><span
                         class="nav-icon">📦</span> Entradas</a></li>
@@ -321,9 +321,28 @@
                 <header class="page-header">
                     <div>
                         <h1 class="section-title">Historial de Movimientos</h1>
-                        <p style="opacity: 0.6;">Registro completo de entradas y salidas</p>
+                        <p style="opacity: 0.6;">Registro completo de ventas en la nube</p>
                     </div>
                 </header>
+
+                <div class="inventory-controls" style="margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                    <div class="search-wrapper" style="min-width: 200px;">
+                        <span>🔍</span>
+                        <input type="text" id="historySearchInput" class="filter-input"
+                            placeholder="Buscar producto o sede..."
+                            oninput="renderHistory(false)">
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex: 1; justify-content: flex-end; min-width: 300px;">
+                        <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <span style="font-size: 0.7rem; color: #888; font-weight: 800;">DE:</span>
+                            <input type="date" id="historyDateFrom" class="filter-input" style="width: auto; font-size: 0.8rem;" onchange="renderHistory(true)">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                            <span style="font-size: 0.7rem; color: #888; font-weight: 800;">A:</span>
+                            <input type="date" id="historyDateTo" class="filter-input" style="width: auto; font-size: 0.8rem;" onchange="renderHistory(true)">
+                        </div>
+                    </div>
+                </div>
                 <div class="card" style="padding: 0; overflow: hidden;">
                     <div class="data-table-container">
                         <table class="data-table">
@@ -475,8 +494,8 @@
             <a href="#" onclick="showSection('dashboard', this); return false;"
                 class="active"><i>📊</i><span>Stock</span></a>
             <a href="#" onclick="showSection('sales', this); return false;"><i>🛒</i><span>Vender</span></a>
+            <a href="#" onclick="showSection('history', this); return false;"><i>📜</i><span>Historial</span></a>
             <a href="#" onclick="showSection('manage', this); return false;" class="admin-only"><i>🛠️</i><span>Gesti&oacute;n</span></a>
-            <a href="#" onclick="showSection('history', this); return false;" class="admin-only"><i>📜</i><span>Historial</span></a>
             <a href="#" onclick="showSection('analysis', this); return false;" class="admin-only"><i>📈</i><span>An&aacute;lisis</span></a>
         </nav>
     </div>
@@ -514,7 +533,7 @@
 
         function showSection(sectionId, element) {
             // Role-based protection
-            const adminSections = ['history', 'analysis', 'manage'];
+            const adminSections = ['analysis', 'manage'];
             if (adminSections.includes(sectionId) && currentUserRole !== 'admin') {
                 showToast('Acceso restringido a administradores', 'error');
                 return;
@@ -833,39 +852,76 @@
             if (selectedProduct) updateSizeOptions();
         }
 
-        // --- History Implementation ---
-        // logTransaction is now defined in app.js
-
-        function renderHistory() {
+        // --- History Implementation (Real-time from Supabase) ---
+        let lastFetchedSales = [];
+        async function renderHistory(forceFetch = true) {
             const table = document.getElementById('historyLogTable');
-            const history = JSON.parse(localStorage.getItem('transaction_history') || '[]');
+            const searchTerm = document.getElementById('historySearchInput').value.toLowerCase();
+            const dateFrom = document.getElementById('historyDateFrom').value;
+            const dateTo = document.getElementById('historyDateTo').value;
 
-            if (history.length === 0) {
-                table.innerHTML = '<tr><td colspan="6" style="text-align:center; opacity:0.3; padding:40px;">No hay movimientos registrados</td></tr>';
-                return;
+            try {
+                if (forceFetch || lastFetchedSales.length === 0) {
+                    table.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px;"><div class="loader-small"></div> Cargando desde la nube...</td></tr>';
+                    
+                    // Default to last 30 days if no dates selected
+                    let start = dateFrom ? new Date(dateFrom).toISOString() : null;
+                    if (!start) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - 30);
+                        start = d.toISOString();
+                    }
+                    
+                    let end = dateTo ? new Date(dateTo).toISOString() : null;
+
+                    lastFetchedSales = await fetchSales(start, end);
+                }
+
+                // Apply Filters locally
+                let filtered = [...lastFetchedSales];
+
+                // 1. Sede Filter (Strict)
+                if (currentUserRole !== 'admin') {
+                    filtered = filtered.filter(s => s.location_id == activeLocationId);
+                }
+
+                // 2. Search Term Filter
+                if (searchTerm) {
+                    filtered = filtered.filter(s => 
+                        s.product_name.toLowerCase().includes(searchTerm) || 
+                        (s.location_name && s.location_name.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                if (filtered.length === 0) {
+                    table.innerHTML = `<tr><td colspan="6" style="text-align:center; opacity:0.3; padding:40px;">No se encontraron ventas con los filtros aplicados</td></tr>`;
+                    return;
+                }
+
+                table.innerHTML = filtered.map(s => {
+                    const dateObj = new Date(s.created_at);
+                    return `
+                    <tr>
+                        <td>
+                            <div style="font-size:0.75rem; font-weight:700;">${dateObj.toLocaleDateString()}</div>
+                            <div style="font-size:0.6rem; opacity:0.5;">${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                        </td>
+                        <td><span class="type-badge type-sale">VENTA</span></td>
+                        <td>
+                            <div style="font-weight:700; color:#fff;">${s.product_name}</div>
+                            <div style="font-size:0.6rem; opacity:0.5;">Talla: ${s.size}</div>
+                        </td>
+                        <td style="font-size:0.75rem; font-weight:bold; color:var(--color-red);">${(s.location_name || '').replace('Sede ', '')}</td>
+                        <td style="font-weight:800; text-align:right; color:#e74c3c">
+                            -${s.quantity}
+                        </td>
+                    </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error("Error al renderizar historial:", err);
+                table.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--color-red); padding:40px;">Error de conexión</td></tr>';
             }
-
-            table.innerHTML = history.map(h => {
-                const dateObj = new Date(h.date);
-                const isSale = h.type === 'Venta';
-                return `
-                <tr>
-                    <td>
-                        <div style="font-size:0.75rem; font-weight:700;">${dateObj.toLocaleDateString()}</div>
-                        <div style="font-size:0.6rem; opacity:0.5;">${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-                    </td>
-                    <td><span class="type-badge ${isSale ? 'type-sale' : 'type-entry'}">${h.type}</span></td>
-                    <td>
-                        <div style="font-weight:700; color:#fff;">${h.product}</div>
-                        <div style="font-size:0.6rem; opacity:0.5;">Talla: ${h.size}</div>
-                    </td>
-                    <td style="font-size:0.75rem; font-weight:bold; color:var(--color-red);">${h.sede.replace('Sede ', '')}</td>
-                    <td style="font-weight:800; text-align:right; color:${isSale ? '#e74c3c' : '#2ecc71'}">
-                        ${isSale ? '-' : '+'}${h.qty}
-                    </td>
-                </tr>
-                `;
-            }).join('');
         }
 
         // --- Analysis Implementation ---
@@ -988,9 +1044,14 @@
 
             if (!selectedProduct) return;
 
-            // Get all records for this product across all locations
+            // Find ALL related IDs (same name) to consolidate stock
+            const relatedIds = allProducts
+                .filter(p => p.name.trim().toLowerCase() === selectedProduct.name.trim().toLowerCase())
+                .map(p => p.id);
+
+            // Get all records for this product (all related IDs) across all locations
             const availableRecords = currentInventory.filter(i =>
-                i.product_id == selectedProduct.id && i.stock > 0
+                relatedIds.includes(i.product_id) && i.stock > 0
             );
 
             // Group by size to show consolidated info + breakdown
@@ -1000,10 +1061,15 @@
                     groupedBySize[rec.size] = { total: 0, breakdown: [] };
                 }
                 groupedBySize[rec.size].total += rec.stock;
-                groupedBySize[rec.size].breakdown.push(`${rec.location_name.replace('Sede ', '')}: ${rec.stock}`);
+                
+                const locName = rec.location_name.replace('Sede ', '');
+                const entry = `${locName}: ${rec.stock}`;
+                if (!groupedBySize[rec.size].breakdown.includes(entry)) {
+                    groupedBySize[rec.size].breakdown.push(entry);
+                }
             });
 
-            const sizes = Object.keys(groupedBySize);
+            const sizes = Object.keys(groupedBySize).sort();
 
             if (sizes.length === 0) {
                 sizeSelect.innerHTML = '<option value="" disabled selected>Sin stock registrado</option>';

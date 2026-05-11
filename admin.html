@@ -514,9 +514,21 @@
         }
 
         function renderAdminInventory(productsToRender = allProducts) {
+            // Consolidate products by name for the grid
+            const consolidated = [];
+            const namesSeen = new Set();
+            
+            productsToRender.forEach(p => {
+                const name = p.name.trim();
+                if (!namesSeen.has(name)) {
+                    consolidated.push(p);
+                    namesSeen.add(name);
+                }
+            });
+
             const grid = document.getElementById('adminInventoryGrid');
-            grid.innerHTML = productsToRender.map(p => `
-                <div class="product-card" onclick="openProductSettings(${p.id})">
+            grid.innerHTML = consolidated.map(p => `
+                <div class="product-card" onclick="openProductSettings('${p.id}')">
                     <img src="${p.image}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 12px;">
                     <div style="padding: 10px;">
                         <div style="font-size: 0.7rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
@@ -530,7 +542,11 @@
             const term = document.getElementById('adminInvSearch').value.toLowerCase();
             const filtered = allProducts.filter(p => {
                 const nameMatch = p.name.toLowerCase().includes(term);
-                const sizeMatch = currentInventory.some(i => i.product_id === p.id && i.size.toString().includes(term) && i.stock > 0);
+                const sizeMatch = currentInventory.some(i => 
+                    (i.product_id === p.id || (allProducts.find(ap => ap.id === i.product_id)?.name === p.name)) && 
+                    i.size.toString().toLowerCase().includes(term) && 
+                    i.stock > 0
+                );
                 return nameMatch || sizeMatch;
             });
             renderAdminInventory(filtered);
@@ -538,16 +554,59 @@
 
         function openProductSettings(id) {
             const prod = allProducts.find(p => p.id == id);
+            if (!prod) return;
+
+            // Find ALL related IDs (same name) to consolidate stock
+            const relatedIds = allProducts
+                .filter(p => p.name.trim().toLowerCase() === prod.name.trim().toLowerCase())
+                .map(p => p.id);
+
             document.getElementById('editTitle').textContent = prod.name;
             document.getElementById('editSubtitle').textContent = prod.category || 'Deportivo';
+            
             const list = document.getElementById('editSizeList');
-            list.innerHTML = `<div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; padding: 10px; font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #222;"><div>Talla</div><div style="text-align:center;">F. New York</div><div style="text-align:center;">Bulevar</div></div>`;
-            const inventory = currentInventory.filter(i => i.product_id == id);
-            const stockMap = {}; inventory.forEach(i => { stockMap[`${i.size}_${i.location_id}`] = i.stock || 0; });
-            const metaSizes = prod.sizes || []; if (metaSizes.length === 0) metaSizes.push('Única');
-            metaSizes.forEach(s => {
-                const ny = stockMap[`${s}_1`] || 0, bul = stockMap[`${s}_2`] || 0;
-                list.innerHTML += `<div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:10px; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:12px; opacity: ${(ny+bul) > 0 ? 1 : 0.3}"><span style="font-weight:700; font-size: 0.9rem;">${s}</span><div style="text-align:center; font-weight:900;">${ny}</div><div style="text-align:center; font-weight:900;">${bul}</div></div>`;
+            list.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 8px; padding: 10px; font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #222;">
+                    <div>Talla</div>
+                    <div style="text-align:center;">F. N.Y.</div>
+                    <div style="text-align:center;">Bulevar</div>
+                    <div style="text-align:center;">Global</div>
+                </div>
+            `;
+            
+            const inventory = currentInventory.filter(i => relatedIds.includes(i.product_id));
+            const stockMap = {}; 
+            inventory.forEach(i => { 
+                const key = `${i.size}_${i.location_id}`;
+                stockMap[key] = (stockMap[key] || 0) + (i.stock || 0); 
+            });
+
+            // Get all unique sizes from product metadata AND inventory records
+            const metaSizes = prod.sizes || [];
+            const inventorySizes = [...new Set(inventory.map(i => i.size))];
+            const allUniqueSizes = [...new Set([...metaSizes, ...inventorySizes])].sort((a, b) => {
+                // Numeric sort for shoe sizes
+                const numA = parseFloat(a), numB = parseFloat(b);
+                if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                return a.toString().localeCompare(b.toString());
+            });
+
+            if (allUniqueSizes.length === 0) allUniqueSizes.push('Única');
+
+            allUniqueSizes.forEach(s => {
+                const ny = stockMap[`${s}_1`] || 0;
+                const bul = stockMap[`${s}_2`] || 0;
+                const global = stockMap[`${s}_0`] || 0;
+                const total = ny + bul + global;
+                
+                list.innerHTML += `
+                    <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap:8px; align-items:center; background:rgba(255,255,255,0.03); padding:12px; border-radius:12px; opacity: ${total > 0 ? 1 : 0.3}">
+                        <span style="font-weight:700; font-size: 0.85rem;">${s}</span>
+                        <div style="text-align:center; font-weight:900; color: ${ny > 0 ? '#fff' : '#444'}">${ny}</div>
+                        <div style="text-align:center; font-weight:900; color: ${bul > 0 ? '#fff' : '#444'}">${bul}</div>
+                        <div style="text-align:center; font-weight:900; color: ${global > 0 ? '#2ecc71' : '#444'}">${global}</div>
+                    </div>
+                `;
             });
             document.getElementById('editModal').style.display = 'flex';
         }

@@ -170,25 +170,37 @@
         }
 
         function updateSizeOptions() {
-            const sede = document.getElementById('saleSede').value;
             const sizeSelect = document.getElementById('saleSize');
             const alertText = document.getElementById('stockAlert');
 
-            if (!sede) return;
+            if (!selectedProduct) return;
 
-            // Use currentInventory instead of fetching again
+            // Find ALL related IDs (same name)
+            const relatedIds = allProducts
+                .filter(p => p.name.trim().toLowerCase() === selectedProduct.name.trim().toLowerCase())
+                .map(p => p.id);
+
+            // Get all records for these IDs across all locations
             const available = currentInventory.filter(i =>
-                i.product_name === selectedProduct.name &&
-                i.location_name === sede
+                relatedIds.includes(i.product_id) && i.stock > 0
             );
 
             if (available.length === 0) {
                 sizeSelect.innerHTML = '<option value="" disabled selected>Sin stock registrado</option>';
-                alertText.textContent = "Este producto no tiene entradas en esta sede.";
+                alertText.textContent = "Este producto no tiene existencias disponibles.";
             } else {
+                // Group by size
+                const grouped = {};
+                available.forEach(i => {
+                    if (!grouped[i.size]) grouped[i.size] = 0;
+                    grouped[i.size] += i.stock;
+                });
+
                 sizeSelect.innerHTML = '<option value="" disabled selected>Seleccione talla...</option>' +
-                    available.map(i => `<option value="${i.size}">${i.size} (Stock: ${i.stock})</option>`).join('');
-                alertText.textContent = "Selecciona una talla para descontar.";
+                    Object.keys(grouped).sort().map(size => 
+                        `<option value="${size}">${size} (Total: ${grouped[size]})</option>`
+                    ).join('');
+                alertText.textContent = "Selecciona una talla (stock consolidado de todas las sedes).";
             }
         }
 

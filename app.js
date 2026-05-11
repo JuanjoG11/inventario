@@ -229,10 +229,19 @@ async function fetchInventory() {
                     parsedSizes = typeof p.sizes === 'string' ? JSON.parse(p.sizes) : (p.sizes || []);
                 } catch (e) {
                     console.warn(`⚠️ Error parseando tallas para ${p.name}:`, p.sizes);
-                    // Fallback: si es una cadena separada por comas
                     if (typeof p.sizes === 'string') {
                         parsedSizes = p.sizes.split(',').map(s => s.trim());
                     }
+                }
+
+                // Resilience: If sizes is an array of objects (like [{size: "38", stock: 1}]), extract just the size
+                if (Array.isArray(parsedSizes)) {
+                    parsedSizes = parsedSizes.map(s => {
+                        if (typeof s === 'object' && s !== null) {
+                            return s.size || s.talla || Object.keys(s)[0];
+                        }
+                        return s;
+                    }).filter(s => s !== undefined && s !== null);
                 }
 
                 return {
