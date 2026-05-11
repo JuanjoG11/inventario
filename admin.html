@@ -128,6 +128,7 @@
 
     <nav class="mobile-nav">
         <a href="#" class="mobile-nav-item active" onclick="showAdminSection('overview'); return false;"><i>📊</i><span>Resumen</span></a>
+        <a href="#" class="mobile-nav-item" onclick="showAdminSection('branch-report'); return false;"><i>🏪</i><span>Sedes</span></a>
         <a href="#" class="mobile-nav-item" onclick="showAdminSection('movements'); return false;"><i>📜</i><span>Movs</span></a>
         <a href="#" class="mobile-nav-item" onclick="showAdminSection('inventory'); return false;"><i>📦</i><span>Stock</span></a>
         <a href="https://tennisymas.com/admin.html" class="mobile-nav-item"><i>🌐</i><span>Web</span></a>
@@ -141,6 +142,7 @@
             </div>
             <nav style="flex: 1;">
                 <a href="#" class="admin-nav-link active" onclick="showAdminSection('overview'); return false;"><span>📊</span> Resumen General</a>
+                <a href="#" class="admin-nav-link" onclick="showAdminSection('branch-report'); return false;"><span>🏪</span> Ventas por Sede</a>
                 <a href="#" class="admin-nav-link" onclick="showAdminSection('movements'); return false;"><span>📜</span> Historial Global</a>
                 <a href="#" class="admin-nav-link" onclick="showAdminSection('inventory'); return false;"><span>📦</span> Control Stock</a>
             </nav>
@@ -206,6 +208,24 @@
                 </div>
             </div>
 
+            <div id="admin-branch-report" class="admin-section" style="display: none;">
+                <div class="glass-panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3 style="margin: 0;">Ventas por Sede</h3>
+                        <select id="branchTimeFilter" onchange="renderBranchReport()" style="background: rgba(255,255,255,0.05); color: white; border: 1px solid #333; padding: 10px; border-radius: 10px; font-size: 0.8rem;">
+                            <option value="today">Hoy</option>
+                            <option value="month" selected>Este Mes</option>
+                            <option value="all">Histórico</option>
+                        </select>
+                    </div>
+                    
+                    <div id="branchCardsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <!-- Cards will be injected here -->
+                        <div style="text-align: center; padding: 40px; opacity: 0.5; grid-column: 1 / -1;">Cargando reporte de sedes...</div>
+                    </div>
+                </div>
+            </div>
+
             <div id="admin-inventory" class="admin-section" style="display: none;">
                 <div class="glass-panel">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 10px;">
@@ -249,9 +269,76 @@
                 if (l.getAttribute('onclick')?.includes(`'${section}'`)) l.classList.add('active');
             });
             if (section === 'overview') await renderAdminDashboard();
+            if (section === 'branch-report') await renderBranchReport();
             if (section === 'movements') await renderGlobalHistory();
             if (section === 'inventory') renderAdminInventory();
             window.scrollTo(0, 0);
+        }
+
+        async function renderBranchReport() {
+            const timeFilter = document.getElementById('branchTimeFilter').value;
+            let startDate = null;
+            const now = new Date();
+
+            if (timeFilter === 'today') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+            } else if (timeFilter === 'month') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            }
+
+            const sales = await fetchSales(startDate);
+            const container = document.getElementById('branchCardsContainer');
+            
+            // Filter out admin from locations to show only real sedes
+            const realSedes = locations.filter(l => l.role === 'sede');
+            
+            if (sales.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; opacity: 0.5; grid-column: 1 / -1;">No hay ventas registradas en este periodo</div>';
+                return;
+            }
+
+            container.innerHTML = realSedes.map(sede => {
+                const sedeSales = sales.filter(s => s.location_id == sede.id);
+                const totalUnits = sedeSales.reduce((a, b) => a + (b.quantity || 0), 0);
+                const totalRevenue = sedeSales.reduce((a, b) => a + (parseFloat(b.price) || 0), 0);
+                
+                // Group by product to see "what" they sold
+                const productMap = {};
+                sedeSales.forEach(s => {
+                    const name = s.product_name;
+                    productMap[name] = (productMap[name] || 0) + (s.quantity || 0);
+                });
+                const topProducts = Object.entries(productMap)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                return `
+                    <div class="kpi-card" style="border-top: 4px solid ${totalUnits > 0 ? '#2ecc71' : '#333'};">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <div>
+                                <div class="kpi-label">${sede.name}</div>
+                                <div class="kpi-value" style="font-size: 1.8rem;">${formatCurrency(totalRevenue)}</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 10px; text-align: center;">
+                                <div style="font-size: 1.2rem; font-weight: 900; color: var(--color-accent);">${totalUnits}</div>
+                                <div style="font-size: 0.5rem; font-weight: 800; opacity: 0.5;">UDS</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <div style="font-size: 0.6rem; font-weight: 800; color: #555; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;">Lo más vendido</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                ${topProducts.length > 0 ? topProducts.map(([name, qty]) => `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 8px;">
+                                        <div style="font-size: 0.75rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">${name}</div>
+                                        <div style="font-weight: 800; color: #2ecc71; font-size: 0.8rem;">${qty}</div>
+                                    </div>
+                                `).join('') : '<div style="font-size: 0.7rem; opacity: 0.3; font-style: italic;">Sin ventas</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         async function renderAdminDashboard() {
