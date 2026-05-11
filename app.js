@@ -234,7 +234,7 @@ async function fetchInventory() {
                     }
                 }
 
-                // Resilience: If sizes is an array of objects (like [{size: "38", stock: 1}]), extract just the size
+                // Resilience: Handle both Array of objects and Simple Objects
                 if (Array.isArray(parsedSizes)) {
                     parsedSizes = parsedSizes.map(s => {
                         if (typeof s === 'object' && s !== null) {
@@ -242,6 +242,9 @@ async function fetchInventory() {
                         }
                         return s;
                     }).filter(s => s !== undefined && s !== null);
+                } else if (typeof parsedSizes === 'object' && parsedSizes !== null) {
+                    // It's a map like {"40": 1, "41": 1}
+                    parsedSizes = Object.keys(parsedSizes);
                 }
 
                 return {
