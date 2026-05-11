@@ -336,9 +336,70 @@
                                 `).join('') : '<div style="font-size: 0.7rem; opacity: 0.3; font-style: italic;">Sin ventas</div>'}
                             </div>
                         </div>
+                        
+                        <button onclick="showSedeHistory(${sede.id}, '${timeFilter}')" style="width: 100%; margin-top: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;">
+                            Ver Historial de Ventas
+                        </button>
                     </div>
                 `;
             }).join('');
+        }
+
+        async function showSedeHistory(sedeId, timeFilter) {
+            const sede = locations.find(l => l.id == sedeId);
+            let startDate = null;
+            const now = new Date();
+
+            if (timeFilter === 'today') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+            } else if (timeFilter === 'month') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            }
+
+            const sales = await fetchSales(startDate);
+            const sedeSales = sales.filter(s => s.location_id == sedeId);
+
+            document.getElementById('editTitle').textContent = `Ventas: ${sede.name}`;
+            document.getElementById('editSubtitle').textContent = timeFilter === 'today' ? 'Hoy' : (timeFilter === 'month' ? 'Este Mes' : 'Histórico Total');
+            
+            const list = document.getElementById('editSizeList');
+            
+            if (sedeSales.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: 30px; opacity: 0.5;">No hay ventas para mostrar</div>';
+            } else {
+                list.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px; padding: 10px; font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 800; border-bottom: 1px solid #222;">
+                        <div>Fecha/Hora</div>
+                        <div>Producto / Talla</div>
+                        <div style="text-align:right;">Precio</div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                        ${sedeSales.map(s => {
+                            const dateObj = new Date(s.created_at);
+                            const dateStr = dateObj.toLocaleDateString([], { day: '2-digit', month: '2-digit' });
+                            const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            
+                            return `
+                                <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 10px; align-items: center; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px;">
+                                    <div>
+                                        <div style="font-weight: 800; font-size: 0.75rem; color: #fff;">${dateStr}</div>
+                                        <div style="font-size: 0.6rem; opacity: 0.5;">${timeStr}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.product_name}</div>
+                                        <div style="font-size: 0.65rem; color: var(--color-accent); font-weight: 800;">TALLA: ${s.size}</div>
+                                    </div>
+                                    <div style="text-align: right; font-weight: 900; color: #2ecc71; font-size: 0.8rem;">
+                                        ${formatCurrency(s.price || 0)}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+            
+            document.getElementById('editModal').style.display = 'flex';
         }
 
         async function renderAdminDashboard() {
