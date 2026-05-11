@@ -199,7 +199,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Sede</th><th>Cant</th><th>Precio</th><th style="text-align:center;">Acciones</th></tr></thead><tbody id="globalHistoryTable"></tbody></table></div>
+                    <div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Talla</th><th>Sede</th><th>Cant</th><th>Precio</th><th style="text-align:center;">Acciones</th></tr></thead><tbody id="globalHistoryTable"></tbody></table></div>
                     <div id="historySummary" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 700; color: #555; font-size: 0.7rem; text-transform: uppercase;">Total Filtrado</span>
                         <div style="display: flex; gap: 20px; align-items: center;">
@@ -747,7 +747,7 @@
             
             const table = document.getElementById('globalHistoryTable');
             if (sales.length === 0) {
-                table.innerHTML = '<tr><td colspan="5" style="text-align:center; opacity:0.3; padding:40px;">No se encontraron registros en este periodo</td></tr>';
+                table.innerHTML = '<tr><td colspan="8" style="text-align:center; opacity:0.3; padding:40px;">No se encontraron registros en este periodo</td></tr>';
                 document.getElementById('historyTotalQty').textContent = 0;
                 return;
             }
@@ -757,6 +757,7 @@
                     <td>${new Date(h.created_at).toLocaleString()}</td>
                     <td><span style="color: #2ecc71; font-weight: 800; font-size: 0.6rem; text-transform: uppercase;">Venta</span></td>
                     <td style="font-weight: 700;">${h.product_name}</td>
+                    <td style="font-weight: 800; color: var(--color-accent);">${h.size || '-'}</td>
                     <td style="opacity: 0.7;">${h.location_name}</td>
                     <td style="font-weight: 900;">${h.quantity}</td>
                     <td style="color: #2ecc71; font-weight: 900;">${formatCurrency(h.price || 0)}</td>
