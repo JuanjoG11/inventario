@@ -547,10 +547,10 @@
             const salesToday = await fetchSales(startOfDay);
             const salesMonth = await fetchSales(startOfMonth);
 
-            document.getElementById('globalTotalSales').textContent = salesToday.reduce((a, b) => a + (b.quantity || 0), 0);
-            document.getElementById('globalMonthlySales').textContent = salesMonth.reduce((a, b) => a + (b.quantity || 0), 0);
+            document.getElementById('globalTotalSales').textContent = salesToday.reduce((a, b) => a + (parseInt(b.quantity) || 0), 0);
+            document.getElementById('globalMonthlySales').textContent = salesMonth.reduce((a, b) => a + (parseInt(b.quantity) || 0), 0);
             
-            const totalRevenue = salesMonth.reduce((a, b) => a + (parseFloat(b.price) || 0), 0);
+            const totalRevenue = salesMonth.reduce((a, b) => a + (cleanPrice(b.price) || 0), 0);
             document.getElementById('globalTotalRevenue').textContent = formatCurrency(totalRevenue);
 
             renderAdminChart(salesMonth); 
@@ -748,7 +748,8 @@
             const table = document.getElementById('globalHistoryTable');
             if (sales.length === 0) {
                 table.innerHTML = '<tr><td colspan="8" style="text-align:center; opacity:0.3; padding:40px;">No se encontraron registros en este periodo</td></tr>';
-                document.getElementById('historyTotalQty').textContent = 0;
+                document.getElementById('historyTotalQty').textContent = '0 uds';
+                document.getElementById('historyTotalPrice').textContent = formatCurrency(0);
                 return;
             }
 
@@ -760,15 +761,15 @@
                     <td style="font-weight: 800; color: var(--color-accent);">${h.size || '-'}</td>
                     <td style="opacity: 0.7;">${h.location_name}</td>
                     <td style="font-weight: 900;">${h.quantity}</td>
-                    <td style="color: #2ecc71; font-weight: 900;">${formatCurrency(h.price || 0)}</td>
+                    <td style="color: #2ecc71; font-weight: 900;">${formatCurrency(cleanPrice(h.price) || 0)}</td>
                     <td style="text-align:center;">
                         <button onclick="voidSale(${h.id})" style="background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.2); color: #e74c3c; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;" title="Anular venta y devolver stock">🗑️</button>
                     </td>
                 </tr>
             `).join('');
             
-            const totalQty = sales.reduce((a, b) => a + (b.quantity || 0), 0);
-            const totalPrice = sales.reduce((a, b) => a + (parseFloat(b.price) || 0), 0);
+            const totalQty = sales.reduce((a, b) => a + (parseInt(b.quantity) || 0), 0);
+            const totalPrice = sales.reduce((a, b) => a + (cleanPrice(b.price) || 0), 0);
             
             document.getElementById('historyTotalQty').textContent = totalQty + ' uds';
             document.getElementById('historyTotalPrice').textContent = formatCurrency(totalPrice);

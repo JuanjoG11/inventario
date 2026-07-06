@@ -208,20 +208,21 @@ async function fetchInventory() {
                     }
                 }
 
-                // Enforce category by explicit naming conventions (Improved Order)
+                // Enforce category by explicit naming conventions
+                // Prioridad: tipo de calzado primero, luego audiencia (niños), luego ropa
                 const lowName = p.name.toLowerCase();
-                if (lowName.includes('niño') || lowName.includes(' jr') || lowName.includes('niña')) {
-                    pCat = 'Niños';
+                if ((lowName.includes('teni') || lowName.includes('tenis')) && lowName.includes('guayo')) {
+                    pCat = 'Tenis-Guayos';
                 } else if (lowName.includes('futsal') || lowName.includes('tf') || lowName.includes('sala')) {
                     pCat = 'Futsal';
-                } else if ((lowName.includes('teni') || lowName.includes('tenis')) && lowName.includes('guayo')) {
-                    pCat = 'Tenis-Guayos';
-                } else if (lowName.includes('guayo') || lowName.includes('fg')) {
+                } else if (lowName.includes('guayo') || lowName.includes(' fg') || lowName.endsWith('fg')) {
                     pCat = 'Guayos';
                 } else if (lowName.includes('peto')) {
                     pCat = 'Petos';
                 } else if (lowName.includes('camiseta') || lowName.includes('camisa')) {
                     pCat = 'Camisetas';
+                } else if (lowName.includes('niño') || lowName.includes(' jr') || lowName.includes('niña')) {
+                    pCat = 'Niños';
                 }
 
                 let parsedSizes = [];
