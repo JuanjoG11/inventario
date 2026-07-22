@@ -163,7 +163,7 @@ async function fetchInventory() {
             // 1. Fetch ALL products from the database (The "Web" catalog)
             const { data: pData, error: pError } = await supabaseClient
                 .from('products')
-                .select('id,name,category,image,images,sizes,price');
+                .select('id,name,category,image,images,sizes,price,cost_price');
 
             if (pError) throw pError;
 
@@ -252,6 +252,7 @@ async function fetchInventory() {
                     ...p,
                     image: pImage,
                     category: pCat || 'Deportivo',
+                    cost_price: p.cost_price || null,
                     sizes: Array.isArray(parsedSizes) ? parsedSizes : []
                 };
             });

@@ -108,6 +108,24 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Toast Notifications */
+        .admin-toast {
+            display: flex; align-items: center; gap: 12px;
+            background: #1e1e22; border: 1px solid rgba(255,255,255,0.08);
+            color: #fff; padding: 14px 18px; border-radius: 16px;
+            font-size: 0.85rem; font-weight: 700;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            pointer-events: all; min-width: 240px; max-width: 340px;
+            animation: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .admin-toast.removing { animation: toastOut 0.3s ease forwards; }
+        .admin-toast-success { border-left: 4px solid #2ecc71; }
+        .admin-toast-error   { border-left: 4px solid #e74c3c; }
+        .admin-toast-info    { border-left: 4px solid #3498db; }
+        .admin-toast-icon { font-size: 1.2rem; flex-shrink: 0; }
+        @keyframes toastIn  { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { from { opacity: 1; transform: translateX(0);     } to { opacity: 0; transform: translateX(40px); } }
+
         @media (max-width: 992px) {
             .admin-sidebar { display: none; }
             .admin-main { margin-left: 0; padding: 15px; padding-top: 10px; width: 100%; box-sizing: border-box; }
@@ -169,6 +187,7 @@
                     <div class="kpi-card"><div class="kpi-label">Ventas Hoy</div><div class="kpi-value" id="globalTotalSales">0</div><div style="font-size: 0.65rem; color: #3498db; font-weight: 800;">HOY</div></div>
                     <div class="kpi-card" style="border-bottom: 3px solid #2ecc71;"><div class="kpi-label">Venta Total $</div><div class="kpi-value" id="globalTotalRevenue" style="color: #2ecc71;">$0</div><div style="font-size: 0.65rem; color: #666; font-weight: 800;">RECAUDO MES</div></div>
                     <div class="kpi-card" style="border-bottom: 3px solid #f1c40f;"><div class="kpi-label">Ventas Mes</div><div class="kpi-value" id="globalMonthlySales" style="color: #f1c40f;">0</div><div style="font-size: 0.65rem; color: #888; font-weight: 800;">UNIDADES</div></div>
+                    <div class="kpi-card" style="border-bottom: 3px solid #9b59b6;"><div class="kpi-label">Margen Bruto</div><div class="kpi-value" id="globalMarginMonth" style="color: #9b59b6;">$0</div><div style="font-size: 0.65rem; color: #888; font-weight: 800;">GANANCIA MES</div></div>
                 </div>
                 <div class="admin-section-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 25px;">
                     <div class="glass-panel"><h3>TENDENCIA</h3><div style="height: 300px;"><canvas id="adminSalesChart"></canvas></div></div>
@@ -199,12 +218,13 @@
                             </select>
                         </div>
                     </div>
-                    <div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Talla</th><th>Sede</th><th>Cant</th><th>Precio</th><th style="text-align:center;">Acciones</th></tr></thead><tbody id="globalHistoryTable"></tbody></table></div>
+                    <div class="admin-table-wrapper"><table class="admin-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Talla</th><th>Sede</th><th>Cant</th><th>Precio Venta</th><th style="color:#9b59b6;">Ganancia</th><th style="text-align:center;">Acciones</th></tr></thead><tbody id="globalHistoryTable"></tbody></table></div>
                     <div id="historySummary" style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-weight: 700; color: #555; font-size: 0.7rem; text-transform: uppercase;">Total Filtrado</span>
                         <div style="display: flex; gap: 20px; align-items: center;">
                             <span id="historyTotalQty" style="font-weight: 900; color: var(--color-accent); font-size: 1.2rem;">0 uds</span>
                             <span id="historyTotalPrice" style="font-weight: 900; color: #2ecc71; font-size: 1.2rem;">$0</span>
+                            <span id="historyTotalMargin" style="font-weight: 900; color: #9b59b6; font-size: 1.2rem;">$ —</span>
                         </div>
                     </div>
                 </div>
@@ -271,6 +291,9 @@
         </div>
     </div>
 
+    <!-- Toast notifications -->
+    <div id="toastContainer" style="position: fixed; bottom: 100px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
+
     <script src="tennisymas_catalog.js?v=1.0.1"></script>
     <script src="app.js?v=1.0.1"></script>
     <script>
@@ -280,6 +303,20 @@
             await init(); 
             await renderAdminDashboard();
         }
+
+        function showToast(message, type = 'success') {
+            const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `admin-toast admin-toast-${type}`;
+            toast.innerHTML = `<span class="admin-toast-icon">${icons[type] || '🔔'}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+            }, 3500);
+        }
+        window.showToast = showToast;
 
         async function showAdminSection(section) {
             document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
@@ -553,6 +590,20 @@
             const totalRevenue = salesMonth.reduce((a, b) => a + (cleanPrice(b.price) || 0), 0);
             document.getElementById('globalTotalRevenue').textContent = formatCurrency(totalRevenue);
 
+            // Margen bruto del mes (solo productos con cost_price registrado)
+            let totalMargin = 0;
+            let hasAnyCost = false;
+            salesMonth.forEach(h => {
+                const prod = allProducts.find(p => p.name === h.product_name);
+                const costUnit = prod ? (cleanPrice(prod.cost_price) || 0) : 0;
+                if (costUnit > 0) {
+                    hasAnyCost = true;
+                    totalMargin += (cleanPrice(h.price) || 0) - costUnit * (parseInt(h.quantity) || 1);
+                }
+            });
+            const marginEl = document.getElementById('globalMarginMonth');
+            if (marginEl) marginEl.textContent = hasAnyCost ? formatCurrency(totalMargin) : '$ —';
+
             renderAdminChart(salesMonth); 
             renderAdminTopProducts(salesMonth);
         }
@@ -639,6 +690,7 @@
                     <div style="padding: 10px;">
                         <div style="font-size: 0.7rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
                         <div style="font-size: 0.8rem; color: #2ecc71; font-weight: 900; margin-top: 5px;">${formatCurrency(cleanPrice(p.price))}</div>
+                        ${p.cost_price ? `<div style="font-size: 0.65rem; color: #9b59b6; font-weight: 700;">Costo: ${formatCurrency(cleanPrice(p.cost_price))}</div>` : `<div style="font-size: 0.6rem; color: #444; font-weight: 600;">Sin costo registrado</div>`}
                     </div>
                 </div>
             `).join('');
@@ -714,10 +766,87 @@
                     </div>
                 `;
             });
+
+            // Precio de costo editable
+            const currentCost = cleanPrice(prod.cost_price) || 0;
+            const salePrice = cleanPrice(prod.price) || 0;
+            const margin = currentCost > 0 ? salePrice - currentCost : null;
+            list.innerHTML += `
+                <div style="margin-top: 15px; padding: 15px; background: rgba(155, 89, 182, 0.07); border: 1px solid rgba(155, 89, 182, 0.2); border-radius: 14px;">
+                    <div style="font-size: 0.6rem; color: #9b59b6; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">💰 Precio de Costo (Contabilidad)</div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input id="costPriceInput" type="number" placeholder="Ej: 120000" value="${currentCost > 0 ? currentCost : ''}"
+                            style="flex:1; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 700;">
+                        <button onclick="saveCostPrice('${prod.id}', '${prod.name}')"
+                            style="background: #9b59b6; border: none; color: white; padding: 10px 16px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; cursor: pointer; white-space: nowrap;">
+                            Guardar
+                        </button>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem;">
+                        <span style="color: #555;">Precio venta: <strong style="color:#2ecc71;">${formatCurrency(salePrice)}</strong></span>
+                        <span id="marginPreview" style="color: ${margin !== null ? (margin > 0 ? '#2ecc71' : '#e74c3c') : '#555'};">
+                            ${margin !== null ? `Ganancia: ${formatCurrency(margin)}` : 'Sin costo registrado'}
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            // Update margin preview live
+            setTimeout(() => {
+                const input = document.getElementById('costPriceInput');
+                if (input) {
+                    input.addEventListener('input', () => {
+                        const cost = parseFloat(input.value) || 0;
+                        const preview = document.getElementById('marginPreview');
+                        if (preview && cost > 0) {
+                            const m = salePrice - cost;
+                            preview.textContent = `Ganancia: ${formatCurrency(m)}`;
+                            preview.style.color = m > 0 ? '#2ecc71' : '#e74c3c';
+                        } else if (preview) {
+                            preview.textContent = 'Sin costo registrado';
+                            preview.style.color = '#555';
+                        }
+                    });
+                }
+            }, 50);
+
             document.getElementById('editModal').style.display = 'flex';
         }
 
         function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+
+        async function saveCostPrice(productId, productName) {
+            const input = document.getElementById('costPriceInput');
+            if (!input) return;
+            const cost = parseFloat(input.value);
+            if (isNaN(cost) || cost < 0) {
+                alert('Ingresa un precio de costo válido');
+                return;
+            }
+
+            // Update all products with same name (handles duplicates)
+            const relatedIds = allProducts
+                .filter(p => p.name.trim().toLowerCase() === productName.trim().toLowerCase())
+                .map(p => p.id);
+
+            const { error } = await supabaseClient
+                .from('products')
+                .update({ cost_price: cost })
+                .in('id', relatedIds);
+
+            if (error) {
+                alert('Error al guardar: ' + error.message);
+                console.error(error);
+                return;
+            }
+
+            // Update local cache
+            allProducts.forEach(p => {
+                if (relatedIds.includes(p.id)) p.cost_price = cost;
+            });
+
+            if (typeof showToast === 'function') showToast(`Costo guardado: ${formatCurrency(cost)}`, 'success');
+        }
 
         async function renderGlobalHistory() {
             const timeFilter = document.getElementById('historyFilter').value;
@@ -753,7 +882,16 @@
                 return;
             }
 
-            table.innerHTML = sales.map(h => `
+            table.innerHTML = sales.map(h => {
+                const prod = allProducts.find(p => p.name === h.product_name);
+                const costUnit = prod ? (cleanPrice(prod.cost_price) || 0) : 0;
+                const saleTotal = cleanPrice(h.price) || 0;
+                const costTotal = costUnit * (parseInt(h.quantity) || 1);
+                const margin = costUnit > 0 ? saleTotal - costTotal : null;
+                const marginHtml = margin !== null
+                    ? `<span style="color:${margin >= 0 ? '#9b59b6' : '#e74c3c'}; font-weight:900;">${formatCurrency(margin)}</span>`
+                    : `<span style="color:#444; font-size:0.7rem;">—</span>`;
+                return `
                 <tr>
                     <td>${new Date(h.created_at).toLocaleString()}</td>
                     <td><span style="color: #2ecc71; font-weight: 800; font-size: 0.6rem; text-transform: uppercase;">Venta</span></td>
@@ -761,18 +899,33 @@
                     <td style="font-weight: 800; color: var(--color-accent);">${h.size || '-'}</td>
                     <td style="opacity: 0.7;">${h.location_name}</td>
                     <td style="font-weight: 900;">${h.quantity}</td>
-                    <td style="color: #2ecc71; font-weight: 900;">${formatCurrency(cleanPrice(h.price) || 0)}</td>
+                    <td style="color: #2ecc71; font-weight: 900;">${formatCurrency(saleTotal)}</td>
+                    <td>${marginHtml}</td>
                     <td style="text-align:center;">
                         <button onclick="voidSale(${h.id})" style="background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.2); color: #e74c3c; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;" title="Anular venta y devolver stock">🗑️</button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
             
             const totalQty = sales.reduce((a, b) => a + (parseInt(b.quantity) || 0), 0);
             const totalPrice = sales.reduce((a, b) => a + (cleanPrice(b.price) || 0), 0);
+
+            // Total margin: only count sales where we have cost data
+            let totalMargin = 0;
+            let hasAnyCost = false;
+            sales.forEach(h => {
+                const prod = allProducts.find(p => p.name === h.product_name);
+                const costUnit = prod ? (cleanPrice(prod.cost_price) || 0) : 0;
+                if (costUnit > 0) {
+                    hasAnyCost = true;
+                    totalMargin += (cleanPrice(h.price) || 0) - costUnit * (parseInt(h.quantity) || 1);
+                }
+            });
             
             document.getElementById('historyTotalQty').textContent = totalQty + ' uds';
             document.getElementById('historyTotalPrice').textContent = formatCurrency(totalPrice);
+            const marginEl = document.getElementById('historyTotalMargin');
+            if (marginEl) marginEl.textContent = hasAnyCost ? formatCurrency(totalMargin) : '$ —';
         }
 
         async function voidSale(saleId) {
