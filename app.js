@@ -351,8 +351,8 @@ async function fetchInventory() {
  * 🛒 SALES REGISTRATION (SMART LOCATION SUBTRACTION)
  * Subtracts from the active location first, then from others if needed (Global Pool)
  */
-async function registerSale(productId, activeLocId, size, quantity) {
-    console.log(`🛒 Venta: Prod ${productId}, Sede ${activeLocId}, Talla ${size}, Qty ${quantity}`);
+async function registerSale(productId, activeLocId, size, quantity, customPrice = null) {
+    console.log(`🛒 Venta: Prod ${productId}, Sede ${activeLocId}, Talla ${size}, Qty ${quantity}, Precio personalizado: ${customPrice ?? 'catálogo'}`);
 
     if (supabaseClient) {
         try {
@@ -433,6 +433,12 @@ async function registerSale(productId, activeLocId, size, quantity) {
             // 4. Record the transaction in Supabase
             const location = locations.find(l => l.id == activeLocId);
             
+            // Usar precio personalizado si fue indicado, de lo contrario el del catálogo
+            const saleUnitPrice = customPrice !== null && !isNaN(customPrice) && customPrice >= 0
+                ? customPrice
+                : cleanPrice(targetProduct.price);
+            const saleTotalPrice = saleUnitPrice * quantity;
+
             console.log("📝 Intentando registrar venta en tabla 'sales'...");
             const { error: saleError } = await supabaseClient
                 .from('sales')
@@ -443,7 +449,7 @@ async function registerSale(productId, activeLocId, size, quantity) {
                     location_name: location ? location.name : 'Sede Desconocida',
                     size: size,
                     quantity: quantity,
-                    price: cleanPrice(targetProduct.price) * quantity,
+                    price: saleTotalPrice,
                     created_at: new Date().toISOString()
                 });
             

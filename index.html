@@ -297,6 +297,22 @@
                                     </div>
                                 </div>
 
+                                <!-- Precio de venta personalizado -->
+                                <div class="form-group" style="margin-bottom: 20px;">
+                                    <label style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span>Precio de Venta</span>
+                                        <span id="salePriceRef" style="font-size: 0.7rem; color: #888; font-weight: 600;"></span>
+                                    </label>
+                                    <div style="position: relative;">
+                                        <span style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-weight: 800; font-size: 0.9rem; pointer-events: none;">$</span>
+                                        <input type="number" id="salePrice" class="form-control" min="0" step="100"
+                                            placeholder="Precio catálogo por defecto"
+                                            style="padding: 18px 25px 18px 35px;"
+                                            oninput="updateSalePricePreview()">
+                                    </div>
+                                    <div id="salePricePreview" style="font-size: 0.7rem; margin-top: 6px; color: #e67e22; font-weight: 700; min-height: 18px;"></div>
+                                </div>
+
                                 <p id="stockAlert"
                                     style="font-size: 0.75rem; color: #888; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 30px; border-left: 3px solid var(--color-red);">
                                 </p>
@@ -1025,6 +1041,20 @@
                 document.getElementById('prevCat').textContent = selectedProduct.category || 'Deportivo';
                 document.getElementById('prevImg').src = selectedProduct.image || (selectedProduct.images && selectedProduct.images[0]) || 'images/logo-tm.png';
 
+                // Mostrar precio de catálogo como referencia y limpiar campo de precio
+                const refEl = document.getElementById('salePriceRef');
+                const priceInput = document.getElementById('salePrice');
+                const previewEl = document.getElementById('salePricePreview');
+                if (refEl && selectedProduct.price) {
+                    const catalogPrice = cleanPrice(selectedProduct.price);
+                    refEl.textContent = `Catálogo: ${formatCurrency(catalogPrice)}`;
+                    if (priceInput) {
+                        priceInput.placeholder = formatCurrency(catalogPrice).replace(/[^0-9]/g, '');
+                        priceInput.value = '';
+                    }
+                }
+                if (previewEl) previewEl.textContent = '';
+
                 updateFormVisibility();
                 updateSizeOptions();
             } else {
@@ -1036,6 +1066,34 @@
                 const sizeSelect = document.getElementById('restockSize');
                 sizeSelect.innerHTML = prod.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
             }
+        }
+
+        function updateSalePricePreview() {
+            if (!selectedProduct) return;
+            const priceInput = document.getElementById('salePrice');
+            const previewEl = document.getElementById('salePricePreview');
+            const qtyInput = document.getElementById('saleQty');
+            if (!priceInput || !previewEl) return;
+
+            const customPrice = parseFloat(priceInput.value);
+            const qty = parseInt(qtyInput?.value) || 1;
+            const catalogPrice = cleanPrice(selectedProduct.price) || 0;
+
+            if (priceInput.value === '' || isNaN(customPrice)) {
+                previewEl.textContent = '';
+                return;
+            }
+
+            const diff = customPrice - catalogPrice;
+            const total = customPrice * qty;
+            let diffText = '';
+            if (diff < 0) {
+                diffText = ` · Descuento: ${formatCurrency(Math.abs(diff))} (${Math.round(Math.abs(diff)/catalogPrice*100)}%)`;
+            } else if (diff > 0) {
+                diffText = ` · Precio mayor al catálogo`;
+            }
+            previewEl.textContent = `Total: ${formatCurrency(total)}${diffText}`;
+            previewEl.style.color = diff < 0 ? '#e67e22' : (diff > 0 ? '#e74c3c' : '#888');
         }
 
         function updateSizeOptions() {
@@ -1189,6 +1247,10 @@
                     updateSizeOptions();
                 });
 
+                // Actualizar preview de precio cuando cambia la cantidad
+                const saleQtyEl = document.getElementById('saleQty');
+                if (saleQtyEl) saleQtyEl.addEventListener('input', updateSalePricePreview);
+
                 // Set up other listeners...
                 const searchInput = document.getElementById('productSearch');
                 const results = document.getElementById('searchResults');
@@ -1256,12 +1318,18 @@
                     return;
                 }
 
+                // Precio personalizado: si el campo está vacío usa el del catálogo
+                const customPriceInput = document.getElementById('salePrice');
+                const customPrice = customPriceInput && customPriceInput.value !== ''
+                    ? parseFloat(customPriceInput.value)
+                    : null;
+
                 const btn = document.getElementById('submitBtn');
                 btn.disabled = true;
                 btn.textContent = 'Procesando...';
 
                 // Use activeLocationId instead of sede validation
-                const success = await registerSale(selectedProduct.id, activeLocationId, size, qty);
+                const success = await registerSale(selectedProduct.id, activeLocationId, size, qty, customPrice);
 
                 if (success) {
                     logTransaction('Venta', selectedProduct.name, size, sede, qty);
@@ -1289,6 +1357,13 @@
                     document.getElementById('productDetails').style.display = 'none';
                     document.getElementById('noProductSelected').style.display = 'block';
                     document.getElementById('formPlaceholder').style.display = 'block';
+                    // Limpiar campos de precio
+                    const priceInput = document.getElementById('salePrice');
+                    const priceRef = document.getElementById('salePriceRef');
+                    const pricePreview = document.getElementById('salePricePreview');
+                    if (priceInput) { priceInput.value = ''; priceInput.placeholder = 'Precio catálogo por defecto'; }
+                    if (priceRef) priceRef.textContent = '';
+                    if (pricePreview) pricePreview.textContent = '';
 
                     // Reload inventory and update dashboard
                     await fetchInventory();
