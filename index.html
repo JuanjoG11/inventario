@@ -306,6 +306,7 @@
                                     <div style="position: relative;">
                                         <span style="position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #888; font-weight: 800; font-size: 0.9rem; pointer-events: none;">$</span>
                                         <input type="number" id="salePrice" class="form-control" min="0" step="100"
+                                            value=""
                                             placeholder="Precio catálogo por defecto"
                                             style="padding: 18px 25px 18px 35px;"
                                             oninput="updateSalePricePreview()">
@@ -1320,8 +1321,9 @@
 
                 // Precio personalizado: si el campo está vacío usa el del catálogo
                 const customPriceInput = document.getElementById('salePrice');
-                const customPrice = customPriceInput && customPriceInput.value !== ''
-                    ? parseFloat(customPriceInput.value)
+                const customPriceVal = customPriceInput ? customPriceInput.value.trim() : '';
+                const customPrice = customPriceVal !== '' && parseFloat(customPriceVal) > 0
+                    ? parseFloat(customPriceVal)
                     : null;
 
                 const btn = document.getElementById('submitBtn');
