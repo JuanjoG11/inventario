@@ -6,14 +6,26 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const EMERGENCY_PRODUCTS = [];
 
 
+// 🔐 SESSION VERSION — cambiar este valor invalida TODAS las sesiones activas
+const SESSION_VERSION = '2';
+
 // State
 let locations = [
-    { id: 1, name: "Sede Fantasias New York", pin: "1111", role: "sede" },
-    { id: 2, name: "Sede Bulevar", pin: "2222", role: "sede" },
-    { id: 3, name: "Sede Virtual", pin: "3333", role: "sede" },
-    { id: 4, name: "Sede Virtual 2", pin: "4444", role: "sede" },
-    { id: 99, name: "MODO ADMINISTRADOR", pin: "0000", role: "admin" }
+    { id: 1, name: "Sede Fantasias New York", pin: "7382", role: "sede" },
+    { id: 2, name: "Sede Bulevar", pin: "4951", role: "sede" },
+    { id: 3, name: "Sede Virtual", pin: "6127", role: "sede" },
+    { id: 4, name: "Sede Virtual 2", pin: "8043", role: "sede" },
+    { id: 99, name: "MODO ADMINISTRADOR", pin: "5519", role: "admin" }
 ];
+
+// Invalidar sesiones de versiones anteriores
+if (localStorage.getItem('session_version') !== SESSION_VERSION) {
+    localStorage.removeItem('is_logged_in');
+    localStorage.removeItem('active_location_id');
+    localStorage.removeItem('user_role');
+    localStorage.setItem('session_version', SESSION_VERSION);
+}
+
 let activeLocationId = parseInt(localStorage.getItem('active_location_id') || '0'); // 0 means not logged in
 let isLoggedIn = localStorage.getItem('is_logged_in') === 'true';
 let currentUserRole = localStorage.getItem('user_role') || 'sede';
