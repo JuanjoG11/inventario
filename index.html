@@ -677,7 +677,9 @@
                 const size = (item.size || "").toString();
                 const cat = item.category || "Otros";
 
-                const matchesSearch = name.toLowerCase().includes(term) || size.includes(term);
+                const matchesByName = name.toLowerCase().includes(term);
+                const matchesBySize = size.includes(term) && (item.stock > 0);
+                const matchesSearch = matchesByName || matchesBySize;
                 
                 // Smart Sede Match: Always include Global Stock (0) items, OR match the specific sede
                 const matchesSede = sede === 'all' || 
