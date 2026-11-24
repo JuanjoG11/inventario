@@ -224,16 +224,15 @@ async function fetchInventory() {
                 }
 
                 // Enforce category by explicit naming conventions
-                // Prioridad: tipo de calzado primero, luego audiencia (niños), luego ropa
-                // Si la categoría ya es 'Tenis' (sección nueva de la web), respetarla sin sobreescribir
+                // Solo aplica si la categoría actual NO viene bien definida desde la DB.
+                // Categorías protegidas: 'Tenis' y 'Tenis-Guayos' (no se sobreescriben por nombre).
                 const lowName = p.name.toLowerCase();
-                if (pCat === 'Tenis') {
-                    // Categoría Tenis explícita: no sobreescribir
-                } else if ((lowName.includes('tenis') && lowName.includes('guayo'))) {
-                    pCat = 'Tenis-Guayos';
-                } else if (lowName.includes('futsal') || lowName.includes(' tf') || lowName.includes('sala') || lowName.endsWith(' in') || lowName.endsWith(' ic') || lowName.includes(' ic ')) {
+                const protectedCats = ['Tenis', 'Tenis-Guayos'];
+                if (protectedCats.includes(pCat)) {
+                    // Respetar categoría que viene de la DB o del Smart Matcher
+                } else if (lowName.includes('futsal') || lowName.includes('tf') || lowName.includes('sala')) {
                     pCat = 'Futsal';
-                } else if (lowName.includes('guayo') || lowName.includes(' fg') || lowName.endsWith(' fg')) {
+                } else if (lowName.includes('guayo') || lowName.includes(' fg') || lowName.endsWith('fg')) {
                     pCat = 'Guayos';
                 } else if (lowName.includes('peto')) {
                     pCat = 'Petos';
