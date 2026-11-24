@@ -185,7 +185,7 @@ async function fetchInventory() {
                 let pCat = p.category;
 
                 // Smart Matcher for Bodega Aliases
-                if (!pImage || pImage === 'images/logo-tm.png') {
+                if ((!pImage || pImage === 'images/logo-tm.png') && pCat !== 'Tenis') {
                     const lowName = p.name.toLowerCase();
                     let matchedRef = null;
 
@@ -211,6 +211,9 @@ async function fetchInventory() {
                             pCat = 'Petos';
                         } else if (lowName.includes('camiseta')) {
                             pCat = 'Camisetas';
+                        } else if (lowName.includes('air max') || lowName.includes('ultraboost') || lowName.includes('revolution') || lowName.includes('pegasus') || lowName.includes('nmd') || lowName.includes('runfalcon') || lowName.includes('softride') || lowName.includes('rs-x')) {
+                            pCat = 'Tenis';
+                            matchedRef = TENNISYMAS_PRODUCTS.find(c => c.category === 'Tenis' && c.name.toLowerCase().split(' ').some(w => lowName.includes(w) && w.length > 3));
                         }
                     }
 
@@ -222,12 +225,15 @@ async function fetchInventory() {
 
                 // Enforce category by explicit naming conventions
                 // Prioridad: tipo de calzado primero, luego audiencia (niños), luego ropa
+                // Si la categoría ya es 'Tenis' (sección nueva de la web), respetarla sin sobreescribir
                 const lowName = p.name.toLowerCase();
-                if ((lowName.includes('teni') || lowName.includes('tenis')) && lowName.includes('guayo')) {
+                if (pCat === 'Tenis') {
+                    // Categoría Tenis explícita: no sobreescribir
+                } else if ((lowName.includes('tenis') && lowName.includes('guayo'))) {
                     pCat = 'Tenis-Guayos';
-                } else if (lowName.includes('futsal') || lowName.includes('tf') || lowName.includes('sala')) {
+                } else if (lowName.includes('futsal') || lowName.includes(' tf') || lowName.includes('sala') || lowName.endsWith(' in') || lowName.endsWith(' ic') || lowName.includes(' ic ')) {
                     pCat = 'Futsal';
-                } else if (lowName.includes('guayo') || lowName.includes(' fg') || lowName.endsWith('fg')) {
+                } else if (lowName.includes('guayo') || lowName.includes(' fg') || lowName.endsWith(' fg')) {
                     pCat = 'Guayos';
                 } else if (lowName.includes('peto')) {
                     pCat = 'Petos';

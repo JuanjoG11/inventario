@@ -197,6 +197,7 @@
                     <button class="cat-pill" onclick="setCategoryFilter('Petos y Camisetas', this)">🎽 PETOS/CAMISETAS</button>
                     <button class="cat-pill" onclick="setCategoryFilter('Guayos', this)">⚽ GUAYOS</button>
                     <button class="cat-pill" onclick="setCategoryFilter('Tenis-Guayos', this)">👟 TENIS GUAYOS</button>
+                    <button class="cat-pill" onclick="setCategoryFilter('Tenis', this)">🥿 TENIS</button>
                     <button class="cat-pill" onclick="setCategoryFilter('Niños', this)">👶 NIÑOS</button>
                     <button class="cat-pill" onclick="setCategoryFilter('Futsal', this)">🏟️ FUTSAL</button>
                 </div>
@@ -702,6 +703,9 @@
                         matchesCat = itemCat.includes('peto') || itemCat.includes('cami') || itemCat.includes('ropa');
                     } else if (filter.includes('niño') || filter.includes('kid')) {
                         matchesCat = itemCat.includes('niño') || itemCat.includes('niña') || itemCat.includes('infantil') || itemCat.includes(' jr');
+                    } else if (filter === 'tenis') {
+                        // Categoría Tenis exacta (sección nueva)
+                        matchesCat = itemCat === 'tenis';
                     } else if (filter.includes('tenis')) {
                         // Tenis-Guayos case
                         matchesCat = itemCat.includes('tenis-guayo') || itemCat.includes('tenis guayo') || (itemCat.includes('tenis') && itemCat.includes('guayo'));

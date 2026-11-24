@@ -1,4 +1,4 @@
-﻿// 🚀 TENNIS Y MAS - CATÁLOGO REAL EXTENDIDO (54 PRODUCTOS)
+﻿// 🚀 TENNIS Y MAS - CATÁLOGO REAL EXTENDIDO (66 PRODUCTOS)
 // Basado en inventario real de tennisymas.com
 
 const TENNISYMAS_PRODUCTS = [
@@ -57,6 +57,20 @@ const TENNISYMAS_PRODUCTS = [
     { id: 44, name: "Set Petos x10 Nike (Verde)", category: "Petos", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/e5e5e5e5-5e5e-5e5e-5e5e-5e5e5e5e5e5e/training-bib-green.png", sizes: ["Única"] },
     { id: 45, name: "Peto Malla Transpirable", category: "Petos", image: "https://m.media-amazon.com/images/I/71wK+1sK+ZL._AC_SY679_.jpg", sizes: ["M", "XL"] },
     { id: 46, name: "Peto Doble Faz", category: "Petos", image: "https://http2.mlstatic.com/D_NQ_NP_968393-MCO45686009867_042021-O.jpg", sizes: ["Única"] },
+
+    // --- TENIS (12 Productos) ---
+    { id: 55, name: "Nike Air Max 270", category: "Tenis", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/f9a85d5a-2a3f-4f6e-a048-71b8d5e72e1e/air-max-270-shoes.png", sizes: [37, 38, 39, 40, 41, 42, 43, 44] },
+    { id: 56, name: "Adidas Ultraboost 22", category: "Tenis", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/4b3c85e4c1c84d3e8f3eafc500fd146e_9366/Tenis_Ultraboost_22_Blanco_GZ0127_01_standard.jpg", sizes: [37, 38, 39, 40, 41, 42, 43] },
+    { id: 57, name: "Nike Air Max 90", category: "Tenis", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/huypknqe9kfm9xqeiv7n/air-max-90-shoes.png", sizes: [38, 39, 40, 41, 42, 43, 44] },
+    { id: 58, name: "Adidas NMD_R1", category: "Tenis", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/5a3c85e4c1c84d3e8f3eafc500fd146e_9366/Tenis_NMD_R1_Negro_GZ7922_01_standard.jpg", sizes: [38, 39, 40, 41, 42, 43] },
+    { id: 59, name: "Nike React Infinity Run FK 3", category: "Tenis", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/d3f4bb88-eadf-4eed-a0f8-abe19e71e43b/react-infinity-run-flyknit-3-road-running-shoes.png", sizes: [38, 39, 40, 41, 42, 43] },
+    { id: 60, name: "Puma RS-X", category: "Tenis", image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/369666/01/sv01/fnd/PNA/fmt/png/RS-X-Sneakers", sizes: [37, 38, 39, 40, 41, 42, 43] },
+    { id: 61, name: "Nike Air Zoom Pegasus 39", category: "Tenis", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/ipgrakmxgw3c5oc3eiaj/air-zoom-pegasus-39-road-running-shoes.png", sizes: [38, 39, 40, 41, 42, 43, 44] },
+    { id: 62, name: "Adidas Runfalcon 3.0", category: "Tenis", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/6b3c85e4c1c84d3e8f3eafc500fd146e_9366/Tenis_Runfalcon_3.0_Blanco_HP7544_01_standard.jpg", sizes: [37, 38, 39, 40, 41, 42, 43] },
+    { id: 63, name: "Nike Air Force 1 Low Mujer", category: "Tenis", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/jl5akyxuoh4v1wbqlfem/air-force-1-07-shoes.png", sizes: [35, 36, 37, 38, 39, 40, 41] },
+    { id: 64, name: "Adidas Grand Court 2.0", category: "Tenis", image: "https://assets.adidas.com/images/w_600,f_auto,q_auto/7c3c85e4c1c84d3e8f3eafc500fd146e_9366/Tenis_Grand_Court_2.0_Blanco_GW9195_01_standard.jpg", sizes: [36, 37, 38, 39, 40, 41, 42] },
+    { id: 65, name: "Nike Revolution 6 NN", category: "Tenis", image: "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/0e28e062-cc28-4b2e-824d-1a2f68aa0ab1/revolution-6-next-nature-road-running-shoes.png", sizes: [38, 39, 40, 41, 42, 43] },
+    { id: 66, name: "Puma Softride Enzo Evo", category: "Tenis", image: "https://images.puma.com/image/upload/f_auto,q_auto,b_rgb:fafafa,w_600,h_600/global/376749/01/sv01/fnd/PNA/fmt/png/Softride-Enzo-Evo-Running-Shoes", sizes: [37, 38, 39, 40, 41, 42, 43] },
 
     // --- CAMISETAS (8 Productos) ---
     { id: 47, name: "Camiseta Nike Dri-FIT Park VII", category: "Camisetas", image: "images/logo-tm.png", sizes: ["S", "M", "L", "XL", "XXL"] },
