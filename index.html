@@ -707,11 +707,15 @@
                         // Categoría Tenis exacta (sección nueva)
                         matchesCat = itemCat === 'tenis';
                     } else if (filter.includes('tenis')) {
-                        // Tenis-Guayos case
-                        matchesCat = itemCat.includes('tenis-guayo') || itemCat.includes('tenis guayo') || (itemCat.includes('tenis') && itemCat.includes('guayo'));
+                        // Tenis-Guayos: por categoría O por nombre del producto
+                        const itemName = (item.product_name || '').toLowerCase();
+                        matchesCat = itemCat.includes('tenis-guayo') || itemCat.includes('tenis guayo')
+                            || itemName.includes('teniguayo') || itemName.includes('teni guayo') || itemName.includes('tenis guayo');
                     } else if (filter.includes('guayo')) {
-                        // Clean guayos check (Avoid matching TENIS-GUAYOS if possible but let's be inclusive if they just want shoes)
-                        matchesCat = itemCat === 'guayos' || itemCat === 'guayo';
+                        // Guayos puros: excluir los TENIGUAYO (van en su propio filtro)
+                        const itemName2 = (item.product_name || '').toLowerCase();
+                        const isTeniGuayo = itemName2.includes('teniguayo') || itemName2.includes('teni guayo') || itemName2.includes('tenis guayo') || itemCat.includes('tenis-guayo');
+                        matchesCat = (itemCat === 'guayos' || itemCat === 'guayo') && !isTeniGuayo;
                     } else if (filter.includes('futsal') || filter.includes('sala')) {
                         matchesCat = itemCat.includes('futsal') || itemCat.includes('sala') || itemCat.includes(' indoor');
                     } else {
